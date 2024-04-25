@@ -10,12 +10,18 @@ import com.seedfinding.mcfeature.loot.function.SetCountFunction;
 import com.seedfinding.mcfeature.loot.roll.ConstantRoll;
 import com.seedfinding.mcfeature.loot.roll.UniformRoll;
 
+@SuppressWarnings("unused")
 public class TrialChambersLootTables {
 
-	public static final Supplier<LootTable> UNIMPLEMENTED = () -> new LootTable();
+	public static final Supplier<LootTable> UNIMPLEMENTED = LootTable::new;
 	
 	// TODO
-	public static final Supplier<LootTable> REWARD = () -> new LootTable(
+	public static final Supplier<LootTable> VAULT = () -> new LootTable(
+			new LootPool(new ConstantRoll(0))
+	);
+
+	// TODO
+	public static final Supplier<LootTable> OMINOUS_VAULT = () -> new LootTable(
 			new LootPool(new ConstantRoll(0))
 	);
 	

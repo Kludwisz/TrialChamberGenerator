@@ -13,8 +13,8 @@ public class JigsawBlock {
     public BlockDirection direction2;
     public BPos relativePos;
     
-    private int selectionPriority;
-    private int placementPriority;
+    private final int selectionPriority;
+    private final int placementPriority;
 
     public JigsawBlock(int poolType, JointType jointType, String name, String targetName,
                        BlockDirection direction1, BlockDirection direction2, BPos relativePos,
@@ -33,15 +33,6 @@ public class JigsawBlock {
         this.selectionPriority = selectionPrio;
         this.placementPriority = placementPrio;
     }
-    
-    /*
-    public JigsawBlock(String alias, JointType jointType, String name, String targetName,
-            BlockDirection direction1, BlockDirection direction2, BPos relativePos)
-	{
-		this(-1, jointType, name, targetName, direction1, direction2, relativePos);
-		this.poolAlias = alias;
-	}
-	*/
     
     public int getSelectionPriority() {
     	return this.selectionPriority;
