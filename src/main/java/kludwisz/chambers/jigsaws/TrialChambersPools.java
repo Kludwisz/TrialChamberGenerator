@@ -8,6 +8,8 @@ import com.seedfinding.mccore.util.data.Pair;
 public class TrialChambersPools {
 	
 	public static List<Pair<Integer, Integer>> get(int poolID) {
+		if (poolID < 0 || poolID > CHAMBER_POOLS.size())
+			return null;
 		return CHAMBER_POOLS.get(poolID);
 	}
 	

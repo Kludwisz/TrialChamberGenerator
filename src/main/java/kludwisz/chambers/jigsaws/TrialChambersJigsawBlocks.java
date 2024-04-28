@@ -10,7 +10,7 @@ public class TrialChambersJigsawBlocks {
 		return JIGSAW_BLOCKS.get(pieceID);
 	}
 	
-    private static final List<List<JigsawBlock>> JIGSAW_BLOCKS = List.of(
+    private static final List<List<JigsawBlock>> JIGSAW_BLOCKS = List.<List<JigsawBlock>>of(
 			// chamber/assembly
 			List.of(
 					new JigsawBlock(21, JointType.ALIGNED, "empty", "reward_connector", BlockDirection.NORTH, BlockDirection.UP, new BPos(29,3,12), 0, 0),
@@ -63,8 +63,8 @@ public class TrialChambersJigsawBlocks {
 			),
 // chamber/chamber_1
 			List.of( // TODO FIXME do these aliases even fucking exist???
-//					new JigsawBlock(/* USES ALIAS */ -1, "chamber/addon/c6", JointType.ROLLABLE, "empty", "c6_addon", BlockDirection.UP, BlockDirection.NORTH, new BPos(9,0,7), 0, 0),
-//					new JigsawBlock(/* USES ALIAS */ -1, "chamber/addon/c6", JointType.ROLLABLE, "empty", "c6_addon", BlockDirection.UP, BlockDirection.NORTH, new BPos(14,0,21), 0, 0),
+					new JigsawBlock(/* USES ALIAS?? */ -1, JointType.ROLLABLE, "empty","chamber/addon/c6", BlockDirection.UP, BlockDirection.NORTH, new BPos(9,0,7), 0, 0),
+					new JigsawBlock(/* USES ALIAS?? */ -1, JointType.ROLLABLE, "empty","chamber/addon/c6", BlockDirection.UP, BlockDirection.NORTH, new BPos(14,0,21), 0, 0),
 					new JigsawBlock(5, JointType.ALIGNED, "empty", "c1_breeze", BlockDirection.UP, BlockDirection.NORTH, new BPos(7,1,12), 2, 2),
 					new JigsawBlock(19, JointType.ALIGNED, "empty", "copper_dispenser", BlockDirection.DOWN, BlockDirection.EAST, new BPos(1,3,5), 0, 0),
 					new JigsawBlock(19, JointType.ALIGNED, "empty", "copper_dispenser", BlockDirection.DOWN, BlockDirection.EAST, new BPos(1,3,10), 0, 0),
@@ -779,13 +779,13 @@ public class TrialChambersJigsawBlocks {
 					new JigsawBlock(22, JointType.ROLLABLE, "empty", "ominous_vault", BlockDirection.SOUTH, BlockDirection.UP, new BPos(14,15,17), 0, 0)
 			),
 // corridor/end_1
-			List.of(
+			List.of( // FIXME :empty
 					new JigsawBlock(1, JointType.ROLLABLE, ":empty", "second_corridor", BlockDirection.NORTH, BlockDirection.UP, new BPos(9,0,0), 0, 0),
 					new JigsawBlock(12, JointType.ROLLABLE, "empty", "in_connector", BlockDirection.SOUTH, BlockDirection.UP, new BPos(9,9,18), 0, 2),
 					new JigsawBlock(22, JointType.ROLLABLE, "empty", "ominous_vault", BlockDirection.SOUTH, BlockDirection.UP, new BPos(9,14,9), 0, 0)
 			),
 // corridor/end_2
-			List.of(
+			List.of( // FIXME :empty
 					new JigsawBlock(1, JointType.ROLLABLE, ":empty", "second_corridor", BlockDirection.NORTH, BlockDirection.UP, new BPos(9,0,0), 0, 0),
 					new JigsawBlock(22, JointType.ROLLABLE, "empty", "ominous_vault", BlockDirection.SOUTH, BlockDirection.UP, new BPos(9,2,14), 0, 0),
 					new JigsawBlock(12, JointType.ROLLABLE, "empty", "in_connector", BlockDirection.SOUTH, BlockDirection.UP, new BPos(9,9,18), 0, 2)

@@ -12,23 +12,27 @@ import com.seedfinding.mcfeature.loot.LootTable;
 import kludwisz.util.DecoratorRand;
 
 public class Main {
-	private static final TrialChambers CHAMBERS = new TrialChambers(MCVersion.v1_19_2);
+	private static final TrialChambers CHAMBERS = new TrialChambers(MCVersion.v1_20);
 	
 	public static void main(String[] args) {
 		test();
 	}
-	
+
+	public static int adv;
 	private static void test() {
 		// test the generator
+		// FIXME CORRIDOR PIECES ARE BROKEN
+
 		TrialChambersGenerator gen = new TrialChambersGenerator();
-		genForRegion(gen, -6, 3);
-		List<Triplet<BPos, LootTable, Long>> chests = gen.getChestsWithLootSeeds();
+
+		genForRegion(gen, 0, -9);
+
 		
-		for (Triplet<BPos, LootTable, Long> chest : chests) {
-			System.out.printf("/tp %d %d %d   %d\n", 
-					chest.getFirst().getX(), chest.getFirst().getY(), chest.getFirst().getZ(), 
-					chest.getThird());
-		}
+		//for (Triplet<BPos, LootTable, Long> chest : chests) {
+		//	System.out.printf("/tp %d %d %d   %d\n",
+		//			chest.getFirst().getX(), chest.getFirst().getY(), chest.getFirst().getZ(),
+		//			chest.getThird());
+		//}
 	}
 	
 	
@@ -42,14 +46,14 @@ public class Main {
 		gen.generate(worldseed, tc.getX(), tc.getZ(), rand);
 				
 		int c=0;
-		for (TrialChambersGenerator.Piece p : gen.getPieces()) {
+		//for (TrialChambersGenerator.Piece p : gen.getPieces()) {
 					
-			System.out.print(p.getName() + "      /tp " + p.box.minX + " " + p.box.minY + " " + p.box.minZ);
-			System.out.println("      /tp " + p.box.maxX + " " + p.box.maxY + " " + p.box.maxZ);
+			//System.out.print(p.getName() + "      /tp " + p.box.minX + " " + p.box.minY + " " + p.box.minZ);
+			//System.out.println("      /tp " + p.box.maxX + " " + p.box.maxY + " " + p.box.maxZ);
 			//if (c > 10)
 			//	break;
 			//c++;
-		}
+		//}
 	}
 
 	

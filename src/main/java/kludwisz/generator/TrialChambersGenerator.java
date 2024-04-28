@@ -31,10 +31,10 @@ import kludwisz.util.VoxelShape;
 
 public class TrialChambersGenerator {
     private static final int MAX_DIST = 116; // max distance from start piece
-    private static final int MAX_DEPTH = 20; // defined as "size" in the client jar 
-    private static final int EMPTY_PIECE_ID = 153;
-    private static final int EMPTY_POOL_ID = 43;
-    private static final int START_POOL_ID = 5; // trial_chambers/chamber/end
+    private static final int MAX_DEPTH = 20; // defined as “size” in the client jar
+    private static final int EMPTY_PIECE_ID = 180;
+    private static final int EMPTY_POOL_ID = 44;
+    private static final int START_POOL_ID = 7; // trial_chambers/chamber/end
     private static final ArrayList<Integer> START_TEMPLATES = getTemplatesFromPool(TrialChambersPools.get(START_POOL_ID));
     
     private long worldseed;
@@ -59,13 +59,11 @@ public class TrialChambersGenerator {
         rand.setCarverSeed(worldseed, chunkX, chunkZ, MCVersion.v1_19); // version doesnt matter
         // choose start height
         int pickedY = rand.nextInt(21) - 41;
-        //System.out.println(validY);
         
         BlockRotation rotation = BlockRotation.getRandom(rand);
         System.out.println("Rotation: " + rotation.name());
         
         int template = rand.getRandom(START_TEMPLATES);
-        //System.out.println(template);
         BPos size = TrialChambersStructureSize.get(template);
 
         // set starting position
@@ -147,9 +145,12 @@ public class TrialChambersGenerator {
             list.sort(
             	Comparator.comparingInt(
             		(var0x) -> {
-            			return -var0x.nbt.getSelectionPriority(); // FIXME HACK
+                        if (var0x instanceof BlockJigsawInfo)
+                            return ((BlockJigsawInfo)var0x).nbt.getSelectionPriority();
+                        else
+            			    return 0;
             		}
-            	)
+            	).reversed()
             );
             
             return list;
@@ -233,8 +234,7 @@ public class TrialChambersGenerator {
             VoxelShape mutableobject = new VoxelShape();
             BlockBox box = piece.box;
             int minY = box.minY;
-            
-            // System.out.println("Shuffle for piece " + piece.getName());
+
             label139:
                 for (BlockJigsawInfo blockJigsawInfo : piece.getShuffledJigsawBlocks(pos, rand)) {
                     BlockDirection blockDirection = blockJigsawInfo.getFront();
@@ -246,14 +246,11 @@ public class TrialChambersGenerator {
                     
                     List<Pair<Integer, Integer>> pool = TrialChambersPools.get(blockJigsawInfo.getPoolType());
                     
-                    if (pool != null && pool.size() != 0) {
+                    if (pool != null && !pool.isEmpty()) {
                         int fallbackPoolID = TrialChambersPools.getFallbackID(blockJigsawInfo.getPoolType());
                         List<Pair<Integer, Integer>> fallbackPool = TrialChambersPools.get(fallbackPoolID);
                         
-                        if (fallbackPool != null && fallbackPool.size() != 0) {
-                        	
-                        	// JigSawPool jigSawPool1 = new JigSawPool(pool.getSecond());
-                            // JigSawPool jigSawPool2 = new JigSawPool(fallbackPool.getSecond());
+                        if (fallbackPool != null && !fallbackPool.isEmpty()) {
                             boolean isInside = box.contains(relativeBlockPos);
                             VoxelShape mutableobject1;
                             if (isInside) {
@@ -277,7 +274,7 @@ public class TrialChambersGenerator {
                                 //}
                             }
                             list.addAll(getShuffledTemplatesFromPool(fallbackPool, rand));
-                            
+
                             // ArrayList<Integer> listtmp = getShuffledTemplatesFromPool(fallbackPool, rand);
                             // if(listtmp.size() != 0) {
                             //    rand.shuffle(listtmp);
@@ -347,10 +344,10 @@ public class TrialChambersGenerator {
                                                 if(depth+1<= this.maxDepth){
                                                     piece2.setVoxelShape(mutableobject1);
                                                     this.placing.add(piece2, placementPriority);
-                                                    // this.placing.add(var56, var30 aka placementPriority);
-                                                    // final SequencedPriorityIterator<JigsawPlacement.PieceState> placing = new SequencedPriorityIterator();
-                                                    
-                                                    //System.out.println("placed piece: " + piece2.getName());
+                                                    System.out.println("placed piece: " + piece2.getName() + ", parent: " + piece.getName() + " (pid " + piece.id + ")");
+                                                    System.out.println("      /tp " + piece2.box.minX + " " + piece2.box.minY + " " + piece2.box.minZ);
+
+                                                    //System.out.println("      /tp " + piece2.box.maxX + " " + piece2.box.maxY + " " + piece2.box.maxZ);
                                                     //System.out.println("this.placing.hasNext(): " + this.placing.hasNext());
                                                 }
                                                 continue label139;
@@ -360,6 +357,9 @@ public class TrialChambersGenerator {
                                 }
                             }
                         }
+                    }
+                    else {
+                        System.out.println("EMPTY POOL!");
                     }
                 }
         }
