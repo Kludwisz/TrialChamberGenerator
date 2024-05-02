@@ -20,44 +20,22 @@ public class Main {
 
 	public static int adv;
 	private static void test() {
-		// test the generator
 		// FIXME CORRIDOR PIECES ARE BROKEN
-
 		TrialChambersGenerator gen = new TrialChambersGenerator();
-
-		genForRegion(gen, 0, -9);
-
-		
-		//for (Triplet<BPos, LootTable, Long> chest : chests) {
-		//	System.out.printf("/tp %d %d %d   %d\n",
-		//			chest.getFirst().getX(), chest.getFirst().getY(), chest.getFirst().getZ(),
-		//			chest.getThird());
-		//}
+		genForRegion(gen, 0, 0);
 	}
-	
-	
+
 	private static void genForRegion(TrialChambersGenerator gen, int rx, int rz) {
-		final long worldseed = 12345L;
+		final long worldseed = 123L;
 		
 		ChunkRand rand = new ChunkRand();
 		CPos tc = CHAMBERS.getInRegion(worldseed, rx, rz, rand);
-		//System.out.println(tc);
-				
 		gen.generate(worldseed, tc.getX(), tc.getZ(), rand);
-				
-		int c=0;
-		//for (TrialChambersGenerator.Piece p : gen.getPieces()) {
-					
-			//System.out.print(p.getName() + "      /tp " + p.box.minX + " " + p.box.minY + " " + p.box.minZ);
-			//System.out.println("      /tp " + p.box.maxX + " " + p.box.maxY + " " + p.box.maxZ);
-			//if (c > 10)
-			//	break;
-			//c++;
-		//}
+		gen.printPieces();
 	}
 
-	
 	// 30004 : index = 4, step = 3
+	// DONE
 	private static void findDecorationSalt() {
 		final long goodLootSeed = -6363922035146148698L;
 		final int cx = -181;

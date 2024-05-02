@@ -8,186 +8,186 @@ public class TrialChambersPieceNames {
 	}
 	
 	private static final List<String> PIECENAMES = List.of(
-			"chamber/assembly",
-			"chamber/chamber_1",
-			"chamber/chamber_2",
-			"chamber/chamber_4",
-			"chamber/chamber_8",
-			"chamber/entrance_cap",
-			"chamber/eruption",
-			"chamber/pedestal",
-			"chamber/slanted",
-			"chamber/addon/10x15_pathway_3",
-			"chamber/addon/10x15_rise",
-			"chamber/addon/10x15_stacked_pathway",
-			"chamber/addon/c1_breeze",
-			"chamber/addon/c3_side_walkway_1",
-			"chamber/addon/c3_side_walkway_2",
-			"chamber/addon/closed_side_walkway",
-			"chamber/addon/corner_room_1",
-			"chamber/addon/full_column_ranged_spawner",
-			"chamber/addon/full_corner_column",
-			"chamber/addon/full_stacked_walkway",
-			"chamber/addon/full_stacked_walkway_2",
-			"chamber/addon/grate_bridge",
-			"chamber/addon/hanging_platform",
-			"chamber/addon/lower_staircase_down",
-			"chamber/addon/lower_walkway_platform",
-			"chamber/addon/middle_column_ranged_spawner",
-			"chamber/addon/middle_walkway",
-			"chamber/addon/platform_with_space",
-			"chamber/addon/short_grate_platform",
-			"chamber/addon/short_platform",
-			"chamber/addon/side_walkway",
-			"chamber/addon/stairs_with_space",
-			"chamber/addon/stairs_with_space_2",
-			"chamber/addon/walkway_extension",
-			"chamber/addon/walkway_with_bridge_1",
-			"chamber/assembly/cover_1",
-			"chamber/assembly/cover_2",
-			"chamber/assembly/cover_3",
-			"chamber/assembly/cover_4",
-			"chamber/assembly/cover_5",
-			"chamber/assembly/cover_6",
-			"chamber/assembly/full_column",
-			"chamber/assembly/hanging_1",
-			"chamber/assembly/hanging_2",
-			"chamber/assembly/hanging_3",
-			"chamber/assembly/hanging_4",
-			"chamber/assembly/left_staircase_1",
-			"chamber/assembly/left_staircase_2",
-			"chamber/assembly/left_staircase_3",
-			"chamber/assembly/platform_1",
-			"chamber/assembly/right_staircase_1",
-			"chamber/assembly/right_staircase_2",
-			"chamber/assembly/right_staircase_3",
-			"chamber/assembly/spawner_1",
-			"chamber/assembly/spawner_trap_1",
-			"chamber/eruption/breeze_slice_1",
-			"chamber/eruption/center_1",
-			"chamber/eruption/quadrant_1",
-			"chamber/eruption/quadrant_2",
-			"chamber/eruption/quadrant_3",
-			"chamber/eruption/quadrant_4",
-			"chamber/eruption/quadrant_5",
-			"chamber/eruption/slice_1",
-			"chamber/eruption/slice_2",
-			"chamber/eruption/slice_3",
-			"chamber/pedestal/center_1",
-			"chamber/pedestal/ominous_slice_1",
-			"chamber/pedestal/quadrant_1",
-			"chamber/pedestal/quadrant_2",
-			"chamber/pedestal/quadrant_3",
-			"chamber/pedestal/slice_1",
-			"chamber/pedestal/slice_2",
-			"chamber/pedestal/slice_3",
-			"chamber/pedestal/slice_4",
-			"chamber/pedestal/slice_5",
-			"chamber/slanted/center",
-			"chamber/slanted/hallway_1",
-			"chamber/slanted/hallway_2",
-			"chamber/slanted/hallway_3",
-			"chamber/slanted/hallway_4",
-			"chamber/slanted/hallway_5",
-			"chamber/slanted/ominous_upper_arm_1",
-			"chamber/slanted/quadrant_1",
-			"chamber/slanted/quadrant_2",
-			"chamber/slanted/quadrant_3",
-			"chamber/slanted/quadrant_4",
-			"chamber/slanted/ramp_1",
-			"chamber/slanted/ramp_2",
-			"chamber/slanted/ramp_3",
-			"chamber/slanted/ramp_4",
-			"chests/supply",
-			"chests/connectors/supply",
-			"corridor/atrium_1",
-			"corridor/end_1",
-			"corridor/end_2",
-			"corridor/entrance_1",
-			"corridor/first_plate",
-			"corridor/second_plate",
-			"corridor/straight_1",
-			"corridor/straight_2",
-			"corridor/straight_3",
-			"corridor/straight_4",
-			"corridor/straight_5",
-			"corridor/straight_6",
-			"corridor/straight_7",
-			"corridor/straight_8",
-			"corridor/addon/arrow_dispenser",
-			"corridor/addon/bridge_lower",
-			"corridor/addon/chandelier_upper",
-			"corridor/addon/decoration_upper",
-			"corridor/addon/head_upper",
-			"corridor/addon/ladder_to_middle",
-			"corridor/addon/open_walkway",
-			"corridor/addon/open_walkway_upper",
-			"corridor/addon/reward_upper",
-			"corridor/addon/staircase",
-			"corridor/addon/wall",
-			"corridor/addon/walled_walkway",
-			"corridor/atrium/bogged_relief",
-			"corridor/atrium/breeze_relief",
-			"corridor/atrium/grand_staircase_1",
-			"corridor/atrium/grand_staircase_2",
-			"corridor/atrium/grand_staircase_3",
-			"corridor/atrium/spider_relief",
-			"corridor/atrium/spiral_relief",
-			"decor/barrel",
-			"decor/candle_1",
-			"decor/candle_2",
-			"decor/candle_3",
-			"decor/candle_4",
-			"decor/dead_bush_pot",
-			"decor/empty_pot",
-			"decor/flow_pot",
-			"decor/guster_pot",
-			"decor/scrape_pot",
-			"decor/undecorated_pot",
-			"dispensers/chamber",
-			"dispensers/floor_dispenser",
-			"dispensers/wall_dispenser",
-			"hallway/cache_1",
-			"hallway/corner_staircase",
-			"hallway/corner_staircase_down",
-			"hallway/corridor_connector_1",
-			"hallway/left_corner",
-			"hallway/long_straight_staircase",
-			"hallway/long_straight_staircase_down",
-			"hallway/lower_hallway_connector",
-			"hallway/right_corner",
-			"hallway/rubble",
-			"hallway/rubble_chamber",
-			"hallway/rubble_chamber_thin",
-			"hallway/rubble_thin",
-			"hallway/straight",
-			"hallway/straight_staircase",
-			"hallway/straight_staircase_down",
-			"hallway/upper_hallway_connector",
-			"intersection/intersection_1",
-			"intersection/intersection_2",
-			"intersection/intersection_3",
-			"reward/ominous_vault",
-			"reward/vault",
-			"spawner/breeze/breeze",
-			"spawner/connectors/breeze",
-			"spawner/connectors/melee",
-			"spawner/connectors/ranged",
-			"spawner/connectors/slow_ranged",
-			"spawner/connectors/small_melee",
-			"spawner/melee/husk",
-			"spawner/melee/slime",
-			"spawner/melee/zombie",
-			"spawner/ranged/poison_skeleton",
-			"spawner/ranged/skeleton",
-			"spawner/ranged/stray",
-			"spawner/slow_ranged/poison_skeleton",
-			"spawner/slow_ranged/skeleton",
-			"spawner/slow_ranged/stray",
-			"spawner/small_melee/baby_zombie",
-			"spawner/small_melee/cave_spider",
-			"spawner/small_melee/silverfish",
-			"spawner/small_melee/spider",
-			"empty" // id 180
+			"chamber/assembly",  /*id = 0*/
+			"chamber/chamber_1",  /*id = 1*/
+			"chamber/chamber_2",  /*id = 2*/
+			"chamber/chamber_4",  /*id = 3*/
+			"chamber/chamber_8",  /*id = 4*/
+			"chamber/entrance_cap",  /*id = 5*/
+			"chamber/eruption",  /*id = 6*/
+			"chamber/pedestal",  /*id = 7*/
+			"chamber/slanted",  /*id = 8*/
+			"chamber/addon/10x15_pathway_3",  /*id = 9*/
+			"chamber/addon/10x15_rise",  /*id = 10*/
+			"chamber/addon/10x15_stacked_pathway",  /*id = 11*/
+			"chamber/addon/c1_breeze",  /*id = 12*/
+			"chamber/addon/c3_side_walkway_1",  /*id = 13*/
+			"chamber/addon/c3_side_walkway_2",  /*id = 14*/
+			"chamber/addon/closed_side_walkway",  /*id = 15*/
+			"chamber/addon/corner_room_1",  /*id = 16*/
+			"chamber/addon/full_column_ranged_spawner",  /*id = 17*/
+			"chamber/addon/full_corner_column",  /*id = 18*/
+			"chamber/addon/full_stacked_walkway",  /*id = 19*/
+			"chamber/addon/full_stacked_walkway_2",  /*id = 20*/
+			"chamber/addon/grate_bridge",  /*id = 21*/
+			"chamber/addon/hanging_platform",  /*id = 22*/
+			"chamber/addon/lower_staircase_down",  /*id = 23*/
+			"chamber/addon/lower_walkway_platform",  /*id = 24*/
+			"chamber/addon/middle_column_ranged_spawner",  /*id = 25*/
+			"chamber/addon/middle_walkway",  /*id = 26*/
+			"chamber/addon/platform_with_space",  /*id = 27*/
+			"chamber/addon/short_grate_platform",  /*id = 28*/
+			"chamber/addon/short_platform",  /*id = 29*/
+			"chamber/addon/side_walkway",  /*id = 30*/
+			"chamber/addon/stairs_with_space",  /*id = 31*/
+			"chamber/addon/stairs_with_space_2",  /*id = 32*/
+			"chamber/addon/walkway_extension",  /*id = 33*/
+			"chamber/addon/walkway_with_bridge_1",  /*id = 34*/
+			"chamber/assembly/cover_1",  /*id = 35*/
+			"chamber/assembly/cover_2",  /*id = 36*/
+			"chamber/assembly/cover_3",  /*id = 37*/
+			"chamber/assembly/cover_4",  /*id = 38*/
+			"chamber/assembly/cover_5",  /*id = 39*/
+			"chamber/assembly/cover_6",  /*id = 40*/
+			"chamber/assembly/full_column",  /*id = 41*/
+			"chamber/assembly/hanging_1",  /*id = 42*/
+			"chamber/assembly/hanging_2",  /*id = 43*/
+			"chamber/assembly/hanging_3",  /*id = 44*/
+			"chamber/assembly/hanging_4",  /*id = 45*/
+			"chamber/assembly/left_staircase_1",  /*id = 46*/
+			"chamber/assembly/left_staircase_2",  /*id = 47*/
+			"chamber/assembly/left_staircase_3",  /*id = 48*/
+			"chamber/assembly/platform_1",  /*id = 49*/
+			"chamber/assembly/right_staircase_1",  /*id = 50*/
+			"chamber/assembly/right_staircase_2",  /*id = 51*/
+			"chamber/assembly/right_staircase_3",  /*id = 52*/
+			"chamber/assembly/spawner_1",  /*id = 53*/
+			"chamber/assembly/spawner_trap_1",  /*id = 54*/
+			"chamber/eruption/breeze_slice_1",  /*id = 55*/
+			"chamber/eruption/center_1",  /*id = 56*/
+			"chamber/eruption/quadrant_1",  /*id = 57*/
+			"chamber/eruption/quadrant_2",  /*id = 58*/
+			"chamber/eruption/quadrant_3",  /*id = 59*/
+			"chamber/eruption/quadrant_4",  /*id = 60*/
+			"chamber/eruption/quadrant_5",  /*id = 61*/
+			"chamber/eruption/slice_1",  /*id = 62*/
+			"chamber/eruption/slice_2",  /*id = 63*/
+			"chamber/eruption/slice_3",  /*id = 64*/
+			"chamber/pedestal/center_1",  /*id = 65*/
+			"chamber/pedestal/ominous_slice_1",  /*id = 66*/
+			"chamber/pedestal/quadrant_1",  /*id = 67*/
+			"chamber/pedestal/quadrant_2",  /*id = 68*/
+			"chamber/pedestal/quadrant_3",  /*id = 69*/
+			"chamber/pedestal/slice_1",  /*id = 70*/
+			"chamber/pedestal/slice_2",  /*id = 71*/
+			"chamber/pedestal/slice_3",  /*id = 72*/
+			"chamber/pedestal/slice_4",  /*id = 73*/
+			"chamber/pedestal/slice_5",  /*id = 74*/
+			"chamber/slanted/center",  /*id = 75*/
+			"chamber/slanted/hallway_1",  /*id = 76*/
+			"chamber/slanted/hallway_2",  /*id = 77*/
+			"chamber/slanted/hallway_3",  /*id = 78*/
+			"chamber/slanted/hallway_4",  /*id = 79*/
+			"chamber/slanted/hallway_5",  /*id = 80*/
+			"chamber/slanted/ominous_upper_arm_1",  /*id = 81*/
+			"chamber/slanted/quadrant_1",  /*id = 82*/
+			"chamber/slanted/quadrant_2",  /*id = 83*/
+			"chamber/slanted/quadrant_3",  /*id = 84*/
+			"chamber/slanted/quadrant_4",  /*id = 85*/
+			"chamber/slanted/ramp_1",  /*id = 86*/
+			"chamber/slanted/ramp_2",  /*id = 87*/
+			"chamber/slanted/ramp_3",  /*id = 88*/
+			"chamber/slanted/ramp_4",  /*id = 89*/
+			"chests/supply",  /*id = 90*/
+			"chests/connectors/supply",  /*id = 91*/
+			"corridor/atrium_1",  /*id = 92*/
+			"corridor/end_1",  /*id = 93*/
+			"corridor/end_2",  /*id = 94*/
+			"corridor/entrance_1",  /*id = 95*/
+			"corridor/first_plate",  /*id = 96*/
+			"corridor/second_plate",  /*id = 97*/
+			"corridor/straight_1",  /*id = 98*/
+			"corridor/straight_2",  /*id = 99*/
+			"corridor/straight_3",  /*id = 100*/
+			"corridor/straight_4",  /*id = 101*/
+			"corridor/straight_5",  /*id = 102*/
+			"corridor/straight_6",  /*id = 103*/
+			"corridor/straight_7",  /*id = 104*/
+			"corridor/straight_8",  /*id = 105*/
+			"corridor/addon/arrow_dispenser",  /*id = 106*/
+			"corridor/addon/bridge_lower",  /*id = 107*/
+			"corridor/addon/chandelier_upper",  /*id = 108*/
+			"corridor/addon/decoration_upper",  /*id = 109*/
+			"corridor/addon/head_upper",  /*id = 110*/
+			"corridor/addon/ladder_to_middle",  /*id = 111*/
+			"corridor/addon/open_walkway",  /*id = 112*/
+			"corridor/addon/open_walkway_upper",  /*id = 113*/
+			"corridor/addon/reward_upper",  /*id = 114*/
+			"corridor/addon/staircase",  /*id = 115*/
+			"corridor/addon/wall",  /*id = 116*/
+			"corridor/addon/walled_walkway",  /*id = 117*/
+			"corridor/atrium/bogged_relief",  /*id = 118*/
+			"corridor/atrium/breeze_relief",  /*id = 119*/
+			"corridor/atrium/grand_staircase_1",  /*id = 120*/
+			"corridor/atrium/grand_staircase_2",  /*id = 121*/
+			"corridor/atrium/grand_staircase_3",  /*id = 122*/
+			"corridor/atrium/spider_relief",  /*id = 123*/
+			"corridor/atrium/spiral_relief",  /*id = 124*/
+			"decor/barrel",  /*id = 125*/
+			"decor/candle_1",  /*id = 126*/
+			"decor/candle_2",  /*id = 127*/
+			"decor/candle_3",  /*id = 128*/
+			"decor/candle_4",  /*id = 129*/
+			"decor/dead_bush_pot",  /*id = 130*/
+			"decor/empty_pot",  /*id = 131*/
+			"decor/flow_pot",  /*id = 132*/
+			"decor/guster_pot",  /*id = 133*/
+			"decor/scrape_pot",  /*id = 134*/
+			"decor/undecorated_pot",  /*id = 135*/
+			"dispensers/chamber",  /*id = 136*/
+			"dispensers/floor_dispenser",  /*id = 137*/
+			"dispensers/wall_dispenser",  /*id = 138*/
+			"hallway/cache_1",  /*id = 139*/
+			"hallway/corner_staircase",  /*id = 140*/
+			"hallway/corner_staircase_down",  /*id = 141*/
+			"hallway/corridor_connector_1",  /*id = 142*/
+			"hallway/left_corner",  /*id = 143*/
+			"hallway/long_straight_staircase",  /*id = 144*/
+			"hallway/long_straight_staircase_down",  /*id = 145*/
+			"hallway/lower_hallway_connector",  /*id = 146*/
+			"hallway/right_corner",  /*id = 147*/
+			"hallway/rubble",  /*id = 148*/
+			"hallway/rubble_chamber",  /*id = 149*/
+			"hallway/rubble_chamber_thin",  /*id = 150*/
+			"hallway/rubble_thin",  /*id = 151*/
+			"hallway/straight",  /*id = 152*/
+			"hallway/straight_staircase",  /*id = 153*/
+			"hallway/straight_staircase_down",  /*id = 154*/
+			"hallway/upper_hallway_connector",  /*id = 155*/
+			"intersection/intersection_1",  /*id = 156*/
+			"intersection/intersection_2",  /*id = 157*/
+			"intersection/intersection_3",  /*id = 158*/
+			"reward/ominous_vault",  /*id = 159*/
+			"reward/vault",  /*id = 160*/
+			"spawner/breeze/breeze",  /*id = 161*/
+			"spawner/connectors/breeze",  /*id = 162*/
+			"spawner/connectors/melee",  /*id = 163*/
+			"spawner/connectors/ranged",  /*id = 164*/
+			"spawner/connectors/slow_ranged",  /*id = 165*/
+			"spawner/connectors/small_melee",  /*id = 166*/
+			"spawner/melee/husk",  /*id = 167*/
+			"spawner/melee/slime",  /*id = 168*/
+			"spawner/melee/zombie",  /*id = 169*/
+			"spawner/ranged/poison_skeleton",  /*id = 170*/
+			"spawner/ranged/skeleton",  /*id = 171*/
+			"spawner/ranged/stray",  /*id = 172*/
+			"spawner/slow_ranged/poison_skeleton",  /*id = 173*/
+			"spawner/slow_ranged/skeleton",  /*id = 174*/
+			"spawner/slow_ranged/stray",  /*id = 175*/
+			"spawner/small_melee/baby_zombie",  /*id = 176*/
+			"spawner/small_melee/cave_spider",  /*id = 177*/
+			"spawner/small_melee/silverfish",  /*id = 178*/
+			"spawner/small_melee/spider",  /*id = 179*/
+			"empty"  /*id = 180*/
 	);
 }

@@ -13,7 +13,7 @@ public class TrialChambersStructureLoot {
 		return STRUCTURE_LOOT.get(pieceID);
 	}
 	
-	private static final List< List<Pair<BPos,LootTable>> > STRUCTURE_LOOT = List.of(
+	private static final List< List<Pair<BPos,LootTable>> > STRUCTURE_LOOT = List.<List<Pair<BPos, LootTable>>>of(
 			List.of(),
 			List.of(),
 			List.of(
