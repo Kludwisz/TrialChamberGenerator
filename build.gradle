@@ -1,18 +1,17 @@
 plugins {
     id 'java'
     id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '7.1.1'
 }
 
-archivesBaseName = 'Kludwisz'
 group = 'Kludwisz'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = JavaVersion.VERSION_16
-targetCompatibility = JavaVersion.VERSION_16
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     mavenCentral()
-    //maven { url "https://maven.latticg.com" }
     maven { url "https://maven.seedfinding.com" }
     maven { url "https://www.jitpack.io" }
 }
@@ -28,4 +27,12 @@ dependencies {
     implementation('com.seedfinding:mc_feature:1.171.7') 	{ transitive = false }
 
     implementation group: 'it.unimi.dsi', name: 'fastutil-core', version: '8.5.13'
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'kludwisz.generator.Main'
+        )
+    }
 }

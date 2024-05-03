@@ -164,15 +164,22 @@ public class ModifiedTrialChambersGenerator {
         }
 
         public BlockDirection getOpposite(BlockDirection b){
-            return switch (b) {
-                case NORTH -> BlockDirection.SOUTH;
-                case SOUTH -> BlockDirection.NORTH;
-                case WEST -> BlockDirection.EAST;
-                case EAST -> BlockDirection.WEST;
-                case DOWN -> BlockDirection.UP;
-                case UP -> BlockDirection.DOWN;
-                default -> throw new IllegalStateException("Unable to get facing of ");
-            };
+            switch (b) {
+                case NORTH:
+                    return BlockDirection.SOUTH;
+                case SOUTH:
+                    return BlockDirection.NORTH;
+                case WEST:
+                    return BlockDirection.EAST;
+                case EAST:
+                    return BlockDirection.WEST;
+                case DOWN:
+                    return BlockDirection.UP;
+                case UP:
+                    return BlockDirection.DOWN;
+                default:
+                    throw new IllegalStateException("Unable to get facing of ");
+            }
         }
 
         public boolean canAttach(BlockJigsawInfo blockJigsawInfo2, BlockDirection direction) {
@@ -189,7 +196,7 @@ public class ModifiedTrialChambersGenerator {
     public static class Assembler {
         int maxDepth;
         int matches;
-        int targetMatches;
+        int targetMatches = 13; // TODO don't hardcode this
         boolean halted = false;
         long structseed;
 
@@ -202,8 +209,8 @@ public class ModifiedTrialChambersGenerator {
             this.maxDepth = maxDepth;
             this.uniquePieceMap = uniquePieceMap;
             this.dataMap = dataMap;
-            this.matches = 0;
-            this.targetMatches = dataMap.size() + uniquePieceMap.size();
+            this.matches = 9;
+            // this.targetMatches = dataMap.size() + uniquePieceMap.size();
         }
 
         void setStructseed(long structseed) {

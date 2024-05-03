@@ -1,13 +1,15 @@
 package kludwisz.generator;
 
 import com.seedfinding.mccore.rand.ChunkRand;
-import com.seedfinding.mccore.util.data.Pair;
 import com.seedfinding.mccore.util.pos.BPos;
 import com.seedfinding.mccore.version.MCVersion;
+import com.seedfinding.mcseed.lcg.LCG;
 
 import java.util.HashMap;
 
 public class PanoramaCracker {
+
+
     private static class DecorationData {
         public String piecename;
         public BPos pos;
@@ -84,21 +86,8 @@ public class PanoramaCracker {
         TrialChambers TC = new TrialChambers(MCVersion.v1_20);
         final ChunkRand rand = new ChunkRand();
 
-        // region seed does 2 nextInt(22) calls
-        // reverse the first one
-        final long maxUpperBound = (long) Math.ceil((1L<<31) / 22.0);
-
-        // measure time between each progress update
-        // long startTime = System.currentTimeMillis();
-        // final long updateProgressAfter = maxUpperBound / 100000;
-
         for (long n = rangeStart; n <= rangeEnd; n++) {
             long upper31 = (n * 22 + chunkX) << 31;
-//            if (n % updateProgressAfter == 0) {
-//                System.out.println("Progress: " + (n / updateProgressAfter) + " * 10ppm");
-//                long endTime = System.currentTimeMillis();
-//                System.out.println("Time elapsed: " + ((endTime - startTime) / 1000) + "s");
-//            }
 
             //iterate over lower 17 bits
             for (long lower17 = 0; lower17 < (1L<<17); lower17++) {
@@ -109,7 +98,7 @@ public class PanoramaCracker {
 
                 // reverse region seed into structure seed
                 rand.advance(-2);
-                long structureSeed = rand.getSeed() - TC.getSalt();
+                long structureSeed = (rand.getSeed() ^ LCG.JAVA.multiplier) - TC.getSalt();
                 bruteForceStructureSeed(structureSeed, rand);
             }
         }
@@ -125,5 +114,49 @@ public class PanoramaCracker {
 
         ModifiedTrialChambersGenerator trialChambersGenerator = new ModifiedTrialChambersGenerator();
         trialChambersGenerator.generate(structureSeed, chunkX, chunkZ, rand, dataMap, uniquePieceMap);
+    }
+
+
+    public static void test() {
+        DecorationData[] testData = new DecorationData[] {
+                new DecorationData("decor/undecorated_pot", new BPos(148, -35, 312)),
+                new DecorationData("decor/undecorated_pot", new BPos(148, -35, 310)),
+                new DecorationData("decor/candle_4", new BPos(153, -33, 311)),
+                new DecorationData("decor/barrel", new BPos(153, -33, 306)),
+                new DecorationData("decor/flow_pot", new BPos(139, -28, 302)),
+                new DecorationData("decor/empty_pot", new BPos(144, -35, 311)),
+                new DecorationData("decor/undecorated_pot", new BPos(144, -35, 310)),
+        };
+        DecorationData[] testUniqueData = new DecorationData[] {
+                new DecorationData("corridor/atrium/grand_staircase_1", new BPos(140, -35, 325)),
+                new DecorationData("intersection/intersection_2", new BPos(133, -37, 272)),
+        };
+
+        HashMap<BPos, String> testDataMap = new HashMap<>();
+        HashMap<String, BPos> testUniquePieceMap = new HashMap<>();
+        for (DecorationData d : testData) {
+            testDataMap.put(d.pos, d.piecename);
+        }
+        for (DecorationData d : testUniqueData) {
+            testUniquePieceMap.put(d.piecename, d.pos);
+        }
+        //if (crackTest())
+        //    System.out.println("Cracked");
+        //else
+        //    System.out.println("Not cracked");
+
+        ChunkRand rand = new ChunkRand();
+        new TrialChambers(MCVersion.v1_20).getInRegion(10000L, 0, 0, rand);
+        System.out.println(rand.getSeed());
+        rand.advance(-2);
+        long struct = (rand.getSeed() ^ LCG.JAVA.multiplier) - new TrialChambers(MCVersion.v1_20).getSalt();
+        System.out.println(struct);
+
+        ModifiedTrialChambersGenerator gen1 = new ModifiedTrialChambersGenerator();
+        gen1.generate(10000L, 7, 17, new ChunkRand(), testDataMap, testUniquePieceMap);
+        //TrialChambersGenerator gen2 = new TrialChambersGenerator();
+
+        //gen2.generate(10000L, 7, 17, new ChunkRand());
+        //gen2.printPieces();
     }
 }
