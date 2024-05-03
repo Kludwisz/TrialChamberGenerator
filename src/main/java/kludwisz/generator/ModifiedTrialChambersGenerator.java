@@ -6,19 +6,15 @@ import com.seedfinding.mccore.util.block.BlockDirection;
 import com.seedfinding.mccore.util.block.BlockMirror;
 import com.seedfinding.mccore.util.block.BlockRotation;
 import com.seedfinding.mccore.util.data.Pair;
-import com.seedfinding.mccore.util.data.Triplet;
 import com.seedfinding.mccore.util.pos.BPos;
 import com.seedfinding.mccore.util.pos.CPos;
 import com.seedfinding.mccore.version.MCVersion;
-import com.seedfinding.mcfeature.loot.LootTable;
 import com.seedfinding.mcseed.rand.JRand;
 import kludwisz.chambers.jigsaws.JigsawBlock;
 import kludwisz.chambers.jigsaws.TrialChambersJigsawBlocks;
 import kludwisz.chambers.jigsaws.TrialChambersPools;
 import kludwisz.chambers.pieces.TrialChambersPieceNames;
-import kludwisz.chambers.pieces.TrialChambersStructureLoot;
 import kludwisz.chambers.pieces.TrialChambersStructureSize;
-import kludwisz.util.DecoratorRand;
 import kludwisz.util.SequencedPriorityIterator;
 import kludwisz.util.VoxelShape;
 
@@ -350,7 +346,7 @@ public class ModifiedTrialChambersGenerator {
                                                 this.matches++;
                                             }
                                             if (matches >= this.targetMatches) {
-                                                System.out.println("Found " + this.structseed);
+                                                System.out.println(this.structseed);
                                                 this.halted = true;
                                                 return;
                                             }
