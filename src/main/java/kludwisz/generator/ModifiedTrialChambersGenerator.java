@@ -209,7 +209,7 @@ public class ModifiedTrialChambersGenerator {
             this.maxDepth = maxDepth;
             this.uniquePieceMap = uniquePieceMap;
             this.dataMap = dataMap;
-            this.matches = 9;
+            this.matches = 0;
             // this.targetMatches = dataMap.size() + uniquePieceMap.size();
         }
 

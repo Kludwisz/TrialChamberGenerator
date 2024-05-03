@@ -8,8 +8,6 @@ import com.seedfinding.mcseed.lcg.LCG;
 import java.util.HashMap;
 
 public class PanoramaCracker {
-
-
     private static class DecorationData {
         public String piecename;
         public BPos pos;
@@ -140,17 +138,13 @@ public class PanoramaCracker {
         for (DecorationData d : testUniqueData) {
             testUniquePieceMap.put(d.piecename, d.pos);
         }
-        //if (crackTest())
-        //    System.out.println("Cracked");
-        //else
-        //    System.out.println("Not cracked");
 
         ChunkRand rand = new ChunkRand();
         new TrialChambers(MCVersion.v1_20).getInRegion(10000L, 0, 0, rand);
-        System.out.println(rand.getSeed());
+        //System.out.println(rand.getSeed());
         rand.advance(-2);
         long struct = (rand.getSeed() ^ LCG.JAVA.multiplier) - new TrialChambers(MCVersion.v1_20).getSalt();
-        System.out.println(struct);
+        //System.out.println(struct);
 
         ModifiedTrialChambersGenerator gen1 = new ModifiedTrialChambersGenerator();
         gen1.generate(10000L, 7, 17, new ChunkRand(), testDataMap, testUniquePieceMap);
