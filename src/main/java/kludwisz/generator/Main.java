@@ -3,11 +3,8 @@ package kludwisz.generator;
 import java.util.List;
 
 import com.seedfinding.mccore.rand.ChunkRand;
-import com.seedfinding.mccore.util.data.Triplet;
-import com.seedfinding.mccore.util.pos.BPos;
 import com.seedfinding.mccore.util.pos.CPos;
 import com.seedfinding.mccore.version.MCVersion;
-import com.seedfinding.mcfeature.loot.LootTable;
 
 import kludwisz.util.DecoratorRand;
 
@@ -15,14 +12,13 @@ public class Main {
 	private static final TrialChambers CHAMBERS = new TrialChambers(MCVersion.v1_20);
 	
 	public static void main(String[] args) {
-		test();
+		PanoramaCracker.crack();
 	}
 
 	public static int adv;
 	private static void test() {
-		// FIXME CORRIDOR PIECES ARE BROKEN
 		TrialChambersGenerator gen = new TrialChambersGenerator();
-		genForRegion(gen, 0, 0);
+		genForRegion(gen, 2, 1);
 	}
 
 	private static void genForRegion(TrialChambersGenerator gen, int rx, int rz) {

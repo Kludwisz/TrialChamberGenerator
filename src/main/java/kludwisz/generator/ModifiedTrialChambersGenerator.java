@@ -1,10 +1,5 @@
 package kludwisz.generator;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-
 import com.seedfinding.mccore.rand.ChunkRand;
 import com.seedfinding.mccore.util.block.BlockBox;
 import com.seedfinding.mccore.util.block.BlockDirection;
@@ -17,7 +12,6 @@ import com.seedfinding.mccore.util.pos.CPos;
 import com.seedfinding.mccore.version.MCVersion;
 import com.seedfinding.mcfeature.loot.LootTable;
 import com.seedfinding.mcseed.rand.JRand;
-
 import kludwisz.chambers.jigsaws.JigsawBlock;
 import kludwisz.chambers.jigsaws.TrialChambersJigsawBlocks;
 import kludwisz.chambers.jigsaws.TrialChambersPools;
@@ -28,8 +22,13 @@ import kludwisz.util.DecoratorRand;
 import kludwisz.util.SequencedPriorityIterator;
 import kludwisz.util.VoxelShape;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 
-public class TrialChambersGenerator {
+
+public class ModifiedTrialChambersGenerator {
     private static final int MAX_DIST = 116; // max distance from start piece
     private static final int MAX_DEPTH = 20; // defined as "size" in the client jar
     private static final int EMPTY_PIECE_ID = 180;
@@ -37,15 +36,9 @@ public class TrialChambersGenerator {
     private static final int START_POOL_ID = 7; // trial_chambers/chamber/end
     private static final ArrayList<Integer> START_TEMPLATES = getTemplatesFromPool(TrialChambersPools.get(START_POOL_ID));
 
-    private long worldseed;
-    private List<Piece> pieces;
+    public ModifiedTrialChambersGenerator() {}
 
-    public TrialChambersGenerator() {}
-
-    public boolean generate(long worldseed, int chunkX, int chunkZ, ChunkRand rand) {
-        this.worldseed = worldseed;
-        this.pieces = new ArrayList<>();
-
+    public boolean generate(long worldseed, int chunkX, int chunkZ, ChunkRand rand, HashMap<BPos, String> dataMap, HashMap<String, BPos> uniquePieceMap) {
         // choose random starting template and rotation
         rand.setCarverSeed(worldseed, chunkX, chunkZ, MCVersion.v1_20);
         // choose start height
@@ -69,8 +62,9 @@ public class TrialChambersGenerator {
 
         // create structure max bounding box
         BlockBox fullBox = new BlockBox(centerX - MAX_DIST, y - MAX_DIST, centerZ - MAX_DIST, centerX + MAX_DIST + 1, y + MAX_DIST + 1, centerZ + MAX_DIST + 1);
-        Assembler assembler = new Assembler(MAX_DEPTH, this.pieces, y);
-        assembler.pieces.add(piece);
+        Assembler assembler = new Assembler(MAX_DEPTH, dataMap, uniquePieceMap);
+        assembler.setStructseed(worldseed);
+
         VoxelShape a = new VoxelShape(fullBox);
         a.fullBoxes.add(new BlockBox(box.minX,box.minY,box.minZ,box.maxX+1,box.maxY+1,box.maxZ+1));
         piece.voxelShape = a;
@@ -88,11 +82,11 @@ public class TrialChambersGenerator {
         return true;
     }
 
-    public void printPieces() {
+    /*public void printPieces() {
         for (Piece p : this.pieces) {
             System.out.println(p.getName() + "  /tp  " + p.pos.getX() + " " + p.pos.getY() + " " + p.pos.getZ());
         }
-    }
+    }*/
 
     static public class Piece {
         int id;
@@ -174,22 +168,15 @@ public class TrialChambersGenerator {
         }
 
         public BlockDirection getOpposite(BlockDirection b){
-            switch (b) {
-                case NORTH:
-                    return BlockDirection.SOUTH;
-                case SOUTH:
-                    return BlockDirection.NORTH;
-                case WEST:
-                    return BlockDirection.EAST;
-                case EAST:
-                    return BlockDirection.WEST;
-                case DOWN:
-                    return BlockDirection.UP;
-                case UP:
-                    return BlockDirection.DOWN;
-                default:
-                    throw new IllegalStateException("Unable to get facing of " );
-            }
+            return switch (b) {
+                case NORTH -> BlockDirection.SOUTH;
+                case SOUTH -> BlockDirection.NORTH;
+                case WEST -> BlockDirection.EAST;
+                case EAST -> BlockDirection.WEST;
+                case DOWN -> BlockDirection.UP;
+                case UP -> BlockDirection.DOWN;
+                default -> throw new IllegalStateException("Unable to get facing of ");
+            };
         }
 
         public boolean canAttach(BlockJigsawInfo blockJigsawInfo2, BlockDirection direction) {
@@ -199,26 +186,39 @@ public class TrialChambersGenerator {
         }
 
         public int getPoolType() {
-            //if (this.nbt.poolAlias == null)
-                return this.nbt.poolType;
-            //return TrialChambersPools.getFromAlias(this.nbt.poolAlias + "0");
+            return this.nbt.poolType;
         }
     }
 
     public static class Assembler {
         int maxDepth;
-        List<Piece> pieces;
+        int matches;
+        int targetMatches;
+        boolean halted = false;
+        long structseed;
 
-        // please excuse the mojang garbage
-        // TODO FIXME find out if it's possible to get rid of this crap
         private final SequencedPriorityIterator<Piece> placing = new SequencedPriorityIterator<>();
 
-        Assembler(int maxDepth, List<Piece> pieces, int heightY) {
+        private final HashMap<BPos, String> dataMap;
+        private final HashMap<String, BPos> uniquePieceMap;
+
+        Assembler(int maxDepth, HashMap<BPos, String> dataMap, HashMap<String, BPos> uniquePieceMap) {
             this.maxDepth = maxDepth;
-            this.pieces = pieces;
+            this.uniquePieceMap = uniquePieceMap;
+            this.dataMap = dataMap;
+            this.matches = 0;
+            this.targetMatches = dataMap.size() + uniquePieceMap.size();
+        }
+
+        void setStructseed(long structseed) {
+            this.structseed = structseed;
         }
 
         public void tryPlacing(Piece piece, ChunkRand rand) {
+            if (this.halted) {
+                return;
+            }
+
             int depth = piece.depth;
             BPos pos = piece.pos;
             VoxelShape mutableobject = new VoxelShape();
@@ -237,11 +237,11 @@ public class TrialChambersGenerator {
 
                 List<Pair<Integer, Integer>> pool = TrialChambersPools.get(blockJigsawInfo.getPoolType());
 
-                if (pool != null && pool.size() != 0) {
+                if (pool != null && !pool.isEmpty()) {
                     int fallbackPoolID = TrialChambersPools.getFallbackID(blockJigsawInfo.getPoolType());
                     List<Pair<Integer, Integer>> fallbackPool = TrialChambersPools.get(fallbackPoolID);
 
-                    if (fallbackPool != null && fallbackPool.size() != 0) {
+                    if (fallbackPool != null && !fallbackPool.isEmpty()) {
 
                         // JigSawPool jigSawPool1 = new JigSawPool(pool.getSecond());
                         // JigSawPool jigSawPool2 = new JigSawPool(fallbackPool.getSecond());
@@ -332,16 +332,32 @@ public class TrialChambersGenerator {
                                                     box3.maxX+1,box3.maxY+1,box3.maxZ+1));
 
                                             Piece piece2 = new Piece(jigsawpiece1,blockpos5,box3,rotation1,depth+1);
-                                            this.pieces.add(piece2);
+                                            //this.pieces.add(piece2);
+                                            // check if piece2 satisfies any panorama condition
+                                            if (this.dataMap.containsKey(piece2.pos)) {
+                                                if (!this.dataMap.get(piece2.pos).equals(piece2.getName())) {
+                                                    this.halted = true;
+                                                    return;
+                                                }
+                                                this.matches++;
+                                            }
+                                            // check unique piece conditions
+                                            if (this.uniquePieceMap.containsKey(piece2.getName())) {
+                                                if (!this.uniquePieceMap.get(piece2.getName()).equals(piece2.pos)) {
+                                                    this.halted = true;
+                                                    return;
+                                                }
+                                                this.matches++;
+                                            }
+                                            if (matches >= this.targetMatches) {
+                                                System.out.println("Found " + this.structseed);
+                                                this.halted = true;
+                                                return;
+                                            }
 
                                             if(depth+1<= this.maxDepth){
                                                 piece2.setVoxelShape(mutableobject1);
                                                 this.placing.add(piece2, placementPriority);
-                                                // this.placing.add(var56, var30 aka placementPriority);
-                                                // final SequencedPriorityIterator<JigsawPlacement.PieceState> placing = new SequencedPriorityIterator();
-
-                                                //System.out.println("placed piece: " + piece2.getName());
-                                                //System.out.println("this.placing.hasNext(): " + this.placing.hasNext());
                                             }
                                             continue label139;
                                         }
@@ -384,88 +400,6 @@ public class TrialChambersGenerator {
         for(Pair<Integer, Integer> template : pool) {
             for(int i = 0; i < template.getSecond(); i++) {
                 result.add(template.getFirst());
-            }
-        }
-
-        return result;
-    }
-
-
-    // -------------------------
-    // SEEDFINDING UTILS
-    // TODO
-    // -------------------------
-
-    public static int getDecorationSalt() {
-        return 30004;
-    }
-
-
-    public List<Piece> getPieces() {
-        return this.pieces;
-    }
-
-
-    public List<BPos> getChestPositions() {
-        ArrayList<BPos> result = new ArrayList<>();
-
-        for (Piece p : this.pieces) {
-            List<Pair<BPos, LootTable>> chests = TrialChambersStructureLoot.get(p.id);
-            if (chests==null || chests.size() == 0)
-                continue;
-
-            for (Pair<BPos, LootTable> chest : chests) {
-                BPos rotatedOffset = chest.getFirst().transform(BlockMirror.NONE, p.rotation, BPos.ORIGIN);
-                BPos realChestPos = p.pos.add(rotatedOffset);
-                result.add(realChestPos);
-            }
-        }
-        return result;
-    }
-
-
-    public List<Pair<BPos, LootTable>> getChests() {
-        ArrayList<Pair<BPos, LootTable>> result = new ArrayList<>();
-
-        for (Piece p : this.pieces) {
-            List<Pair<BPos, LootTable>> chests = TrialChambersStructureLoot.get(p.id);
-            if (chests==null || chests.size() == 0)
-                continue;
-
-            for (Pair<BPos, LootTable> chest : chests) {
-                BPos rotatedOffset = chest.getFirst().transform(BlockMirror.NONE, p.rotation, BPos.ORIGIN).add(new BPos(0,-1,0));
-                BPos realChestPos = p.pos.add(rotatedOffset);
-                result.add(new Pair<>(realChestPos, chest.getSecond()));
-            }
-        }
-
-        return result;
-    }
-
-    public List<Triplet<BPos, LootTable, Long>> getChestsWithLootSeeds() {
-        ArrayList<Triplet<BPos, LootTable, Long>> result = new ArrayList<>();
-        HashMap<CPos, DecoratorRand> chunkRandoms = new HashMap<>();
-
-        for (Piece p : this.pieces) {
-
-            List<Pair<BPos, LootTable>> chests = TrialChambersStructureLoot.get(p.id);
-            if (chests==null || chests.size() == 0)
-                continue;
-
-            for (Pair<BPos, LootTable> chest : chests) {
-                BPos rotatedOffset = chest.getFirst().transform(BlockMirror.NONE, p.rotation, BPos.ORIGIN).add(new BPos(0,-1,0));
-                BPos realChestPos = p.pos.add(rotatedOffset);
-                CPos chestChunkPos = realChestPos.toChunkPos();
-
-                if (!chunkRandoms.containsKey(chestChunkPos)) {
-                    DecoratorRand rand = new DecoratorRand();
-                    long popseed = rand.getPopulationSeed(this.worldseed, chestChunkPos.getX()<<4, chestChunkPos.getZ()<<4);
-                    rand.setDecoratorSeed(popseed, getDecorationSalt());
-                    chunkRandoms.put(chestChunkPos, rand);
-                }
-
-                long lootseed = chunkRandoms.get(chestChunkPos).nextLong();
-                result.add(new Triplet<>(realChestPos, chest.getSecond(), lootseed));
             }
         }
 
