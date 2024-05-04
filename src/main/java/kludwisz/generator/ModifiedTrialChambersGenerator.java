@@ -34,9 +34,7 @@ public class ModifiedTrialChambersGenerator {
     }
 
     public void generate(long worldseed, int chunkX, int chunkZ, ChunkRand rand, HashMap<BPos, String> dataMap, HashMap<String, BPos> uniquePieceMap) {
-        // choose random starting template and rotation
         rand.setCarverSeed(worldseed, chunkX, chunkZ, MCVersion.v1_20);
-        // choose start height
         int pickedY = rand.nextInt(21) - 41;
         BlockRotation rotation = BlockRotation.getRandom(rand);
 

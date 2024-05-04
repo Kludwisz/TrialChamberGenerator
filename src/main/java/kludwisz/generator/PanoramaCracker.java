@@ -3,7 +3,9 @@ package kludwisz.generator;
 import com.seedfinding.mccore.rand.ChunkRand;
 import com.seedfinding.mccore.util.block.BlockRotation;
 import com.seedfinding.mccore.util.pos.BPos;
+import com.seedfinding.mccore.util.pos.CPos;
 import com.seedfinding.mccore.version.MCVersion;
+import com.seedfinding.mcmath.util.Mth;
 import com.seedfinding.mcseed.lcg.LCG;
 
 import java.util.HashMap;
@@ -88,10 +90,10 @@ public class PanoramaCracker {
     private static final int startPieceY = -23;
     private static final int startPieceRotation = BlockRotation.NONE.ordinal();
     private static final int targetMatches = 13;
+    private static final HashMap<BPos, String> pieceMap = createPieceMap(pieceData);
+    private static final HashMap<String, BPos> uniquePieceMap = createUniquePieceMap(uniquePieceData);
 
     public static void crack(long rangeStart, long rangeEnd) {
-        final HashMap<BPos, String> pieceMap = createPieceMap(pieceData);
-        final HashMap<String, BPos> uniquePieceMap = createUniquePieceMap(uniquePieceData);
         final TrialChambers TC = new TrialChambers(MCVersion.v1_20);
         final ChunkRand rand = new ChunkRand();
 
@@ -113,10 +115,10 @@ public class PanoramaCracker {
                 rand.setCarverSeed(structureSeed, chunkX, chunkZ, MCVersion.v1_20);
                 int y = rand.nextInt(21) - 41;
                 if (y != startPieceY)
-                    return;
+                    continue;
                 int rot = rand.nextInt(4);
                 if (rot != startPieceRotation)
-                    return;
+                    continue;
 
                 // bruteforce structure seed - generate trial chambers
                 ModifiedTrialChambersGenerator trialChambersGenerator = new ModifiedTrialChambersGenerator(targetMatches);
@@ -162,51 +164,98 @@ public class PanoramaCracker {
 
     @SuppressWarnings("unused")
     public static void fullTest() {
+        final long targetWorldseed = 1928990802296633470L;
+        final long targetStructureSeed = targetWorldseed & Mth.MASK_48;
+
         final TrialChambers TC = new TrialChambers(MCVersion.v1_20);
         final ChunkRand rand = new ChunkRand();
-        final long upperBound = (long)Math.ceil((1L << 31) / 22.0);
+
+        final int chunkXTest = 9;
+        final int chunkZTest = 9;
+        final int startPieceYTest = -29;
+        final int startPieceRotationTest = BlockRotation.NONE.ordinal();
+        final int targetMatchesTest = 12;
 
         // -------------------------------------------------------
 
         final PieceData[] testPieces = new PieceData[] {
-
+                new PieceData("decor/flow_pot", new BPos(160, -25, 141)),
+                new PieceData("decor/undecorated_pot", new BPos(151, -27, 142)),
+                new PieceData("decor/empty_pot", new BPos(157, -25, 133)),
+                new PieceData("decor/candle_4", new BPos(167, -20, 112)),
+                new PieceData("decor/barrel", new BPos(173, -27, 108)),
+                new PieceData("corridor/straight_8", new BPos(170, -28, 101)),
+                new PieceData("corridor/straight_4", new BPos(185, -28, 101))
         };
 
         final PieceData[] testUniquePieces = new PieceData[] {
+                new PieceData("intersection/intersection_2", new BPos(144, -29, 123)),
+                new PieceData("corridor/atrium/grand_staircase_2", new BPos(197, -27, 116)),
+                new PieceData("corridor/atrium_1", new BPos(186, -29, 124)),
+                new PieceData("corridor/first_plate", new BPos(185, -29, 101)),
+                new PieceData("corridor/second_plate", new BPos(144, -29, 124)),
 
+                new PieceData("corridor/atrium/grand_staircase_1", BAD_PIECE_MARKER),
+                new PieceData("corridor/atrium/grand_staircase_3", BAD_PIECE_MARKER),
+                new PieceData("intersection/intersection_1", BAD_PIECE_MARKER),
+                new PieceData("intersection/intersection_3", BAD_PIECE_MARKER),
         };
 
-        final HashMap<BPos, String> pieceMap = createPieceMap(testPieces);
-        final HashMap<String, BPos> uniquePieceMap = createUniquePieceMap(testUniquePieces);
-        final int targetMatchesTest = 0;
+        final HashMap<BPos, String> pieceMapTest = createPieceMap(testPieces);
+        final HashMap<String, BPos> uniquePieceMapTest = createUniquePieceMap(testUniquePieces);
 
         // -------------------------------------------------------
+        rand.setRegionSeed(targetWorldseed, 0, 0, TC.getSalt(), MCVersion.v1_20);
+        int cx = rand.nextInt(22);
+        System.out.println("chunk x = " + cx + " with iseed " + rand.getSeed());
+        long iseed = rand.getSeed();
+        long randUp31 = rand.getSeed() >> 17;
+        long randLow17 = rand.getSeed() & Mth.getMask(17);
+        System.out.println("upper 31 = " + randUp31 + "  mod 22 = " + (randUp31 % 22));
+        System.out.println("upper 17 = " + randLow17);
+        long targetN = (randUp31 - cx) / 22;
 
-        for (long n = 0; n <= upperBound; n++) {
-            long upper31 = (n * 22 + chunkX) << 17;
+        for (long n = targetN-100; n <= targetN+100; n++) {
+            long upper31 = (n * 22L + chunkXTest) << 17;
+            if (upper31 == randUp31) {
+                System.out.println("good upper 31: " + upper31);
+            }
 
             //iterate over lower 17 bits
             for (long lower17 = 0; lower17 < (1L<<17); lower17++) {
+                if (upper31 == randUp31 && lower17 == randLow17) {
+                    System.out.println("good lower 17: " + lower17);
+                }
                 long internalSeed = upper31 | lower17;
+                if (iseed == internalSeed) {
+                    System.out.println("good internal seed: " + internalSeed);
+                }
                 rand.setSeed(internalSeed, false);
-                if (rand.nextInt(22) != chunkZ)
+                if (rand.nextInt(22) != chunkZTest)
                     continue;
 
                 // reverse region seed into structure seed
                 rand.advance(-2);
                 long structureSeed = (rand.getSeed() ^ LCG.JAVA.multiplier) - TC.getSalt();
+                if (structureSeed == targetStructureSeed) {
+                    System.out.println("Passed first phase: " + structureSeed);
+                }
 
                 // check basic carver seed conditions
-                rand.setCarverSeed(structureSeed, chunkX, chunkZ, MCVersion.v1_20);
+                rand.setCarverSeed(structureSeed, chunkXTest, chunkZTest, MCVersion.v1_20);
                 int y = rand.nextInt(21) - 41;
-                if (y != startPieceY)
-                    return;
+                if (y != startPieceYTest)
+                    continue;
                 if (rand.nextInt(4) != 0)
-                    return;
+                    continue;
+
+                if (structureSeed == targetStructureSeed) {
+                    System.out.println("Passed second phase: " + structureSeed);
+                }
 
                 // bruteforce structure seed - generate trial chambers
                 ModifiedTrialChambersGenerator trialChambersGenerator = new ModifiedTrialChambersGenerator(targetMatchesTest);
-                trialChambersGenerator.generate(structureSeed, chunkX, chunkZ, rand, pieceMap, uniquePieceMap);
+                trialChambersGenerator.generate(structureSeed, chunkXTest, chunkZTest, rand, pieceMapTest, uniquePieceMapTest);
             }
         }
     }
