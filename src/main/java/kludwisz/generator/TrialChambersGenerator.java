@@ -32,7 +32,7 @@ import kludwisz.util.VoxelShape;
 public class TrialChambersGenerator {
     private static final int MAX_DIST = 116; // max distance from start piece
     private static final int MAX_DEPTH = 20; // defined as "size" in the client jar
-    private static final int EMPTY_PIECE_ID = 180;
+    private static final int EMPTY_PIECE_ID = 170;
     private static final int EMPTY_POOL_ID = 44;
     private static final int START_POOL_ID = 7; // trial_chambers/chamber/end
     private static final ArrayList<Integer> START_TEMPLATES = getTemplatesFromPool(TrialChambersPools.get(START_POOL_ID));

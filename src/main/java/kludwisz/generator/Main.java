@@ -1,5 +1,7 @@
 package kludwisz.generator;
 
+import com.seedfinding.mccore.rand.ChunkRand;
+
 import java.io.File;
 import java.util.Scanner;
 
@@ -7,7 +9,10 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		// PanoramaCracker.test();
 		// PanoramaCracker.fullTest();
-		runMicroboincApp(args);
+		TrialChambersGenerator tcg = new TrialChambersGenerator();
+		tcg.generate(123L, 14, 11, new ChunkRand());
+		tcg.printPieces();
+		// runMicroboincApp(args);
 	}
 
 	public static void runMicroboincApp(String[] args) throws Exception {
