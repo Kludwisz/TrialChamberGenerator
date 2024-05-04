@@ -19,51 +19,52 @@ public class TrialChambersPools {
 	}
 	
 	private static final List<Integer> FALLBACK_POOLS = Arrays.asList(
-			44,  /*atrium*/
-			44,  /*corridor*/
-			44,  /*decor*/
-			44,  /*decor_chamber*/
-			20,  /*hallway*/
-			44,  /*chamber/addon*/
-			44,  /*chamber/assembly*/
-			44,  /*chamber/end*/
-			8,  /*chamber/entrance_cap*/
-			44,  /*chamber/eruption*/
-			44,  /*chamber/pedestal*/
-			44,  /*chamber/slanted*/
-			20,  /*chambers/end*/
-			44,  /*chests/supply*/
-			44,  /*chests/contents/supply*/
-			44,  /*corridor/slices*/
-			44,  /*corridors/addon/lower*/
-			44,  /*corridors/addon/middle*/
-			44,  /*corridors/addon/middle_upper*/
-			44,  /*dispensers/chamber*/
-			44,  /*hallway/fallback*/
-			44,  /*reward/all*/
-			44,  /*reward/ominous_vault*/
-			44,  /*reward/contents/default*/
-			44,  /*spawner/all*/
-			44,  /*spawner/breeze*/
-			44,  /*spawner/melee*/
-			44,  /*spawner/ranged*/
-			44,  /*spawner/slow_ranged*/
-			44,  /*spawner/small_melee*/
-			44,  /*spawner/contents/breeze*/
-			44,  /*spawner/melee/husk*/
-			44,  /*spawner/melee/slime*/
-			44,  /*spawner/melee/zombie*/
-			44,  /*spawner/ranged/poison_skeleton*/
-			44,  /*spawner/ranged/skeleton*/
-			44,  /*spawner/ranged/stray*/
-			44,  /*spawner/slow_ranged/poison_skeleton*/
-			44,  /*spawner/slow_ranged/skeleton*/
-			44,  /*spawner/slow_ranged/stray*/
-			44,  /*spawner/small_melee/baby_zombie*/
-			44,  /*spawner/small_melee/cave_spider*/
-			44,  /*spawner/small_melee/silverfish*/
-			44,  /*spawner/small_melee/spider*/
-			44   /* empty */
+			45,  /* atrium id = 0 */
+			45,  /* corridor id = 1 */
+			45,  /* decor id = 2 */
+			45,  /* entrance id = 3 */
+			21,  /* hallway id = 4 */
+			45,  /* chamber/addon id = 5 */
+			45,  /* chamber/assembly id = 6 */
+			45,  /* chamber/end id = 7 */
+			8,  /* chamber/entrance_cap id = 8 */
+			45,  /* chamber/eruption id = 9 */
+			45,  /* chamber/pedestal id = 10 */
+			45,  /* chamber/slanted id = 11 */
+			21,  /* chambers/end id = 12 */
+			45,  /* chests/supply id = 13 */
+			45,  /* chests/contents/supply id = 14 */
+			45,  /* corridor/slices id = 15 */
+			45,  /* corridors/addon/lower id = 16 */
+			45,  /* corridors/addon/middle id = 17 */
+			45,  /* corridors/addon/middle_upper id = 18 */
+			45,  /* decor/chamber id = 19 */
+			45,  /* dispensers/chamber id = 20 */
+			45,  /* hallway/fallback id = 21 */
+			45,  /* reward/all id = 22 */
+			45,  /* reward/ominous_vault id = 23 */
+			45,  /* reward/contents/default id = 24 */
+			45,  /* spawner/all id = 25 */
+			45,  /* spawner/breeze id = 26 */
+			45,  /* spawner/melee id = 27 */
+			45,  /* spawner/ranged id = 28 */
+			45,  /* spawner/slow_ranged id = 29 */
+			45,  /* spawner/small_melee id = 30 */
+			45,  /* spawner/contents/breeze id = 31 */
+			45,  /* spawner/melee/husk id = 32 */
+			45,  /* spawner/melee/spider id = 33 */
+			45,  /* spawner/melee/zombie id = 34 */
+			45,  /* spawner/ranged/poison_skeleton id = 35 */
+			45,  /* spawner/ranged/skeleton id = 36 */
+			45,  /* spawner/ranged/stray id = 37 */
+			45,  /* spawner/slow_ranged/poison_skeleton id = 38 */
+			45,  /* spawner/slow_ranged/skeleton id = 39 */
+			45,  /* spawner/slow_ranged/stray id = 40 */
+			45,  /* spawner/small_melee/baby_zombie id = 41 */
+			45,  /* spawner/small_melee/cave_spider id = 42 */
+			45,  /* spawner/small_melee/silverfish id = 43 */
+			45,  /* spawner/small_melee/slime id = 44 */
+			45   /* empty id = 45 */
 	);
 	
     private static final List< List<Pair<Integer, Integer>> > CHAMBER_POOLS = Arrays.asList(
