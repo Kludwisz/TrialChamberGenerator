@@ -56,7 +56,7 @@ public class ModifiedTrialChambersGenerator {
 
         // create structure max bounding box
         BlockBox fullBox = new BlockBox(centerX - MAX_DIST, y - MAX_DIST, centerZ - MAX_DIST, centerX + MAX_DIST + 1, y + MAX_DIST + 1, centerZ + MAX_DIST + 1);
-        Assembler assembler = new Assembler(MAX_DEPTH, dataMap, uniquePieceMap);
+        Assembler assembler = new Assembler(MAX_DEPTH, this.targetMatches, dataMap, uniquePieceMap);
         assembler.setStructseed(worldseed);
 
         VoxelShape a = new VoxelShape(fullBox);
