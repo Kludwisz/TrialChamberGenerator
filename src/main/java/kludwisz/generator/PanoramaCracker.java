@@ -52,7 +52,7 @@ public class PanoramaCracker {
             new DecorationData("decor/flow_pot", new BPos(-5, -21, 1)),
     };
 
-    private static BPos BAD_PIECE_MARKER = new BPos(256, 256, 256);
+    private static final BPos BAD_PIECE_MARKER = new BPos(256, 256, 256);
     private static final DecorationData[] uniquePieceData = new DecorationData[] {
             new DecorationData("corridor/atrium_1", new BPos(-8, -23, -15)),
             new DecorationData("corridor/atrium/grand_staircase_3", new BPos(-19, -21, -7)),

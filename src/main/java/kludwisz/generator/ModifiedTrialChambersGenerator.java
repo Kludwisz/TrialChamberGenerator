@@ -18,23 +18,19 @@ import kludwisz.chambers.pieces.TrialChambersStructureSize;
 import kludwisz.util.SequencedPriorityIterator;
 import kludwisz.util.VoxelShape;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 
 public class ModifiedTrialChambersGenerator {
     private static final int MAX_DIST = 116; // max distance from start piece
     private static final int MAX_DEPTH = 20; // defined as "size" in the client jar
     private static final int EMPTY_PIECE_ID = 180;
-    private static final int EMPTY_POOL_ID = 44;
     private static final int START_POOL_ID = 7; // trial_chambers/chamber/end
-    private static final ArrayList<Integer> START_TEMPLATES = getTemplatesFromPool(TrialChambersPools.get(START_POOL_ID));
+    private static final ArrayList<Integer> START_TEMPLATES = getTemplatesFromPool(Objects.requireNonNull(TrialChambersPools.get(START_POOL_ID)));
 
     public ModifiedTrialChambersGenerator() {}
 
-    public boolean generate(long worldseed, int chunkX, int chunkZ, ChunkRand rand, HashMap<BPos, String> dataMap, HashMap<String, BPos> uniquePieceMap) {
+    public void generate(long worldseed, int chunkX, int chunkZ, ChunkRand rand, HashMap<BPos, String> dataMap, HashMap<String, BPos> uniquePieceMap) {
         // choose random starting template and rotation
         rand.setCarverSeed(worldseed, chunkX, chunkZ, MCVersion.v1_20);
         // choose start height
@@ -50,7 +46,6 @@ public class ModifiedTrialChambersGenerator {
         BlockBox box = BlockBox.getBoundingBox(startPos, rotation, BPos.ORIGIN, BlockMirror.NONE, size);
         int centerX = (box.minX + box.maxX) / 2;
         int centerZ = (box.minZ + box.maxZ) / 2;
-        int centerY = box.minY + 1;
         int y = startPos.getY() + 1;
 
         // create the first piece
@@ -74,15 +69,7 @@ public class ModifiedTrialChambersGenerator {
 
             assembler.tryPlacing(nextPiece, rand);
         }
-
-        return true;
     }
-
-    /*public void printPieces() {
-        for (Piece p : this.pieces) {
-            System.out.println(p.getName() + "  /tp  " + p.pos.getX() + " " + p.pos.getY() + " " + p.pos.getZ());
-        }
-    }*/
 
     static public class Piece {
         int id;
@@ -105,16 +92,8 @@ public class ModifiedTrialChambersGenerator {
             this.depth = depth;
         }
 
-        public void move(int x, int y, int z) {
-            box.move(x, y, z);
-            pos = pos.add(x, y, z);
-        }
-
         public List<BlockJigsawInfo> getShuffledJigsawBlocks(BPos offset, JRand rand) {//taking 20% need to opti
             List<JigsawBlock> blocks = TrialChambersJigsawBlocks.get(this.id);
-            //if (blocks.isEmpty())
-            //	return List.of();
-
             List<BlockJigsawInfo> list = new ArrayList<>(blocks.size());
 
             for (JigsawBlock b : blocks) {
@@ -123,13 +102,9 @@ public class ModifiedTrialChambersGenerator {
             }
             rand.shuffle(list);
 
-            // new feature, introduced in 23w43a
-            // TODO check if this is correct
             list.sort(
                     Comparator.comparingInt(
-                            (var0x) -> {
-                                return -var0x.nbt.getSelectionPriority(); // FIXME HACK
-                            }
+                            (var0x) -> -var0x.nbt.getSelectionPriority()
                     )
             );
 
@@ -245,9 +220,6 @@ public class ModifiedTrialChambersGenerator {
                     List<Pair<Integer, Integer>> fallbackPool = TrialChambersPools.get(fallbackPoolID);
 
                     if (fallbackPool != null && !fallbackPool.isEmpty()) {
-
-                        // JigSawPool jigSawPool1 = new JigSawPool(pool.getSecond());
-                        // JigSawPool jigSawPool2 = new JigSawPool(fallbackPool.getSecond());
                         boolean isInside = box.contains(relativeBlockPos);
                         VoxelShape mutableobject1;
                         if (isInside) {
@@ -266,17 +238,8 @@ public class ModifiedTrialChambersGenerator {
 
                         if (depth != this.maxDepth) {
                             list = getShuffledTemplatesFromPool(pool, rand);
-                            //if(list.size() != 0) {
-                            //    rand.shuffle(list);
-                            //}
                         }
                         list.addAll(getShuffledTemplatesFromPool(fallbackPool, rand));
-
-                        // ArrayList<Integer> listtmp = getShuffledTemplatesFromPool(fallbackPool, rand);
-                        // if(listtmp.size() != 0) {
-                        //    rand.shuffle(listtmp);
-                        // }
-                        // list.addAll(listtmp);
 
                         // aka var30 in the code
                         int placementPriority = blockJigsawInfo.nbt.getPlacementPriority();
