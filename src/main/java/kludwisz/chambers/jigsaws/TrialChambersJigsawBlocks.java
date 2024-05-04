@@ -1242,22 +1242,22 @@ public class TrialChambersJigsawBlocks {
 			),
 // spawner/connectors/melee id = 153
 			Arrays.asList(
-					new JigsawBlock(/* USES ALIAS spawner/contents/melee */ -1, JointType.ALIGNED, "minecraft:empty", "minecraft:spawner", BlockDirection.DOWN, BlockDirection.NORTH, new BPos(1,0,0), 0, 0),
+					new JigsawBlock(/* USES ALIAS spawner/contents/melee  HUSK*/ 32, JointType.ALIGNED, "minecraft:empty", "minecraft:spawner", BlockDirection.DOWN, BlockDirection.NORTH, new BPos(1,0,0), 0, 0),
 					new JigsawBlock(45, JointType.ROLLABLE, "minecraft:spawner_connector", "minecraft:empty", BlockDirection.NORTH, BlockDirection.UP, new BPos(1,0,2), 0, 0)
 			),
 // spawner/connectors/ranged id = 154
 			Arrays.asList(
-					new JigsawBlock(/* USES ALIAS spawner/contents/ranged */ -1, JointType.ALIGNED, "minecraft:empty", "minecraft:spawner", BlockDirection.DOWN, BlockDirection.NORTH, new BPos(1,0,0), 0, 0),
+					new JigsawBlock(/* USES ALIAS spawner/contents/ranged  BOGGED*/ 35, JointType.ALIGNED, "minecraft:empty", "minecraft:spawner", BlockDirection.DOWN, BlockDirection.NORTH, new BPos(1,0,0), 0, 0),
 					new JigsawBlock(45, JointType.ROLLABLE, "minecraft:spawner_connector", "minecraft:empty", BlockDirection.NORTH, BlockDirection.UP, new BPos(1,0,2), 0, 0)
 			),
 // spawner/connectors/slow_ranged id = 155
 			Arrays.asList(
-					new JigsawBlock(/* USES ALIAS spawner/contents/slow_ranged */ -1, JointType.ALIGNED, "minecraft:empty", "minecraft:spawner", BlockDirection.DOWN, BlockDirection.NORTH, new BPos(1,0,0), 0, 0),
+					new JigsawBlock(/* USES ALIAS spawner/contents/slow_ranged  BOGGED*/ 38, JointType.ALIGNED, "minecraft:empty", "minecraft:spawner", BlockDirection.DOWN, BlockDirection.NORTH, new BPos(1,0,0), 0, 0),
 					new JigsawBlock(45, JointType.ROLLABLE, "minecraft:spawner_connector", "minecraft:empty", BlockDirection.NORTH, BlockDirection.UP, new BPos(1,0,2), 0, 0)
 			),
 // spawner/connectors/small_melee id = 156
 			Arrays.asList(
-					new JigsawBlock(/* USES ALIAS spawner/contents/small_melee */ -1, JointType.ALIGNED, "minecraft:empty", "minecraft:spawner", BlockDirection.DOWN, BlockDirection.NORTH, new BPos(1,0,0), 0, 0),
+					new JigsawBlock(/* USES ALIAS spawner/contents/small_melee  BABY ZOMBIE*/ 41, JointType.ALIGNED, "minecraft:empty", "minecraft:spawner", BlockDirection.DOWN, BlockDirection.NORTH, new BPos(1,0,0), 0, 0),
 					new JigsawBlock(45, JointType.ROLLABLE, "minecraft:spawner_connector", "minecraft:empty", BlockDirection.NORTH, BlockDirection.UP, new BPos(1,0,2), 0, 0)
 			),
 // spawner/melee/husk id = 157
