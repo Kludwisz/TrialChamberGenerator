@@ -28,7 +28,7 @@ public class ModifiedTrialChambersGenerator {
     private static final int START_POOL_ID = 7; // trial_chambers/chamber/end
     private static final ArrayList<Integer> START_TEMPLATES = getTemplatesFromPool(Objects.requireNonNull(TrialChambersPools.get(START_POOL_ID)));
 
-    private int targetMatches;
+    private final int targetMatches;
     public ModifiedTrialChambersGenerator(int targetMatches) {
         this.targetMatches = targetMatches;
     }
