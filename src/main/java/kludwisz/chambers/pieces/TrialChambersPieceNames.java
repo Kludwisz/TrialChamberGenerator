@@ -1,5 +1,6 @@
 package kludwisz.chambers.pieces;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class TrialChambersPieceNames {
@@ -7,7 +8,7 @@ public class TrialChambersPieceNames {
 		return PIECENAMES.get(pieceID);
 	}
 	
-	private static final List<String> PIECENAMES = List.of(
+	private static final List<String> PIECENAMES = Arrays.asList(
 			"chamber/assembly",  /*id = 0*/
 			"chamber/chamber_1",  /*id = 1*/
 			"chamber/chamber_2",  /*id = 2*/

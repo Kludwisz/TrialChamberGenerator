@@ -2,7 +2,7 @@ package kludwisz.chambers.pieces;
 
 import com.seedfinding.mccore.util.pos.BPos;
 
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 
 public class TrialChambersStructureSize {
@@ -10,7 +10,7 @@ public class TrialChambersStructureSize {
 		return STRUCTURE_SIZE.get(pieceID);
 	}
 	
-    private static final List<BPos> STRUCTURE_SIZE = List.of(
+    private static final List<BPos> STRUCTURE_SIZE = Arrays.asList(
 			new BPos(34,19,29),      /* 0 chamber/assembly.nbt */
 			new BPos(24,19,29),      /* 1 chamber/chamber_1.nbt */
 			new BPos(24,19,29),      /* 2 chamber/chamber_2.nbt */
