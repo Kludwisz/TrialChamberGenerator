@@ -211,19 +211,20 @@ public class PanoramaCracker {
         long iseed = rand.getSeed();
         long randUp31 = rand.getSeed() >> 17;
         long randLow17 = rand.getSeed() & Mth.getMask(17);
-        System.out.println("upper 31 = " + randUp31 + "  mod 22 = " + (randUp31 % 22));
-        System.out.println("upper 17 = " + randLow17);
-        long targetN = (randUp31 - cx) / 22;
+        System.out.println("target state upper 31 = " + randUp31 + "  mod 22 = " + (randUp31 % 22));
+        System.out.println("target state lower 17 = " + randLow17);
 
-        for (long n = targetN-100; n <= targetN+100; n++) {
+        for (long n = 0; n <= (1L<<31) / 22; n++) {
             long upper31 = (n * 22L + chunkXTest) << 17;
-            if (upper31 == randUp31) {
+            if ((upper31>>17) == randUp31) {
                 System.out.println("good upper 31: " + upper31);
             }
+            else
+                continue;
 
             //iterate over lower 17 bits
             for (long lower17 = 0; lower17 < (1L<<17); lower17++) {
-                if (upper31 == randUp31 && lower17 == randLow17) {
+                if (lower17 == randLow17) {
                     System.out.println("good lower 17: " + lower17);
                 }
                 long internalSeed = upper31 | lower17;
