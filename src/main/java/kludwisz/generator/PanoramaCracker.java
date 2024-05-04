@@ -97,7 +97,7 @@ public class PanoramaCracker {
         final ChunkRand rand = new ChunkRand();
 
         for (long n = rangeStart; n <= rangeEnd; n++) {
-            long upper31 = (n * 22 + chunkX) << 17;
+            long upper31 = (n * 22L + chunkX) << 17;
 
             //iterate over lower 17 bits
             for (long lower17 = 0; lower17 < (1L<<17); lower17++) {

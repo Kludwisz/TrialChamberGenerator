@@ -1,7 +1,5 @@
 package kludwisz.generator;
 
-import com.seedfinding.mccore.version.MCVersion;
-
 import java.io.File;
 import java.util.Scanner;
 
