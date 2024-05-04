@@ -1,6 +1,7 @@
 package kludwisz.chambers.jigsaws;
 
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.seedfinding.mccore.util.data.Pair;
@@ -17,11 +18,7 @@ public class TrialChambersPools {
 		return FALLBACK_POOLS.get(poolID);
 	}
 	
-//	public static int getFromAlias(String alias) {
-//		return ALIAS_TO_ID.getOrDefault(alias, -1);
-//	}
-	
-	private static final List<Integer> FALLBACK_POOLS = List.of(
+	private static final List<Integer> FALLBACK_POOLS = Arrays.asList(
 			44,  /*atrium*/
 			44,  /*corridor*/
 			44,  /*decor*/
@@ -69,8 +66,8 @@ public class TrialChambersPools {
 			44   /* empty */
 	);
 	
-    private static final List< List<Pair<Integer, Integer>> > CHAMBER_POOLS = List.<List<Pair<Integer, Integer>>>of(
-			/* atrium id = 0 */ List.of(
+    private static final List< List<Pair<Integer, Integer>> > CHAMBER_POOLS = Arrays.asList(
+			/* atrium id = 0 */ Arrays.asList(
 					new Pair<>(118, 1),
 					new Pair<>(119, 1),
 					new Pair<>(124, 1),
@@ -80,7 +77,7 @@ public class TrialChambersPools {
 					new Pair<>(122, 1)
 			),
 
-			/* corridor id = 1 */ List.of(
+			/* corridor id = 1 */ Arrays.asList(
 					new Pair<>(97, 1),
 					new Pair<>(156, 1),
 					new Pair<>(157, 1),
@@ -90,7 +87,7 @@ public class TrialChambersPools {
 					new Pair<>(95, 1)
 			),
 
-			/* decor id = 2 */ List.of(
+			/* decor id = 2 */ Arrays.asList(
 					new Pair<>(180, 22),  // empty pool element
 					new Pair<>(131, 2),
 					new Pair<>(130, 2),
@@ -105,12 +102,12 @@ public class TrialChambersPools {
 					new Pair<>(125, 2)
 			),
 
-			/* decor_chamber id = 3 */ List.of(
+			/* decor_chamber id = 3 */ Arrays.asList(
 					new Pair<>(180, 4),  // empty pool element
 					new Pair<>(135, 1)
 			),
 
-			/* hallway id = 4 */ List.of(
+			/* hallway id = 4 */ Arrays.asList(
 					new Pair<>(142, 1),
 					new Pair<>(155, 1),
 					new Pair<>(146, 1),
@@ -137,7 +134,7 @@ public class TrialChambersPools {
 					new Pair<>(154, 1)
 			),
 
-			/* chamber/addon id = 5 */ List.of(
+			/* chamber/addon id = 5 */ Arrays.asList(
 					new Pair<>(19, 1),
 					new Pair<>(20, 1),
 					new Pair<>(18, 1),
@@ -166,7 +163,7 @@ public class TrialChambersPools {
 					new Pair<>(12, 1)
 			),
 
-			/* chamber/assembly id = 6 */ List.of(
+			/* chamber/assembly id = 6 */ Arrays.asList(
 					new Pair<>(41, 2),
 					new Pair<>(35, 2),
 					new Pair<>(36, 2),
@@ -189,16 +186,16 @@ public class TrialChambersPools {
 					new Pair<>(52, 1)
 			),
 
-			/* chamber/end id = 7 */ List.of(
+			/* chamber/end id = 7 */ Arrays.asList(
 					new Pair<>(93, 1),
 					new Pair<>(94, 1)
 			),
 
-			/* chamber/entrance_cap id = 8 */ List.of(
-					new Pair<>(5, 1)
-			),
+			/* chamber/entrance_cap id = 8 */ Collections.singletonList(
+                    new Pair<>(5, 1)
+            ),
 
-			/* chamber/eruption id = 9 */ List.of(
+			/* chamber/eruption id = 9 */ Arrays.asList(
 					new Pair<>(56, 1),
 					new Pair<>(55, 1),
 					new Pair<>(62, 1),
@@ -211,7 +208,7 @@ public class TrialChambersPools {
 					new Pair<>(61, 1)
 			),
 
-			/* chamber/pedestal id = 10 */ List.of(
+			/* chamber/pedestal id = 10 */ Arrays.asList(
 					new Pair<>(65, 1),
 					new Pair<>(70, 1),
 					new Pair<>(71, 3),
@@ -228,7 +225,7 @@ public class TrialChambersPools {
 					new Pair<>(85, 1)
 			),
 
-			/* chamber/slanted id = 11 */ List.of(
+			/* chamber/slanted id = 11 */ Arrays.asList(
 					new Pair<>(75, 1),
 					new Pair<>(76, 1),
 					new Pair<>(77, 1),
@@ -246,22 +243,22 @@ public class TrialChambersPools {
 					new Pair<>(81, 1)
 			),
 
-			/* chambers/end id = 12 */ List.of(
+			/* chambers/end id = 12 */ Arrays.asList(
 					new Pair<>(1, 1),
 					new Pair<>(0, 1),
 					new Pair<>(6, 1),
 					new Pair<>(8, 1)
 			),
 
-			/* chests/supply id = 13 */ List.of(
+			/* chests/supply id = 13 */ Collections.singletonList(
 					new Pair<>(91, 1)
 			),
 
-			/* chests/contents/supply id = 14 */ List.of(
+			/* chests/contents/supply id = 14 */ Collections.singletonList(
 					new Pair<>(90, 1)
 			),
 
-			/* corridor/slices id = 15 */ List.of(
+			/* corridor/slices id = 15 */ Arrays.asList(
 					new Pair<>(98, 1),
 					new Pair<>(99, 2),
 					new Pair<>(100, 2),
@@ -272,7 +269,7 @@ public class TrialChambersPools {
 					new Pair<>(105, 2)
 			),
 
-			/* corridors/addon/lower id = 16 */ List.of(
+			/* corridors/addon/lower id = 16 */ Arrays.asList(
 					new Pair<>(180, 8),  // empty pool element
 					new Pair<>(115, 1),
 					new Pair<>(116, 1),
@@ -281,13 +278,13 @@ public class TrialChambersPools {
 					new Pair<>(107, 2)
 			),
 
-			/* corridors/addon/middle id = 17 */ List.of(
+			/* corridors/addon/middle id = 17 */ Arrays.asList(
 					new Pair<>(180, 8),  // empty pool element
 					new Pair<>(112, 2),
 					new Pair<>(117, 1)
 			),
 
-			/* corridors/addon/middle_upper id = 18 */ List.of(
+			/* corridors/addon/middle_upper id = 18 */ Arrays.asList(
 					new Pair<>(180, 6),  // empty pool element
 					new Pair<>(113, 2),
 					new Pair<>(108, 1),
@@ -296,135 +293,116 @@ public class TrialChambersPools {
 					new Pair<>(114, 1)
 			),
 
-			/* dispensers/chamber id = 19 */ List.of(
+			/* dispensers/chamber id = 19 */ Arrays.asList(
 					new Pair<>(180, 1),  // empty pool element
 					new Pair<>(136, 1),
 					new Pair<>(138, 1),
 					new Pair<>(137, 1)
 			),
 
-			/* hallway/fallback id = 20 */ List.of(
+			/* hallway/fallback id = 20 */ Arrays.asList(
 					new Pair<>(148, 1),
 					new Pair<>(149, 1),
 					new Pair<>(151, 1),
 					new Pair<>(150, 1)
 			),
 
-			/* reward/all id = 21 */ List.of(
+			/* reward/all id = 21 */ Collections.singletonList(
 					new Pair<>(160, 1)
 			),
 
-			/* reward/ominous_vault id = 22 */ List.of(
+			/* reward/ominous_vault id = 22 */ Collections.singletonList(
 					new Pair<>(159, 1)
 			),
 
-			/* reward/contents/default id = 23 */ List.of(
+			/* reward/contents/default id = 23 */ Collections.singletonList(
 					new Pair<>(160, 1)
 			),
 
-			/* spawner/all id = 24 */ List.of(
+			/* spawner/all id = 24 */ Arrays.asList(
 					new Pair<>(164, 1),
 					new Pair<>(163, 1),
 					new Pair<>(166, 1)
 			),
 
-			/* spawner/breeze id = 25 */ List.of(
+			/* spawner/breeze id = 25 */ Collections.singletonList(
 					new Pair<>(162, 1)
 			),
 
-			/* spawner/melee id = 26 */ List.of(
+			/* spawner/melee id = 26 */ Collections.singletonList(
 					new Pair<>(163, 1)
 			),
 
-			/* spawner/ranged id = 27 */ List.of(
+			/* spawner/ranged id = 27 */ Collections.singletonList(
 					new Pair<>(164, 1)
 			),
 
-			/* spawner/slow_ranged id = 28 */ List.of(
+			/* spawner/slow_ranged id = 28 */ Collections.singletonList(
 					new Pair<>(165, 1)
 			),
 
-			/* spawner/small_melee id = 29 */ List.of(
+			/* spawner/small_melee id = 29 */ Collections.singletonList(
 					new Pair<>(166, 1)
 			),
 
-			/* spawner/contents/breeze id = 30 */ List.of(
+			/* spawner/contents/breeze id = 30 */ Collections.singletonList(
 					new Pair<>(161, 1)
 			),
 
-			/* spawner/melee/husk id = 31 */ List.of(
+			/* spawner/melee/husk id = 31 */ Collections.singletonList(
 					new Pair<>(167, 1)
 			),
 
-			/* spawner/melee/slime id = 32 */ List.of(
+			/* spawner/melee/slime id = 32 */ Collections.singletonList(
 					new Pair<>(168, 1)
 			),
 
-			/* spawner/melee/zombie id = 33 */ List.of(
+			/* spawner/melee/zombie id = 33 */ Collections.singletonList(
 					new Pair<>(169, 1)
 			),
 
-			/* spawner/ranged/poison_skeleton id = 34 */ List.of(
+			/* spawner/ranged/poison_skeleton id = 34 */ Collections.singletonList(
 					new Pair<>(170, 1)
 			),
 
-			/* spawner/ranged/skeleton id = 35 */ List.of(
+			/* spawner/ranged/skeleton id = 35 */ Collections.singletonList(
 					new Pair<>(171, 1)
 			),
 
-			/* spawner/ranged/stray id = 36 */ List.of(
+			/* spawner/ranged/stray id = 36 */ Collections.singletonList(
 					new Pair<>(172, 1)
 			),
 
-			/* spawner/slow_ranged/poison_skeleton id = 37 */ List.of(
+			/* spawner/slow_ranged/poison_skeleton id = 37 */ Collections.singletonList(
 					new Pair<>(173, 1)
 			),
 
-			/* spawner/slow_ranged/skeleton id = 38 */ List.of(
+			/* spawner/slow_ranged/skeleton id = 38 */ Collections.singletonList(
 					new Pair<>(174, 1)
 			),
 
-			/* spawner/slow_ranged/stray id = 39 */ List.of(
+			/* spawner/slow_ranged/stray id = 39 */ Collections.singletonList(
 					new Pair<>(175, 1)
 			),
 
-			/* spawner/small_melee/baby_zombie id = 40 */ List.of(
+			/* spawner/small_melee/baby_zombie id = 40 */ Collections.singletonList(
 					new Pair<>(176, 1)
 			),
 
-			/* spawner/small_melee/cave_spider id = 41 */ List.of(
+			/* spawner/small_melee/cave_spider id = 41 */ Collections.singletonList(
 					new Pair<>(177, 1)
 			),
 
-			/* spawner/small_melee/silverfish id = 42 */ List.of(
+			/* spawner/small_melee/silverfish id = 42 */ Collections.singletonList(
 					new Pair<>(178, 1)
 			),
 
-			/* spawner/small_melee/spider id = 43 */ List.of(
+			/* spawner/small_melee/spider id = 43 */ Collections.singletonList(
 					new Pair<>(179, 1)
 			),
     		
-    		/* empty */ List.of(
+    		/* empty */ Collections.singletonList(
     				new Pair<>(180, 0)
     		)
     );
-
-//    private static final HashMap<String, Integer> ALIAS_TO_ID = new HashMap<>() {{
-//    	put("spawner/contents/melee0", 30); // zombie
-//    	put("spawner/contents/melee1", 28); // husk
-//    	put("spawner/contents/melee2", 29); // slime
-//
-//    	put("spawner/contents/ranged0", 32); // skeleton
-//    	put("spawner/contents/ranged1", 33); // stray
-//    	put("spawner/contents/ranged2", 31); // bogged
-//
-//    	put("spawner/contents/slow_ranged0", 35); // skeleton
-//    	put("spawner/contents/slow_ranged1", 36); // stray
-//    	put("spawner/contents/slow_ranged2", 34); // bogged
-//
-//    	put("spawner/contents/small_melee0", 40); // spider
-//    	put("spawner/contents/small_melee1", 38); // cave spider
-//    	put("spawner/contents/small_melee2", 39); // silverfish
-//    	put("spawner/contents/small_melee3", 37); // baby zombie
-//    }};
 }
