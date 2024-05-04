@@ -3,7 +3,6 @@ package kludwisz.generator;
 import com.seedfinding.mccore.rand.ChunkRand;
 import com.seedfinding.mccore.util.block.BlockRotation;
 import com.seedfinding.mccore.util.pos.BPos;
-import com.seedfinding.mccore.util.pos.CPos;
 import com.seedfinding.mccore.version.MCVersion;
 import com.seedfinding.mcmath.util.Mth;
 import com.seedfinding.mcseed.lcg.LCG;
@@ -108,6 +107,7 @@ public class PanoramaCracker {
                     continue;
 
                 // reverse region seed into structure seed
+                // TODO if this run fails, bounded nextInt extra advancement case
                 rand.advance(-2);
                 long structureSeed = (rand.getSeed() ^ LCG.JAVA.multiplier) - TC.getSalt();
 
@@ -214,7 +214,7 @@ public class PanoramaCracker {
         System.out.println("target state upper 31 = " + randUp31 + "  mod 22 = " + (randUp31 % 22));
         System.out.println("target state lower 17 = " + randLow17);
 
-        for (long n = 0; n <= (1L<<31) / 22; n++) {
+        for (long n = 0; n <= (long)Math.ceil((1L<<31) / 22.0); n++) {
             long upper31 = (n * 22L + chunkXTest) << 17;
             if ((upper31>>17) == randUp31) {
                 System.out.println("good upper 31: " + upper31);

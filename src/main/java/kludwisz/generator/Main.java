@@ -6,11 +6,10 @@ import java.io.File;
 import java.util.Scanner;
 
 public class Main {
-	private static final TrialChambers CHAMBERS = new TrialChambers(MCVersion.v1_20);
-	
 	public static void main(String[] args) throws Exception {
-		PanoramaCracker.fullTest();
-		//runMicroboincApp(args);
+		// PanoramaCracker.test();
+		// PanoramaCracker.fullTest();
+		runMicroboincApp(args);
 	}
 
 	public static void runMicroboincApp(String[] args) throws Exception {
