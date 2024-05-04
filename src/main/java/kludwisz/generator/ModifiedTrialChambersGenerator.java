@@ -28,7 +28,10 @@ public class ModifiedTrialChambersGenerator {
     private static final int START_POOL_ID = 7; // trial_chambers/chamber/end
     private static final ArrayList<Integer> START_TEMPLATES = getTemplatesFromPool(Objects.requireNonNull(TrialChambersPools.get(START_POOL_ID)));
 
-    public ModifiedTrialChambersGenerator() {}
+    private int targetMatches;
+    public ModifiedTrialChambersGenerator(int targetMatches) {
+        this.targetMatches = targetMatches;
+    }
 
     public void generate(long worldseed, int chunkX, int chunkZ, ChunkRand rand, HashMap<BPos, String> dataMap, HashMap<String, BPos> uniquePieceMap) {
         // choose random starting template and rotation
@@ -171,7 +174,7 @@ public class ModifiedTrialChambersGenerator {
     public static class Assembler {
         int maxDepth;
         int matches;
-        int targetMatches = 13; // TODO don't hardcode this
+        int targetMatches;
         boolean halted = false;
         long structseed;
 
@@ -180,12 +183,12 @@ public class ModifiedTrialChambersGenerator {
         private final HashMap<BPos, String> dataMap;
         private final HashMap<String, BPos> uniquePieceMap;
 
-        Assembler(int maxDepth, HashMap<BPos, String> dataMap, HashMap<String, BPos> uniquePieceMap) {
+        Assembler(int maxDepth, int targetMatches, HashMap<BPos, String> dataMap, HashMap<String, BPos> uniquePieceMap) {
             this.maxDepth = maxDepth;
             this.uniquePieceMap = uniquePieceMap;
             this.dataMap = dataMap;
             this.matches = 0;
-            // this.targetMatches = dataMap.size() + uniquePieceMap.size();
+            this.targetMatches = targetMatches;
         }
 
         void setStructseed(long structseed) {
@@ -298,7 +301,7 @@ public class ModifiedTrialChambersGenerator {
                                                     box3.maxX+1,box3.maxY+1,box3.maxZ+1));
 
                                             Piece piece2 = new Piece(jigsawpiece1,blockpos5,box3,rotation1,depth+1);
-                                            //this.pieces.add(piece2);
+
                                             // check if piece2 satisfies any panorama condition
                                             if (this.dataMap.containsKey(piece2.pos)) {
                                                 if (!this.dataMap.get(piece2.pos).equals(piece2.getName())) {
