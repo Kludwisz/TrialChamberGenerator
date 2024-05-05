@@ -13,6 +13,7 @@ public class PieceDataSet {
     private final HashSet<String> bannedPieces = new HashSet<>();
     private final HashMap<String, BPos> uniquePieces = new HashMap<>();
     private final HashSet<BPos> certainEmptyPieces = new HashSet<>();
+    private final HashMap<BPos, String> certainPieces = new HashMap<>();
     private final HashMap<BPos, String> uncertainPieces = new HashMap<>();
 
     public final int startPieceY;
@@ -38,6 +39,11 @@ public class PieceDataSet {
         certainEmptyPieces.add(pos);
     }
 
+    public void addCertainPiece(String piece, BPos pos) {
+        certainPieces.put(pos, piece);
+        targetMatches++;
+    }
+
     public void addUncertainPiece(String piece, BPos pos) {
         uncertainPieces.put(pos, piece);
         targetMatches++;
@@ -57,6 +63,12 @@ public class PieceDataSet {
             if (pos.equals(uniquePos))
                 return PieceCheckResult.GOOD;
             else if (pos.distanceTo(uniquePos, DistanceMetric.MANHATTAN) <= MAX_UNIQUE_OFFSET_TOLERANCE)
+                return PieceCheckResult.GOOD;
+            return PieceCheckResult.BAD_CERTAIN;
+        }
+
+        if (certainPieces.containsKey(pos)) {
+            if (certainPieces.get(pos).equals(piecename))
                 return PieceCheckResult.GOOD;
             return PieceCheckResult.BAD_CERTAIN;
         }

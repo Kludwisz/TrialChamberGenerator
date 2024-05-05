@@ -102,16 +102,16 @@ public class PanoramaCracker {
         pds.addUniquePiece("corridor/atrium/grand_staircase_3", new BPos(-19, -21, -7));
 
         // certain pieces
-        pds.addUncertainPiece("corridor/atrium/bogged_relief", new BPos(-12, -21, 7));
-        pds.addUncertainPiece("corridor/atrium/breeze_relief", new BPos(-23, -21, -9));
-        pds.addUncertainPiece("corridor/straight_3", new BPos(-7, -22, 8));
-        pds.addUncertainPiece("corridor/straight_4", new BPos(-2, -22, 8));
-        pds.addUncertainPiece("decor/dead_bush_pot", new BPos(-6, -19, 6));
-        pds.addUncertainPiece("decor/candle_3", new BPos(-5, -19, 6));
+        pds.addCertainPiece("corridor/atrium/bogged_relief", new BPos(-12, -21, 7));
+        pds.addCertainPiece("corridor/atrium/breeze_relief", new BPos(-23, -21, -9));
+        pds.addCertainPiece("corridor/straight_3", new BPos(-7, -22, 8));
+        pds.addCertainPiece("corridor/straight_4", new BPos(-2, -22, 8));
+        pds.addCertainPiece("decor/dead_bush_pot", new BPos(-6, -19, 6));
+        pds.addCertainPiece("decor/candle_3", new BPos(-5, -19, 6));
         pds.addUncertainPiece("decor/empty_pot", new BPos(-4, -19, 6));
-        pds.addUncertainPiece("decor/barrel", new BPos(-1, -19, 6));
+        pds.addCertainPiece("decor/barrel", new BPos(-1, -19, 6));
         pds.addUncertainPiece("decor/flow_pot", new BPos(-5, -21, 1));
-        pds.addUncertainPiece("decor/barrel", new BPos(-1, -21, 1));
+        pds.addCertainPiece("decor/barrel", new BPos(-1, -21, 1));
         pds.addUncertainPiece("_pot", new BPos(10, -21, 1));
         pds.addUncertainPiece("_pot", new BPos(11, -21, 1));
         pds.addUncertainPiece("_pot", new BPos(5, -21, 1));
