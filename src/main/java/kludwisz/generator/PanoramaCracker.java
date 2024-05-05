@@ -37,50 +37,46 @@ public class PanoramaCracker {
     }
 
     /*
+    Commands to place the structure in the correct location in order:
     /place template minecraft:trial_chambers/corridor/atrium_1 -8 -23 -15 clockwise_90 (1 of 1 possible)
     /place template minecraft:trial_chambers/corridor/atrium/bogged_relief -12 -21 7 clockwise_90 (1 of 4 possible)
     /place template minecraft:trial_chambers/corridor/atrium/breeze_relief -23 -21 -9 counterclockwise_90  (1 of 4 possible)
     /place template minecraft:trial_chambers/corridor/atrium/grand_staircase_3 -19 -21 -7 clockwise_90 (1 of 3 possible)
     /place template minecraft:trial_chambers/reward/ominous_vault -26 -9 -2 clockwise_90 (1 of 1 possible)
     /place template minecraft:trial_chambers/corridor/entrance_1 -47 -16 8 counterclockwise_90 (1 of 1 possible)
-    /place template minecraft:trial_chambers/corridor/first_plate -7 -23 8 counterclockwise_90 (1 of 1 possible i think)
+    /place template minecraft:trial_chambers/corridor/first_plate -7 -23 8 counterclockwise_90 (1 of 1 possible)
     /place template minecraft:trial_chambers/corridor/straight_3 -7 -22 8 counterclockwise_90 (1 of 8 possible)
     /place template minecraft:trial_chambers/corridor/straight_4 -2 -22 8 counterclockwise_90 (1 of 8 possible)
-    /place template minecraft:trial_chambers/decor/dead_bush_pot -6 -19 6 (1 of 11 possible + empty) unknown rotation
-    /place template minecraft:trial_chambers/decor/candle_3 -5 -19 6 counterclockwise_90 (1 of 11 possible + empty)
-    /place template minecraft:trial_chambers/decor/empty_pot -4 -19 6 (1 of 11 possible + empty) unknown rotation
-    /place template minecraft:trial_chambers/decor/barrel -1 -19 6 (1 of 11 possible + empty) unknown rotation
-    /place template minecraft:trial_chambers/decor/flow_pot -5 -21 1 clockwise_90 (1 of 11 possible + empty) might be one of the other 2 pot designs
+    /place template minecraft:trial_chambers/decor/dead_bush_pot -6 -19 6 clockwise_90 (1 of 11 possible + empty)
+    /place template minecraft:trial_chambers/decor/candle_3 -5 -19 6 clockwise_90 (1 of 11 possible + empty)
+    /place template minecraft:trial_chambers/decor/empty_pot -4 -19 6 clockwise_90 (1 of 11 possible + empty)
+    /place template minecraft:trial_chambers/decor/barrel -1 -19 6 clockwise_90 (1 of 11 possible + empty)
+    /place template minecraft:trial_chambers/decor/flow_pot -5 -21 1 clockwise_90 (1 of 11 possible + empty)
+    /place template minecraft:trial_chambers/decor/barrel -1 -21 1 clockwise_90 (1 of 11 possible + empty)
+    ~/place template minecraft:trial_chambers/decor/[undecorated,flow,guster,scrape]_pot 10 -21 1 clockwise_90 (1 of the 4 of 11 possible + empty)
+    ~/place template minecraft:trial_chambers/decor/[undecorated,flow,guster,scrape]_pot 11 -21 1 clockwise_90 (1 of the 4 of 11 possible + empty)
+    /place template minecraft:trial_chambers/decor/undecorated_pot 5 -21 1 clockwise_90 (1 of 11 possible + empty)
+    /place template minecraft:trial_chambers/decor/undecorated_pot -6 -21 -3 counterclockwise_90 (1 of 11 + empty)
+    /place template minecraft:trial_chambers/decor/undecorated_pot -4 -19 -8 counterclockwise_90 (1 of 11 + empty)
+    /place template minecraft:trial_chambers/decor/undecorated_pot 0 -19 -8 counterclockwise_90 (1 of 11 + empty)
+    /place template minecraft:trial_chambers/intersection/intersection_1 34 -23 -10 (1 of 3 possible) from andrew
+    /place template minecraft:trial_chambers/corridor/second_plate 16 -23 12 (1 of 1 possible) from andrew
+    ~/place template minecraft:trial_chambers/corridor/end_[1,2] 16 -23 32 (1 of the 2) from andrew
+    Lines starting with ~ mean that the exact part is unknown, it's one of the defined
 
-    /place template minecraft:trial_chambers/intersection/intersection_1 34 -23 -10 clockwise_90
-    /place template minecraft:trial_chambers/corridor/second_plate 16 -23 12 none
-    /place template minecraft:trial_chambers/corridor/[end_1|end_2] 16 -23 32 none
+    Things that should be empty:
+    -7 -19 3
+    -6 -19 -8
+    -5 -19 -8
+    -7 -14 1
+    -2 -14 1
+    3 -14 1
+    8 -14 1
+    -6 -8 1
+    -1 -8 1
+    4 -8 1
+    9 -8 1
      */
-
-    private static final PieceData[] pieceData = new PieceData[] {
-            new PieceData("corridor/atrium/bogged_relief", new BPos(-12, -21, 7)),
-            new PieceData("corridor/atrium/breeze_relief", new BPos(-23, -21, -9)),
-            new PieceData("corridor/first_plate", new BPos(-7, -23, 8)),
-            new PieceData("corridor/straight_3", new BPos(-7, -22, 8)),
-            new PieceData("corridor/straight_4", new BPos(-2, -22, 8)),
-            new PieceData("decor/dead_bush_pot", new BPos(-6, -19, 6)),
-            new PieceData("decor/candle_3", new BPos(-5, -19, 6)),
-            new PieceData("decor/empty_pot", new BPos(-4, -19, 6)),
-            new PieceData("decor/barrel", new BPos(-1, -19, 6)),
-            new PieceData("decor/flow_pot", new BPos(-5, -21, 1)),
-    };
-
-    private static final BPos BAD_PIECE_MARKER = new BPos(256, 256, 256);
-    private static final PieceData[] uniquePieceData = new PieceData[] {
-            new PieceData("corridor/atrium_1", new BPos(-8, -23, -15)),
-            new PieceData("corridor/atrium/grand_staircase_3", new BPos(-19, -21, -7)),
-            new PieceData("intersection/intersection_1", new BPos(34, -23, -10)),
-
-            new PieceData("corridor/atrium/grand_staircase_1", BAD_PIECE_MARKER),
-            new PieceData("corridor/atrium/grand_staircase_2", BAD_PIECE_MARKER),
-            new PieceData("intersection/intersection_2", BAD_PIECE_MARKER),
-            new PieceData("intersection/intersection_3", BAD_PIECE_MARKER),
-    };
 
     // -------------------------------------------------------
 
@@ -88,11 +84,57 @@ public class PanoramaCracker {
     private static final int chunkZ = 2;
     private static final int startPieceY = -23;
     private static final int startPieceRotation = BlockRotation.NONE.ordinal();
-    private static final int targetMatches = 13;
-    private static final HashMap<BPos, String> pieceMap = createPieceMap(pieceData);
-    private static final HashMap<String, BPos> uniquePieceMap = createUniquePieceMap(uniquePieceData);
 
-    public static void crack(long rangeStart, long rangeEnd) {
+    public static void runMainTask(long rangeStart, long rangeEnd) {
+        PieceDataSet pds = new PieceDataSet(startPieceY, startPieceRotation);
+
+        // banned pieces
+        pds.addBannedPiece("corridor/atrium/grand_staircase_1");
+        pds.addBannedPiece("corridor/atrium/grand_staircase_2");
+        pds.addBannedPiece("intersection/intersection_2");
+        pds.addBannedPiece("intersection/intersection_3");
+
+        // unique pieces
+        pds.addUniquePiece("corridor/first_plate", new BPos(-7, -23, 8));
+        pds.addUniquePiece("corridor/second_plate", new BPos(16, -23, 12));
+        pds.addUniquePiece("intersection/intersection_1", new BPos(34, -23, -10));
+        pds.addUniquePiece("corridor/atrium/grand_staircase_3", new BPos(-19, -21, -7));
+
+        // certain pieces
+        pds.addCertainPiece("corridor/atrium/bogged_relief", new BPos(-12, -21, 7));
+        pds.addCertainPiece("corridor/atrium/breeze_relief", new BPos(-23, -21, -9));
+        pds.addCertainPiece("corridor/straight_3", new BPos(-7, -22, 8));
+        pds.addCertainPiece("corridor/straight_4", new BPos(-2, -22, 8));
+        pds.addCertainPiece("decor/dead_bush_pot", new BPos(-6, -19, 6));
+        pds.addCertainPiece("decor/candle_3", new BPos(-5, -19, 6));
+        pds.addCertainPiece("decor/empty_pot", new BPos(-4, -19, 6));
+        pds.addCertainPiece("decor/barrel", new BPos(-1, -19, 6));
+        pds.addCertainPiece("decor/flow_pot", new BPos(-5, -21, 1));
+        pds.addCertainPiece("decor/barrel", new BPos(-1, -21, 1));
+
+        // uncertain pieces
+        pds.addUncertainPiece("_pot", new BPos(10, -21, 1));
+        pds.addUncertainPiece("_pot", new BPos(11, -21, 1));
+        pds.addUncertainPiece("_pot", new BPos(5, -21, 1));
+        pds.addUncertainPiece("_pot", new BPos(-6, -21, -3));
+        pds.addUncertainPiece("_pot", new BPos(-4, -19, -8));
+        pds.addUncertainPiece("_pot", new BPos(0, -19, -8));
+
+        // empty pieces
+        pds.addCertainEmptyPiece(new BPos(-7, -19, 3));
+        pds.addCertainEmptyPiece(new BPos(-6, -19, -8));
+        pds.addCertainEmptyPiece(new BPos(-5, -19, -8));
+        pds.addCertainEmptyPiece(new BPos(-7, -14, 1));
+        pds.addCertainEmptyPiece(new BPos(-2, -14, 1));
+        pds.addCertainEmptyPiece(new BPos(3, -14, 1));
+        pds.addCertainEmptyPiece(new BPos(8, -14, 1));
+        pds.addCertainEmptyPiece(new BPos(-6, -8, 1));
+        pds.addCertainEmptyPiece(new BPos(-1, -8, 1));
+        pds.addCertainEmptyPiece(new BPos(4, -8, 1));
+        pds.addCertainEmptyPiece(new BPos(9, -8, 1));
+    }
+
+    public static void crack(long rangeStart, long rangeEnd, PieceDataSet dataSet) {
         final TrialChambers TC = new TrialChambers(MCVersion.v1_20);
         final ChunkRand rand = new ChunkRand();
 
@@ -111,18 +153,11 @@ public class PanoramaCracker {
                 rand.advance(-2);
                 long structureSeed = (rand.getSeed() ^ LCG.JAVA.multiplier) - TC.getSalt();
 
-                // check basic carver seed conditions
-                rand.setCarverSeed(structureSeed, chunkX, chunkZ, MCVersion.v1_20);
-                int y = rand.nextInt(21) - 41;
-                if (y != startPieceY)
-                    continue;
-                int rot = rand.nextInt(4);
-                if (rot != startPieceRotation)
-                    continue;
-
                 // bruteforce structure seed - generate trial chambers
-                ModifiedTrialChambersGenerator trialChambersGenerator = new ModifiedTrialChambersGenerator(targetMatches);
-                trialChambersGenerator.generate(structureSeed, chunkX, chunkZ, rand, pieceMap, uniquePieceMap);
+                ModifiedTrialChambersGenerator trialChambersGenerator = new ModifiedTrialChambersGenerator();
+                if (trialChambersGenerator.generate(structureSeed, chunkX, chunkZ, rand, dataSet)) {
+                    System.out.println(structureSeed);
+                }
             }
         }
     }
@@ -131,6 +166,7 @@ public class PanoramaCracker {
     // cracker testing
     // -------------------------------------------------------
 
+    /*
     @SuppressWarnings("unused")
     public static void test() {
         PieceData[] testData = new PieceData[] {
@@ -260,4 +296,5 @@ public class PanoramaCracker {
             }
         }
     }
+     */
 }

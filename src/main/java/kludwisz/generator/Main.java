@@ -19,7 +19,7 @@ public class Main {
 				long rangeEnd = reader.nextLong();
 				reader.close();
 
-				PanoramaCracker.crack(rangeStart, rangeEnd);
+				PanoramaCracker.runMainTask(rangeStart, rangeEnd);
 			}
 		}
 	}

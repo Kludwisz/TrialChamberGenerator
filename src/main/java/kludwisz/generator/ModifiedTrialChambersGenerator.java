@@ -28,15 +28,14 @@ public class ModifiedTrialChambersGenerator {
     private static final int START_POOL_ID = 7; // trial_chambers/chamber/end
     private static final ArrayList<Integer> START_TEMPLATES = getTemplatesFromPool(Objects.requireNonNull(TrialChambersPools.get(START_POOL_ID)));
 
-    private final int targetMatches;
-    public ModifiedTrialChambersGenerator(int targetMatches) {
-        this.targetMatches = targetMatches;
-    }
-
-    public void generate(long worldseed, int chunkX, int chunkZ, ChunkRand rand, HashMap<BPos, String> dataMap, HashMap<String, BPos> uniquePieceMap) {
+    public boolean generate(long worldseed, int chunkX, int chunkZ, ChunkRand rand, PieceDataSet dataSet) {
         rand.setCarverSeed(worldseed, chunkX, chunkZ, MCVersion.v1_20);
         int pickedY = rand.nextInt(21) - 41;
+        if (pickedY != dataSet.startPieceY)
+            return false;
         BlockRotation rotation = BlockRotation.getRandom(rand);
+        if (rotation.ordinal() != dataSet.startPieceRotationOrdinal)
+            return false;
 
         int template = rand.getRandom(START_TEMPLATES);
         BPos size = TrialChambersStructureSize.get(template);
@@ -54,8 +53,7 @@ public class ModifiedTrialChambersGenerator {
 
         // create structure max bounding box
         BlockBox fullBox = new BlockBox(centerX - MAX_DIST, y - MAX_DIST, centerZ - MAX_DIST, centerX + MAX_DIST + 1, y + MAX_DIST + 1, centerZ + MAX_DIST + 1);
-        Assembler assembler = new Assembler(MAX_DEPTH, this.targetMatches, dataMap, uniquePieceMap);
-        assembler.setStructseed(worldseed);
+        Assembler assembler = new Assembler(MAX_DEPTH, dataSet);
 
         VoxelShape a = new VoxelShape(fullBox);
         a.fullBoxes.add(new BlockBox(box.minX,box.minY,box.minZ,box.maxX+1,box.maxY+1,box.maxZ+1));
@@ -70,6 +68,8 @@ public class ModifiedTrialChambersGenerator {
 
             assembler.tryPlacing(nextPiece, rand);
         }
+
+        return assembler.success;
     }
 
     static public class Piece {
@@ -171,32 +171,24 @@ public class ModifiedTrialChambersGenerator {
 
     public static class Assembler {
         int maxDepth;
-        int matches;
-        int targetMatches;
-        boolean halted = false;
-        long structseed;
+
+        private final PieceDataSet dataSet;
+        private int matches = 0;
+        private int certainMisses = 0;
+        private int uncertainMisses = 0;
+        private boolean halted = false;
+        public boolean success = false;
 
         private final SequencedPriorityIterator<Piece> placing = new SequencedPriorityIterator<>();
 
-        private final HashMap<BPos, String> dataMap;
-        private final HashMap<String, BPos> uniquePieceMap;
-
-        Assembler(int maxDepth, int targetMatches, HashMap<BPos, String> dataMap, HashMap<String, BPos> uniquePieceMap) {
+        Assembler(int maxDepth, PieceDataSet dataSet) {
             this.maxDepth = maxDepth;
-            this.uniquePieceMap = uniquePieceMap;
-            this.dataMap = dataMap;
-            this.matches = 0;
-            this.targetMatches = targetMatches;
-        }
-
-        void setStructseed(long structseed) {
-            this.structseed = structseed;
+            this.dataSet = dataSet;
         }
 
         public void tryPlacing(Piece piece, ChunkRand rand) {
-            if (this.halted) {
+            if (this.halted)
                 return;
-            }
 
             int depth = piece.depth;
             BPos pos = piece.pos;
@@ -300,26 +292,28 @@ public class ModifiedTrialChambersGenerator {
 
                                             Piece piece2 = new Piece(jigsawpiece1,blockpos5,box3,rotation1,depth+1);
 
-                                            // check if piece2 satisfies any panorama condition
-                                            if (this.dataMap.containsKey(piece2.pos)) {
-                                                if (!this.dataMap.get(piece2.pos).equals(piece2.getName())) {
-                                                    this.halted = true;
-                                                    return;
-                                                }
-                                                this.matches++;
-                                            }
-                                            // check unique piece conditions
-                                            if (this.uniquePieceMap.containsKey(piece2.getName())) {
-                                                if (!this.uniquePieceMap.get(piece2.getName()).equals(piece2.pos)) {
-                                                    this.halted = true;
-                                                    return;
-                                                }
-                                                this.matches++;
-                                            }
-                                            if (matches >= this.targetMatches) {
-                                                System.out.println(this.structseed);
-                                                this.halted = true;
-                                                return;
+                                            PieceDataSet.PieceCheckResult result = dataSet.checkPiece(piece2.getName(), piece2.pos);
+
+                                            switch (result) {
+                                                case BAD_CERTAIN:
+                                                    certainMisses++;
+                                                    if (certainMisses > PieceDataSet.MAX_CERTAIN_TOLERANCE) {
+                                                        this.halted = true;
+                                                        return;
+                                                    }
+                                                case BAD_UNCERTAIN:
+                                                    uncertainMisses++;
+                                                    if (uncertainMisses > PieceDataSet.MAX_UNCERTAIN_TOLERANCE) {
+                                                        this.halted = true;
+                                                        return;
+                                                    }
+                                                case GOOD:
+                                                    matches++;
+                                                    if (matches >= dataSet.targetMatches - PieceDataSet.MAX_UNCERTAIN_TOLERANCE) {
+                                                        this.success = true;
+                                                        this.halted = true;
+                                                        return;
+                                                    }
                                             }
 
                                             if(depth+1<= this.maxDepth){
