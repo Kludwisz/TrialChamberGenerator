@@ -5,10 +5,8 @@ import java.util.Scanner;
 
 public class Main {
 	public static void main(String[] args) throws Exception {
-		// PanoramaCracker.test();
-		// PanoramaCracker.fullTest();
-		// runMicroboincApp(args);
 		// PanoramaCracker.runAutomatedTests(1000);
+		runMicroboincApp(args);
 	}
 
 	public static void runMicroboincApp(String[] args) throws Exception {

@@ -45,10 +45,6 @@ public class PieceDataSet {
 
     // --------------------------------------------------------------
 
-    public final int getUncertainPieceCount() {
-        return uncertainPieces.size();
-    }
-
     public final PieceCheckResult checkPiece(String piecename, BPos pos) {
         if (bannedPieces.contains(piecename))
             return PieceCheckResult.BAD_CERTAIN;
