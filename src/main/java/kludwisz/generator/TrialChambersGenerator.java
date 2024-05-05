@@ -94,7 +94,8 @@ public class TrialChambersGenerator {
 
     public void printPieces() {
         for (Piece p : this.pieces) {
-            System.out.println(p.getName() + "  /tp  " + p.pos.getX() + " " + p.pos.getY() + " " + p.pos.getZ());
+            System.out.print(p.getName() + "  /tp  " + p.box.minX + " " + p.box.minY + " " + p.box.minZ);
+            System.out.println("  /tp  " + p.box.maxX + " " + p.box.maxY + " " + p.box.maxZ);
         }
     }
 
