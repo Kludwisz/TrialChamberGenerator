@@ -1,10 +1,9 @@
 package kludwisz.generator;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
+import acgen.src.main.java.kludwisz.ancientcity.AncientCityGenerator;
+import acgen.src.main.java.kludwisz.ancientcity.Main;
 import com.seedfinding.mccore.rand.ChunkRand;
 import com.seedfinding.mccore.util.block.BlockBox;
 import com.seedfinding.mccore.util.block.BlockDirection;
@@ -24,6 +23,8 @@ import kludwisz.chambers.jigsaws.TrialChambersPools;
 import kludwisz.chambers.pieces.TrialChambersPieceNames;
 import kludwisz.chambers.pieces.TrialChambersStructureLoot;
 import kludwisz.chambers.pieces.TrialChambersStructureSize;
+import kludwisz.generator.util.BlockBoxUtil;
+import kludwisz.generator.util.MutableBlockPos;
 import kludwisz.util.DecoratorRand;
 import kludwisz.util.SequencedPriorityIterator;
 import kludwisz.util.VoxelShape;
@@ -33,63 +34,213 @@ public class TrialChambersGenerator {
     private static final int MAX_DIST = 116; // max distance from start piece
     private static final int MAX_DEPTH = 20; // defined as "size" in the client jar
     private static final int EMPTY_PIECE_ID = 170;
-    private static final int EMPTY_POOL_ID = 45;
-    private static final int START_POOL_ID = 7; // trial_chambers/chamber/end
-    private static final ArrayList<Integer> START_TEMPLATES = getTemplatesFromPool(TrialChambersPools.get(START_POOL_ID));
+    private static final int[] START_TEMPLATES = { 78, 79 }; /* chamber/end id = 7 */
+    public static final BlockRotation[] BLOCK_ROTATIONS = BlockRotation.values();
 
-    private long worldseed;
-    private List<Piece> pieces;
+    public final TrialChambersGenerator.Piece[] pieces = new TrialChambersGenerator.Piece[256];
+    public final VoxelShape[] voxelShapes = new VoxelShape[256];
+    public int piecesLen;
+    public final SequencedPriorityIterator<TrialChambersGenerator.Piece> placing = new SequencedPriorityIterator<>();
 
-    public TrialChambersGenerator() {}
+    private final BlockBox rootBox = BlockBox.empty();
+    private final TrialChambersGenerator.BlockJigsawInfo[] parentJigsawsArr = new TrialChambersGenerator.BlockJigsawInfo[5];
+    private final TrialChambersGenerator.BlockJigsawInfo[] childPieceJigsawBlocksArr = new TrialChambersGenerator.BlockJigsawInfo[5];
+    private final int[] childTemplatesArr = new int[46];
+    private final BlockRotation[] childRotationsArr = new BlockRotation[4];
+    private final MutableBlockPos childJigsawPos = new MutableBlockPos();
+    private final BlockBox childPieceMinBox = BlockBox.empty();
+
+    public TrialChambersGenerator() {
+        for (int i = 0; i < this.pieces.length; i++) {
+            this.pieces[i] = new TrialChambersGenerator.Piece(i);
+        }for (int i = 0; i < this.voxelShapes.length; i++) {
+            this.voxelShapes[i] = new VoxelShape();
+        }
+        for (int i = 0; i < this.parentJigsawsArr.length; i++) {
+            this.parentJigsawsArr[i] = new TrialChambersGenerator.BlockJigsawInfo();
+        }
+        for (int i = 0; i < this.childPieceJigsawBlocksArr.length; i++) {
+            this.childPieceJigsawBlocksArr[i] = new TrialChambersGenerator.BlockJigsawInfo();
+        }
+    }
 
     public boolean generate(long worldseed, int chunkX, int chunkZ, ChunkRand rand) {
-        this.worldseed = worldseed;
-        this.pieces = new ArrayList<>();
+        this.piecesLen = 0;
 
-        // choose random starting template and rotation
+        // choose random y position and rotation
         rand.setCarverSeed(worldseed, chunkX, chunkZ, MCVersion.v1_20);
-        // choose start height
         int pickedY = rand.nextInt(21) - 41;
-        BlockRotation rotation = BlockRotation.getRandom(rand);
+        BlockRotation startPieceRotation = BlockRotation.getRandom(rand);
 
-        int template = rand.getRandom(START_TEMPLATES);
-        BPos size = TrialChambersStructureSize.get(template);
+        // choose random starting template
+        int startPieceId = START_TEMPLATES[rand.nextInt(START_TEMPLATES.length)];
+        BPos startPieceSize = TrialChambersStructureSize.get(startPieceId);
 
         // set starting position
-        BPos startPos = new CPos(chunkX, chunkZ).toBlockPos(pickedY);
+        Piece startPiece = this.pieces[this.piecesLen];
+        MutableBlockPos startPiecePos = startPiece.pos;
+        startPiecePos.set(chunkX << 4, pickedY, chunkZ << 4);
 
-        BlockBox box = BlockBox.getBoundingBox(startPos, rotation, BPos.ORIGIN, BlockMirror.NONE, size);
-        int centerX = (box.minX + box.maxX) / 2;
-        int centerZ = (box.minZ + box.maxZ) / 2;
-        int centerY = box.minY + 1;
-        int y = startPos.getY() + 1;
+        BlockBox startPieceBox = startPiece.box;
+        BlockBoxUtil.setSizeRotatePos(startPieceBox, startPieceSize, startPieceRotation, startPiecePos);
+        int centerX = (startPieceBox.minX + startPieceBox.maxX) / 2;
+        int centerZ = (startPieceBox.minZ + startPieceBox.maxZ) / 2;
+        int centerY = startPieceBox.minY + 1;
+        int y = startPiecePos.y + 1;
 
         // create the first piece
-        Piece piece = new Piece(template, startPos, box, rotation, 0);
+        startPiece.id = startPieceId;
+        BlockBoxUtil.set(startPiece.box, startPieceBox);
+        startPiece.rotation = startPieceRotation;
+        startPiece.depth = 0;
 
         // create structure max bounding box
-        BlockBox fullBox = new BlockBox(centerX - MAX_DIST, y - MAX_DIST, centerZ - MAX_DIST, centerX + MAX_DIST + 1, y + MAX_DIST + 1, centerZ + MAX_DIST + 1);
-        Assembler assembler = new Assembler(MAX_DEPTH, this.pieces, y);
-        assembler.pieces.add(piece);
-        VoxelShape a = new VoxelShape(fullBox);
-        a.fullBoxes.add(new BlockBox(box.minX,box.minY,box.minZ,box.maxX+1,box.maxY+1,box.maxZ+1));
-        piece.voxelShape = a;
+        // this.placing.clear(); TODO why was this here
+        this.piecesLen++;
+        VoxelShape rootFreeSpace = this.voxelShapes[255].init(BlockBoxUtil.set(this.rootBox, centerX - MAX_DIST, y - MAX_DIST, centerZ - MAX_DIST, centerX + MAX_DIST, y + MAX_DIST, centerZ + MAX_DIST));
+        rootFreeSpace.cutout.add(startPieceBox);
+        startPiece.freeSpace = rootFreeSpace;
 
         // place pieces
-        assembler.tryPlacing(piece, rand);
-        while(assembler.placing.hasNext()) {
-            Piece nextPiece = assembler.placing.next();
+        this.tryPlacing(startPiece, rand);
+        while (this.placing.hasNext()) {
+            Piece nextPiece = this.placing.next();
             if (nextPiece == null)
                 break; // end of input
-
-            assembler.tryPlacing(nextPiece, rand);
+            this.tryPlacing(nextPiece, rand);
         }
 
         return true;
     }
 
-    public List<Piece> getPieces() {
-        return this.pieces;
+    public void tryPlacing(AncientCityGenerator.Piece parentPiece, ChunkRand rand) {
+        int parentPieceId = parentPiece.id;
+        int parentPieceDepth = parentPiece.depth;
+        MutableBlockPos parentPiecePos = parentPiece.pos;
+        VoxelShape parentPieceInnerFreeSpace = null;
+        BlockBox parentPieceBox = parentPiece.box;
+
+        if (parentPieceDepth == MAX_DEPTH) {
+            acgen.src.main.java.kludwisz.ancientcity.Main.skipShuffle(rand, TrialChambersJigsawBlocks.get(parentPieceId).size());
+            return;
+        }
+
+        TrialChambersGenerator.BlockJigsawInfo[] parentJigsaws = this.parentJigsawsArr;
+        int parentJigsawsLen = getShuffledJigsawBlocks(rand, parentJigsaws, parentPieceId, parentPiece.rotation, parentPiecePos);
+        nextParentJigsaw:
+        for (int parentJigsawIndex = 0; parentJigsawIndex < parentJigsawsLen; parentJigsawIndex++) {
+            TrialChambersGenerator.BlockJigsawInfo parentJigsaw = parentJigsaws[parentJigsawIndex];
+
+            TrialChambersGenerator.Piece childPiece = this.pieces[this.piecesLen];
+            MutableBlockPos childPiecePos = childPiece.pos;
+            BlockBox childPieceBox = childPiece.box;
+
+            BlockDirection parentJigsawFront = parentJigsaw.front;
+            MutableBlockPos parentJigsawPos = parentJigsaw.pos;
+            this.childJigsawPos.set(
+                    parentJigsawPos.x + parentJigsawFront.getVector().getX(),
+                    parentJigsawPos.y + parentJigsawFront.getVector().getY(),
+                    parentJigsawPos.z + parentJigsawFront.getVector().getZ()
+            );
+
+            VoxelShape freeSpace;
+
+            if (BlockBoxUtil.contains(parentPieceBox, this.childJigsawPos)) {
+                if (parentPieceInnerFreeSpace == null) {
+                    parentPieceInnerFreeSpace = this.voxelShapes[parentPiece.index].init(parentPieceBox);
+                }
+                freeSpace = parentPieceInnerFreeSpace;
+            } else {
+                freeSpace = parentPiece.freeSpace;
+            }
+
+            boolean skip = false;
+            BlockBox childPieceMinBox = AncientCityJigsawBlocks.PIECE_TARGET_MIN_BOXES[parentPieceId].get(parentJigsaw.nbt.targetName);
+            if (childPieceMinBox != null) {
+                BlockBoxUtil.setRotateMove(this.childPieceMinBox, childPieceMinBox, parentPiece.rotation, childJigsawPos);
+                if (!isInsideFreeSpace(freeSpace, this.childPieceMinBox)) {
+                    skip = true;
+                }
+            }
+
+            int[] childTemplates = this.childTemplatesArr;
+            int childTemplatesLen = getShuffledTemplatesFromPool(rand, parentJigsaw.nbt.poolType, childTemplates);
+            for (int childTemplateIndex = 0; childTemplateIndex < childTemplatesLen; childTemplateIndex++) {
+                int childPieceId = childTemplates[childTemplateIndex];
+                if (childPieceId == 60) // empty piece
+                    break;
+
+                Set<BlockDirection> directions = AncientCityJigsawBlocks.PIECE_CONNECTION_DIRECTIONS[childPieceId].get(parentJigsaw.nbt.targetName);
+                if (directions == null || skip) {
+                    acgen.src.main.java.kludwisz.ancientcity.Main.skipShuffle(rand, 4);
+                    for (int i = 0; i < 4; i++) {
+                        acgen.src.main.java.kludwisz.ancientcity.Main.skipShuffle(rand, AncientCityJigsawBlocks.JIGSAW_BLOCKS_V2.get(childPieceId).size());
+                    }
+                    continue;
+                }
+
+                BlockRotation[] childRotations = this.childRotationsArr;
+                getShuffledBlockRotations(rand, childRotations);
+                for (BlockRotation childPieceRotation : childRotations) {
+
+                    BlockRotation childRotationInverse = switch (childPieceRotation) {
+                        case CLOCKWISE_90 -> BlockRotation.COUNTERCLOCKWISE_90;
+                        case COUNTERCLOCKWISE_90 -> BlockRotation.CLOCKWISE_90;
+                        default -> childPieceRotation;
+                    };
+                    if (!directions.contains(childRotationInverse.rotate(parentJigsawFront))) {
+                        acgen.src.main.java.kludwisz.ancientcity.Main.skipShuffle(rand, AncientCityJigsawBlocks.JIGSAW_BLOCKS_V2.get(childPieceId).size());
+                        continue;
+                    }
+
+                    BPos childPieceSize = AncientCityStructureSize.STRUCTURE_SIZE_V2.get(childPieceId);
+
+                    AncientCityGenerator.BlockJigsawInfo[] arr2 = this.childPieceJigsawBlocksArr;
+                    int len2 = getShuffledJigsawBlocks(rand, arr2, childPieceId, childPieceRotation, MutableBlockPos.ORIGIN);
+                    for (int ji2 = 0; ji2 < len2; ji2++) {
+                        AncientCityGenerator.BlockJigsawInfo childJigsaw = arr2[ji2];
+                        acgen.src.main.java.kludwisz.ancientcity.Main.A += 1;
+
+                        if (!parentJigsaw.canAttach(childJigsaw, parentJigsawFront)) continue;
+
+                        acgen.src.main.java.kludwisz.ancientcity.Main.B += 1;
+
+                        MutableBlockPos childJigsawOffset = childJigsaw.pos;
+                        childPiecePos.set(
+                                this.childJigsawPos.x - childJigsawOffset.x,
+                                this.childJigsawPos.y - childJigsawOffset.y,
+                                this.childJigsawPos.z - childJigsawOffset.z
+                        );
+
+                        if (childPieceSize.getX() < 1 || childPieceSize.getY() < 1 || childPieceSize.getZ() < 1) {
+                            BlockBoxUtil.set(childPieceBox, childPiecePos);
+                        } else {
+                            BlockBoxUtil.setSizeRotatePos(childPieceBox, childPieceSize, childPieceRotation, childPiecePos);
+                        }
+
+                        if (!isInsideFreeSpace(freeSpace, childPieceBox)) continue;
+
+                        Main.C += 1;
+
+                        freeSpace.cutout.add(childPieceBox);
+
+                        int childPieceDepth = parentPieceDepth + 1;
+                        childPiece.id = childPieceId;
+                        childPiece.rotation = childPieceRotation;
+                        childPiece.depth = childPieceDepth;
+                        childPiece.freeSpace = freeSpace;
+
+                        this.piecesLen += 1;
+
+                        if (childPieceDepth <= MAX_DEPTH){
+                            this.placing.addLast(childPiece);
+                        }
+
+                        continue nextParentJigsaw;
+                    }
+                }
+            }
+        }
     }
 
     public void printPieces() {
@@ -99,7 +250,7 @@ public class TrialChambersGenerator {
         }
     }
 
-    static public class Piece {
+    static public class Piece2 {
         int id;
         public BPos pos;
         BlockBox box;
@@ -111,7 +262,7 @@ public class TrialChambersGenerator {
             return TrialChambersPieceNames.get(this.id);
         }
 
-        Piece(int id, BPos pos, BlockBox box, BlockRotation rotation, int depth) {
+        Piece2(int id, BPos pos, BlockBox box, BlockRotation rotation, int depth) {
             this.id = id;
             this.pos = pos;
             this.box = box;
@@ -160,11 +311,69 @@ public class TrialChambersGenerator {
         }
     }
 
+    static public class Piece {
+        public int id;
+        public MutableBlockPos pos;
+        public BlockBox box;
+        public BlockRotation rotation;
+        public VoxelShape freeSpace;
+        public int depth;
+        int index;
+
+        public String getName(){
+            return TrialChambersPieceNames.get(this.id);
+        }
+
+        public Piece(int index) {
+            this.pos = new MutableBlockPos();
+            this.box = new BlockBox(0, 0, 0, 0, 0, 0);
+            this.index = index;
+        }
+
+        public void move(int x, int y, int z) {
+            this.pos.offset(x, y, z);
+            this.box.move(x, y, z);
+        }
+    }
+
     public static class BlockJigsawInfo {
+        public JigsawBlock nbt;
+        public MutableBlockPos pos = new MutableBlockPos();
+        //        public BPos pos;
+        public BlockDirection front;
+        public BlockJigsawInfo() {
+
+        }
+
+        public static BlockDirection getOpposite(BlockDirection b){
+            switch (b) {
+                case NORTH:
+                    return BlockDirection.SOUTH;
+                case SOUTH:
+                    return BlockDirection.NORTH;
+                case WEST:
+                    return BlockDirection.EAST;
+                case EAST:
+                    return BlockDirection.WEST;
+                case DOWN:
+                    return BlockDirection.UP;
+                case UP:
+                    return BlockDirection.DOWN;
+                default:
+                    throw new IllegalStateException("Unable to get facing of " );
+            }
+        }
+
+        public boolean canAttach(AncientCityGenerator.BlockJigsawInfo blockJigsawInfo2, BlockDirection direction) {
+            return (direction.ordinal() ^ 1) == blockJigsawInfo2.front.ordinal() && this.nbt.targetName.equals(blockJigsawInfo2.nbt.name);
+        }
+    }
+
+    public static class BlockJigsawInfo2 {
         JigsawBlock nbt;
         BPos pos;
         BlockRotation rotation;
-        public BlockJigsawInfo(JigsawBlock nbt, BPos pos, BlockRotation rotation) {
+        public BlockJigsawInfo2(JigsawBlock nbt, BPos pos, BlockRotation rotation) {
             this.nbt = nbt;
             this.pos = pos;
             this.rotation = rotation;
