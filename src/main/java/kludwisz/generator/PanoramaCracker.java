@@ -341,7 +341,7 @@ public class PanoramaCracker {
                     System.out.println("(" + i + ")  Good y and rotation: " + structureSeed);
 
                     // bruteforce structure seed - generate trial chambers
-                    ModifiedTrialChambersGenerator trialChambersGenerator = new ModifiedTrialChambersGenerator(targetMatchesTest - 1);
+                    ModifiedTrialChambersGenerator trialChambersGenerator = new ModifiedTrialChambersGenerator(targetMatchesTest);
                     boolean result = trialChambersGenerator.generate(structureSeed, chunkXTest, chunkZTest, rand, pieceMapTest, uniquePieceMapTest);
                     if (!result) {
                         System.out.println("Failed test case: " + structureSeed + " bad generation");
@@ -398,7 +398,12 @@ public class PanoramaCracker {
         int threshold = rand.nextInt(6) + 10;
 
         for (TrialChambersGenerator.Piece piece : shuffledPieces) {
-            if (piece.getName().contains("corridor/atrium/grand_staircase_") || piece.getName().contains("intersection/intersection_") || piece.getName().equals("corridor/atrium_1") || piece.getName().equals("corridor/first_plate"))
+            if (    piece.getName().contains("corridor/atrium/grand_staircase_")
+                    || piece.getName().contains("intersection/intersection_")
+                    || piece.getName().equals("corridor/atrium_1")
+                    || piece.getName().equals("corridor/first_plate")
+                    || piece.getName().contains("corridor/end_")
+            )
                 continue;
             pieces.add(new PieceData(piece.getName(), piece.pos));
             targetMatches++;

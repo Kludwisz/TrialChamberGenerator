@@ -7,9 +7,9 @@ import java.util.Scanner;
 
 public class Main {
 	public static void main(String[] args) throws Exception {
-		// PanoramaCracker.test();
-		// PanoramaCracker.fullTest();
-		PanoramaCracker.runAutomatedTests(10000);
+		// PanoramaCracker.runAutomatedTests(1000); // no errors w/ strict matching
+		// PanoramaCracker.runAutomatedTests(3000); // no errors w/ non-strict matching
+
 		// runMicroboincApp(args);
 	}
 
