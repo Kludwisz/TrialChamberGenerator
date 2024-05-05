@@ -8,6 +8,7 @@ import com.seedfinding.mcmath.util.Mth;
 import com.seedfinding.mcseed.lcg.LCG;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class PanoramaCracker {
     private static class PieceData {
@@ -101,18 +102,16 @@ public class PanoramaCracker {
         pds.addUniquePiece("corridor/atrium/grand_staircase_3", new BPos(-19, -21, -7));
 
         // certain pieces
-        pds.addCertainPiece("corridor/atrium/bogged_relief", new BPos(-12, -21, 7));
-        pds.addCertainPiece("corridor/atrium/breeze_relief", new BPos(-23, -21, -9));
-        pds.addCertainPiece("corridor/straight_3", new BPos(-7, -22, 8));
-        pds.addCertainPiece("corridor/straight_4", new BPos(-2, -22, 8));
-        pds.addCertainPiece("decor/dead_bush_pot", new BPos(-6, -19, 6));
-        pds.addCertainPiece("decor/candle_3", new BPos(-5, -19, 6));
-        pds.addCertainPiece("decor/empty_pot", new BPos(-4, -19, 6));
-        pds.addCertainPiece("decor/barrel", new BPos(-1, -19, 6));
-        pds.addCertainPiece("decor/flow_pot", new BPos(-5, -21, 1));
-        pds.addCertainPiece("decor/barrel", new BPos(-1, -21, 1));
-
-        // uncertain pieces
+        pds.addUncertainPiece("corridor/atrium/bogged_relief", new BPos(-12, -21, 7));
+        pds.addUncertainPiece("corridor/atrium/breeze_relief", new BPos(-23, -21, -9));
+        pds.addUncertainPiece("corridor/straight_3", new BPos(-7, -22, 8));
+        pds.addUncertainPiece("corridor/straight_4", new BPos(-2, -22, 8));
+        pds.addUncertainPiece("decor/dead_bush_pot", new BPos(-6, -19, 6));
+        pds.addUncertainPiece("decor/candle_3", new BPos(-5, -19, 6));
+        pds.addUncertainPiece("decor/empty_pot", new BPos(-4, -19, 6));
+        pds.addUncertainPiece("decor/barrel", new BPos(-1, -19, 6));
+        pds.addUncertainPiece("decor/flow_pot", new BPos(-5, -21, 1));
+        pds.addUncertainPiece("decor/barrel", new BPos(-1, -21, 1));
         pds.addUncertainPiece("_pot", new BPos(10, -21, 1));
         pds.addUncertainPiece("_pot", new BPos(11, -21, 1));
         pds.addUncertainPiece("_pot", new BPos(5, -21, 1));
@@ -132,6 +131,8 @@ public class PanoramaCracker {
         pds.addCertainEmptyPiece(new BPos(-1, -8, 1));
         pds.addCertainEmptyPiece(new BPos(4, -8, 1));
         pds.addCertainEmptyPiece(new BPos(9, -8, 1));
+
+        crack(rangeStart, rangeEnd, pds);
     }
 
     public static void crack(long rangeStart, long rangeEnd, PieceDataSet dataSet) {
@@ -297,4 +298,146 @@ public class PanoramaCracker {
         }
     }
      */
+
+    @SuppressWarnings("unused")
+    public static void runAutomatedTests(int scale) {
+        TrialChambers TC = new TrialChambers(MCVersion.v1_20);
+        ChunkRand rand = new ChunkRand();
+
+        for (int i = 0; i < scale; i++) {
+            // create the basic test data
+            rand.setSeed(i, false);
+            long worldseed = rand.nextLong();
+            long structseed = worldseed & Mth.MASK_48;
+
+            rand.setRegionSeed(structseed, 0, 0, TC.getSalt(), MCVersion.v1_20);
+
+            long seed0 = rand.getSeed();
+
+            int chunkXTest = rand.nextInt(22);
+            long randUp31 = rand.getSeed() >> 17;
+            long randLow17 = rand.getSeed() & Mth.getMask(17);
+            int chunkZTest = rand.nextInt(22);
+
+            int advanceCount = 0;
+            while (rand.getSeed() != seed0) {
+                rand.advance(-1);
+                advanceCount++;
+            }
+
+            if (advanceCount != 2) // 2 in 97 000 000 chance
+                continue;
+
+            rand.setCarverSeed(structseed, chunkXTest, chunkZTest, MCVersion.v1_20);
+            int startPieceYTest = rand.nextInt(21) - 41;
+            int rotTest = rand.nextInt(4);
+
+            PieceDataSet pieces = new PieceDataSet(startPieceYTest, rotTest);
+            createStructureData(structseed, chunkXTest, chunkZTest, pieces, rand);
+
+            for (long n = 0; n <= (long)Math.ceil((1L<<31) / 22.0); n++) {
+                long upper31 = (n * 22L + chunkXTest) << 17;
+                if ((upper31>>17) != randUp31)
+                    continue;
+
+                //iterate over lower 17 bits
+                for (long lower17 = 0; lower17 < (1L<<17); lower17++) {
+                    if (lower17 != randLow17)
+                        continue;
+                    long internalSeed = upper31 | lower17;
+
+                    rand.setSeed(internalSeed, false);
+                    if (rand.nextInt(22) != chunkZTest)
+                        continue;
+
+                    // reverse region seed into structure seed
+                    rand.advance(-2);
+                    long structureSeed = (rand.getSeed() ^ LCG.JAVA.multiplier) - TC.getSalt();
+                    if (structureSeed != structseed) {
+                        System.out.println("Failed test case: " + structureSeed);
+                        return;
+                    }
+                    System.out.println("(" + i + ")  Good structure seed: " + structureSeed);
+
+                    // check basic carver seed conditions
+                    rand.setCarverSeed(structureSeed, chunkXTest, chunkZTest, MCVersion.v1_20);
+                    int y = rand.nextInt(21) - 41;
+                    if (y != startPieceYTest) {
+                        System.out.println("Failed test case: " + structureSeed + " bad y: " + y + " " + startPieceYTest);
+                        return;
+                    }
+                    if (rand.nextInt(4) != rotTest) {
+                        System.out.println("Failed test case: " + structureSeed + " bad rot: " + rotTest);
+                        return;
+                    }
+                    System.out.println("(" + i + ")  Good y and rotation: " + structureSeed);
+
+                    // bruteforce structure seed - generate trial chambers
+                    ModifiedTrialChambersGenerator trialChambersGenerator = new ModifiedTrialChambersGenerator();
+                    boolean result = trialChambersGenerator.generate(structureSeed, chunkXTest, chunkZTest, rand, pieces);
+                    if (!result) {
+                        System.out.println("Failed test case: " + structureSeed + " bad generation");
+                        return;
+                    }
+                    System.out.println("(" + i + ")  Good generation: " + structureSeed);
+                }
+            }
+        }
+    }
+
+    @SuppressWarnings("unused")
+    private static void createStructureData(long structseed, int cx, int cz, PieceDataSet dataSet, ChunkRand rand) {
+        TrialChambersGenerator tcg = new TrialChambersGenerator();
+        tcg.generate(structseed, cx, cz, rand);
+
+        // create unique piece data
+        for (TrialChambersGenerator.Piece piece : tcg.getPieces()) {
+            if (piece.getName().contains("corridor/atrium/grand_staircase_")) {
+                dataSet.addUniquePiece(piece.getName(), piece.pos);
+
+                if (!piece.getName().contains("1"))
+                    dataSet.addBannedPiece("corridor/atrium/grand_staircase_1");
+                if (!piece.getName().contains("2"))
+                    dataSet.addBannedPiece("corridor/atrium/grand_staircase_2");
+                if (!piece.getName().contains("3"))
+                    dataSet.addBannedPiece("corridor/atrium/grand_staircase_3");
+            }
+            else if (piece.getName().contains("intersection/intersection_")) {
+                dataSet.addUniquePiece(piece.getName(), piece.pos);
+
+                if (!piece.getName().contains("1"))
+                    dataSet.addBannedPiece("intersection/intersection_1");
+                if (!piece.getName().contains("2"))
+                    dataSet.addBannedPiece("intersection/intersection_2");
+                if (!piece.getName().contains("3"))
+                    dataSet.addBannedPiece("intersection/intersection_3");
+            }
+            else if (piece.getName().equals("corridor/atrium_1")) {
+                dataSet.addUniquePiece(piece.getName(), piece.pos);
+            }
+            else if (piece.getName().equals("corridor/first_plate")) {
+                dataSet.addUniquePiece(piece.getName(), piece.pos);
+            }
+        }
+
+        // select other, random pieces from the generator and add them to the list
+        List<TrialChambersGenerator.Piece> shuffledPieces = tcg.getPieces();
+        rand.shuffle(shuffledPieces);
+        int threshold = rand.nextInt(6) + 15;
+
+        for (TrialChambersGenerator.Piece piece : shuffledPieces) {
+            if (    piece.getName().contains("corridor/atrium/grand_staircase_")
+                    || piece.getName().contains("intersection/intersection_")
+                    || piece.getName().equals("corridor/atrium_1")
+                    || piece.getName().equals("corridor/first_plate")
+                    || piece.getName().contains("corridor/end_")
+            )
+                continue;
+
+            dataSet.addUncertainPiece(piece.getName(), piece.pos);
+            threshold--;
+            if (threshold <= 0)
+                break;
+        }
+    }
 }

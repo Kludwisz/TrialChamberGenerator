@@ -9,11 +9,9 @@ import java.util.HashSet;
 public class PieceDataSet {
     public static final int MAX_UNIQUE_OFFSET_TOLERANCE = 1;
     public static final int MAX_UNCERTAIN_TOLERANCE = 3;
-    public static final int MAX_CERTAIN_TOLERANCE = 1;
 
     private final HashSet<String> bannedPieces = new HashSet<>();
     private final HashMap<String, BPos> uniquePieces = new HashMap<>();
-    private final HashMap<BPos, String> certainPieces = new HashMap<>();
     private final HashSet<BPos> certainEmptyPieces = new HashSet<>();
     private final HashMap<BPos, String> uncertainPieces = new HashMap<>();
 
@@ -36,11 +34,6 @@ public class PieceDataSet {
         targetMatches++;
     }
 
-    public void addCertainPiece(String piece, BPos pos) {
-        certainPieces.put(pos, piece);
-        targetMatches++;
-    }
-
     public void addCertainEmptyPiece(BPos pos) {
         certainEmptyPieces.add(pos);
     }
@@ -60,6 +53,9 @@ public class PieceDataSet {
         if (bannedPieces.contains(piecename))
             return PieceCheckResult.BAD_CERTAIN;
 
+        if (certainEmptyPieces.contains(pos))
+            return PieceCheckResult.BAD_CERTAIN;
+
         if (uniquePieces.containsKey(piecename)) {
             BPos uniquePos = uniquePieces.get(piecename);
             if (pos.equals(uniquePos))
@@ -69,16 +65,6 @@ public class PieceDataSet {
             return PieceCheckResult.BAD_CERTAIN;
         }
 
-        if (certainPieces.containsKey(pos)) {
-            String certainPiece = certainPieces.get(pos);
-            if (certainPiece.equals(piecename))
-                return PieceCheckResult.GOOD;
-            return PieceCheckResult.BAD_CERTAIN;
-        }
-
-        if (certainEmptyPieces.contains(pos))
-            return PieceCheckResult.BAD_CERTAIN;
-
         if (uncertainPieces.containsKey(pos)) {
             String uncertainPiece = uncertainPieces.get(pos);
             if (piecename.contains(uncertainPiece))
@@ -86,12 +72,13 @@ public class PieceDataSet {
             return PieceCheckResult.BAD_UNCERTAIN;
         }
 
-        return PieceCheckResult.GOOD;
+        return PieceCheckResult.NEUTRAL;
     }
 
     // --------------------------------------------------------------
 
     public enum PieceCheckResult {
+        NEUTRAL,
         GOOD,
         BAD_UNCERTAIN,
         BAD_CERTAIN

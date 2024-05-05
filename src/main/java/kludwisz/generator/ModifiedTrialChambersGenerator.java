@@ -69,7 +69,7 @@ public class ModifiedTrialChambersGenerator {
             assembler.tryPlacing(nextPiece, rand);
         }
 
-        return assembler.success;
+        return assembler.wasSuccesful;
     }
 
     static public class Piece {
@@ -173,17 +173,20 @@ public class ModifiedTrialChambersGenerator {
         int maxDepth;
 
         private final PieceDataSet dataSet;
-        private int matches = 0;
-        private int certainMisses = 0;
-        private int uncertainMisses = 0;
-        private boolean halted = false;
-        public boolean success = false;
+        private int matches;
+        private int uncertainMisses;
+        private boolean halted;
+        public boolean wasSuccesful;
 
         private final SequencedPriorityIterator<Piece> placing = new SequencedPriorityIterator<>();
 
         Assembler(int maxDepth, PieceDataSet dataSet) {
             this.maxDepth = maxDepth;
             this.dataSet = dataSet;
+            this.halted = false;
+            this.wasSuccesful = false;
+            this.uncertainMisses = 0;
+            this.matches = 0;
         }
 
         public void tryPlacing(Piece piece, ChunkRand rand) {
@@ -296,21 +299,19 @@ public class ModifiedTrialChambersGenerator {
 
                                             switch (result) {
                                                 case BAD_CERTAIN:
-                                                    certainMisses++;
-                                                    if (certainMisses > PieceDataSet.MAX_CERTAIN_TOLERANCE) {
-                                                        this.halted = true;
-                                                        return;
-                                                    }
+                                                    this.halted = true;
+                                                    return;
                                                 case BAD_UNCERTAIN:
                                                     uncertainMisses++;
                                                     if (uncertainMisses > PieceDataSet.MAX_UNCERTAIN_TOLERANCE) {
                                                         this.halted = true;
                                                         return;
                                                     }
+                                                    break;
                                                 case GOOD:
                                                     matches++;
                                                     if (matches >= dataSet.targetMatches - PieceDataSet.MAX_UNCERTAIN_TOLERANCE) {
-                                                        this.success = true;
+                                                        this.wasSuccesful = true;
                                                         this.halted = true;
                                                         return;
                                                     }

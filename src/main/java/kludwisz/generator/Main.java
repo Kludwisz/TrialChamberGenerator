@@ -7,7 +7,8 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		// PanoramaCracker.test();
 		// PanoramaCracker.fullTest();
-		runMicroboincApp(args);
+		// runMicroboincApp(args);
+		// PanoramaCracker.runAutomatedTests(1000);
 	}
 
 	public static void runMicroboincApp(String[] args) throws Exception {
