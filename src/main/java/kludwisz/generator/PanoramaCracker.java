@@ -3,7 +3,6 @@ package kludwisz.generator;
 import com.seedfinding.mccore.rand.ChunkRand;
 import com.seedfinding.mccore.util.block.BlockRotation;
 import com.seedfinding.mccore.util.pos.BPos;
-import com.seedfinding.mccore.util.pos.CPos;
 import com.seedfinding.mccore.version.MCVersion;
 import com.seedfinding.mcmath.util.Mth;
 import com.seedfinding.mcseed.lcg.LCG;
@@ -11,7 +10,6 @@ import com.seedfinding.mcseed.lcg.LCG;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
 public class PanoramaCracker {
     private static class PieceData {
@@ -125,7 +123,7 @@ public class PanoramaCracker {
                     continue;
 
                 // bruteforce structure seed - generate trial chambers
-                ModifiedTrialChambersGenerator trialChambersGenerator = new ModifiedTrialChambersGenerator(targetMatches);
+                ModifiedTrialChambersGenerator trialChambersGenerator = new ModifiedTrialChambersGenerator(targetMatches - 1);
                 trialChambersGenerator.generate(structureSeed, chunkX, chunkZ, rand, pieceMap, uniquePieceMap);
             }
         }
@@ -265,6 +263,7 @@ public class PanoramaCracker {
         }
     }
 
+    @SuppressWarnings("unused")
     public static void runAutomatedTests(int scale) {
         TrialChambers TC = new TrialChambers(MCVersion.v1_20);
         ChunkRand rand = new ChunkRand();
@@ -353,6 +352,7 @@ public class PanoramaCracker {
         }
     }
 
+    @SuppressWarnings("unused")
     private static int createStructureData(long structseed, int cx, int cz, ArrayList<PieceData> pieces, ArrayList<PieceData> uniquePieces, ChunkRand rand) {
         TrialChambersGenerator tcg = new TrialChambersGenerator();
         tcg.generate(structseed, cx, cz, rand);
