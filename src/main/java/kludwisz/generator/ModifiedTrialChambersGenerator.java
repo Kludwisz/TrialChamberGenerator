@@ -29,11 +29,13 @@ public class ModifiedTrialChambersGenerator {
     private static final ArrayList<Integer> START_TEMPLATES = getTemplatesFromPool(Objects.requireNonNull(TrialChambersPools.get(START_POOL_ID)));
 
     private final int targetMatches;
+    public boolean wasSuccessful;
     public ModifiedTrialChambersGenerator(int targetMatches) {
         this.targetMatches = targetMatches;
+        this.wasSuccessful = false;
     }
 
-    public void generate(long worldseed, int chunkX, int chunkZ, ChunkRand rand, HashMap<BPos, String> dataMap, HashMap<String, BPos> uniquePieceMap) {
+    public boolean generate(long worldseed, int chunkX, int chunkZ, ChunkRand rand, HashMap<BPos, String> dataMap, HashMap<String, BPos> uniquePieceMap) {
         rand.setCarverSeed(worldseed, chunkX, chunkZ, MCVersion.v1_20);
         int pickedY = rand.nextInt(21) - 41;
         BlockRotation rotation = BlockRotation.getRandom(rand);
@@ -70,6 +72,8 @@ public class ModifiedTrialChambersGenerator {
 
             assembler.tryPlacing(nextPiece, rand);
         }
+
+        return assembler.wasSuccessful;
     }
 
     static public class Piece {
@@ -174,6 +178,7 @@ public class ModifiedTrialChambersGenerator {
         int matches;
         int targetMatches;
         boolean halted = false;
+        boolean wasSuccessful = false;
         long structseed;
 
         private final SequencedPriorityIterator<Piece> placing = new SequencedPriorityIterator<>();
@@ -319,6 +324,7 @@ public class ModifiedTrialChambersGenerator {
                                             if (matches >= this.targetMatches) {
                                                 System.out.println(this.structseed);
                                                 this.halted = true;
+                                                this.wasSuccessful = true;
                                                 return;
                                             }
 

@@ -9,9 +9,7 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		// PanoramaCracker.test();
 		// PanoramaCracker.fullTest();
-		TrialChambersGenerator tcg = new TrialChambersGenerator();
-		tcg.generate(123L, 14, 11, new ChunkRand());
-		tcg.printPieces();
+		PanoramaCracker.runAutomatedTests(10000);
 		// runMicroboincApp(args);
 	}
 

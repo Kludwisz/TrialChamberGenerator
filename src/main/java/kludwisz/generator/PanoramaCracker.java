@@ -3,11 +3,15 @@ package kludwisz.generator;
 import com.seedfinding.mccore.rand.ChunkRand;
 import com.seedfinding.mccore.util.block.BlockRotation;
 import com.seedfinding.mccore.util.pos.BPos;
+import com.seedfinding.mccore.util.pos.CPos;
 import com.seedfinding.mccore.version.MCVersion;
 import com.seedfinding.mcmath.util.Mth;
 import com.seedfinding.mcseed.lcg.LCG;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
 
 public class PanoramaCracker {
     private static class PieceData {
@@ -259,5 +263,149 @@ public class PanoramaCracker {
                 trialChambersGenerator.generate(structureSeed, chunkXTest, chunkZTest, rand, pieceMapTest, uniquePieceMapTest);
             }
         }
+    }
+
+    public static void runAutomatedTests(int scale) {
+        TrialChambers TC = new TrialChambers(MCVersion.v1_20);
+        ChunkRand rand = new ChunkRand();
+
+        for (int i = 0; i < scale; i++) {
+            // create the basic test data
+            rand.setSeed(i, false);
+            long worldseed = rand.nextLong();
+            long structseed = worldseed & Mth.MASK_48;
+
+            rand.setRegionSeed(structseed, 0, 0, TC.getSalt(), MCVersion.v1_20);
+
+            long seed0 = rand.getSeed();
+
+            int chunkXTest = rand.nextInt(22);
+            long randUp31 = rand.getSeed() >> 17;
+            long randLow17 = rand.getSeed() & Mth.getMask(17);
+            int chunkZTest = rand.nextInt(22);
+
+            int advanceCount = 0;
+            while (rand.getSeed() != seed0) {
+                rand.advance(-1);
+                advanceCount++;
+            }
+
+            if (advanceCount != 2) // 2 in 97 000 000 chance
+                continue;
+
+            rand.setCarverSeed(structseed, chunkXTest, chunkZTest, MCVersion.v1_20);
+            int startPieceYTest = rand.nextInt(21) - 41;
+            int rotTest = rand.nextInt(4);
+
+            ArrayList<PieceData> pieces = new ArrayList<>();
+            ArrayList<PieceData> uniquePieces = new ArrayList<>();
+            int targetMatchesTest = createStructureData(structseed, chunkXTest, chunkZTest, pieces, uniquePieces, rand);
+            HashMap<BPos, String> pieceMapTest = createPieceMap(pieces.toArray(new PieceData[0]));
+            HashMap<String, BPos> uniquePieceMapTest = createUniquePieceMap(uniquePieces.toArray(new PieceData[0]));
+
+            for (long n = 0; n <= (long)Math.ceil((1L<<31) / 22.0); n++) {
+                long upper31 = (n * 22L + chunkXTest) << 17;
+                if ((upper31>>17) != randUp31)
+                    continue;
+
+                //iterate over lower 17 bits
+                for (long lower17 = 0; lower17 < (1L<<17); lower17++) {
+                    if (lower17 != randLow17)
+                        continue;
+                    long internalSeed = upper31 | lower17;
+
+                    rand.setSeed(internalSeed, false);
+                    if (rand.nextInt(22) != chunkZTest)
+                        continue;
+
+                    // reverse region seed into structure seed
+                    rand.advance(-2);
+                    long structureSeed = (rand.getSeed() ^ LCG.JAVA.multiplier) - TC.getSalt();
+                    if (structureSeed != structseed) {
+                        System.out.println("Failed test case: " + structureSeed);
+                        return;
+                    }
+                    System.out.println("(" + i + ")  Good structure seed: " + structureSeed);
+
+                    // check basic carver seed conditions
+                    rand.setCarverSeed(structureSeed, chunkXTest, chunkZTest, MCVersion.v1_20);
+                    int y = rand.nextInt(21) - 41;
+                    if (y != startPieceYTest) {
+                        System.out.println("Failed test case: " + structureSeed + " bad y: " + y + " " + startPieceYTest);
+                        return;
+                    }
+                    if (rand.nextInt(4) != rotTest) {
+                        System.out.println("Failed test case: " + structureSeed + " bad rot: " + rotTest);
+                        return;
+                    }
+                    System.out.println("(" + i + ")  Good y and rotation: " + structureSeed);
+
+                    // bruteforce structure seed - generate trial chambers
+                    ModifiedTrialChambersGenerator trialChambersGenerator = new ModifiedTrialChambersGenerator(targetMatchesTest - 1);
+                    boolean result = trialChambersGenerator.generate(structureSeed, chunkXTest, chunkZTest, rand, pieceMapTest, uniquePieceMapTest);
+                    if (!result) {
+                        System.out.println("Failed test case: " + structureSeed + " bad generation");
+                        return;
+                    }
+                    System.out.println("(" + i + ")  Good generation: " + structureSeed);
+                }
+            }
+        }
+    }
+
+    private static int createStructureData(long structseed, int cx, int cz, ArrayList<PieceData> pieces, ArrayList<PieceData> uniquePieces, ChunkRand rand) {
+        TrialChambersGenerator tcg = new TrialChambersGenerator();
+        tcg.generate(structseed, cx, cz, rand);
+        int targetMatches = 0;
+
+        // create unique piece data
+        for (TrialChambersGenerator.Piece piece : tcg.getPieces()) {
+            if (piece.getName().contains("corridor/atrium/grand_staircase_")) {
+                uniquePieces.add(new PieceData(piece.getName(), piece.pos));
+                targetMatches++;
+
+                if (!piece.getName().contains("1"))
+                    uniquePieces.add(new PieceData("corridor/atrium/grand_staircase_1", BAD_PIECE_MARKER));
+                if (!piece.getName().contains("2"))
+                    uniquePieces.add(new PieceData("corridor/atrium/grand_staircase_2", BAD_PIECE_MARKER));
+                if (!piece.getName().contains("3"))
+                    uniquePieces.add(new PieceData("corridor/atrium/grand_staircase_3", BAD_PIECE_MARKER));
+            }
+            else if (piece.getName().contains("intersection/intersection_")) {
+                uniquePieces.add(new PieceData(piece.getName(), piece.pos));
+                targetMatches++;
+
+                if (!piece.getName().contains("1"))
+                    uniquePieces.add(new PieceData("intersection/intersection_1", BAD_PIECE_MARKER));
+                if (!piece.getName().contains("2"))
+                    uniquePieces.add(new PieceData("intersection/intersection_2", BAD_PIECE_MARKER));
+                if (!piece.getName().contains("3"))
+                    uniquePieces.add(new PieceData("intersection/intersection_3", BAD_PIECE_MARKER));
+            }
+            else if (piece.getName().equals("corridor/atrium_1")) {
+                uniquePieces.add(new PieceData(piece.getName(), piece.pos));
+                targetMatches++;
+            }
+            else if (piece.getName().equals("corridor/first_plate")) {
+                uniquePieces.add(new PieceData(piece.getName(), piece.pos));
+                targetMatches++;
+            }
+        }
+
+        // select other, random pieces from the generator and add them to the list
+        List<TrialChambersGenerator.Piece> shuffledPieces = tcg.getPieces();
+        rand.shuffle(shuffledPieces);
+        int threshold = rand.nextInt(6) + 10;
+
+        for (TrialChambersGenerator.Piece piece : shuffledPieces) {
+            if (piece.getName().contains("corridor/atrium/grand_staircase_") || piece.getName().contains("intersection/intersection_") || piece.getName().equals("corridor/atrium_1") || piece.getName().equals("corridor/first_plate"))
+                continue;
+            pieces.add(new PieceData(piece.getName(), piece.pos));
+            targetMatches++;
+            if (targetMatches >= threshold)
+                break;
+        }
+
+        return targetMatches;
     }
 }

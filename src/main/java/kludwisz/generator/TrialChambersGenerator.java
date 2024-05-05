@@ -88,6 +88,10 @@ public class TrialChambersGenerator {
         return true;
     }
 
+    public List<Piece> getPieces() {
+        return this.pieces;
+    }
+
     public void printPieces() {
         for (Piece p : this.pieces) {
             System.out.println(p.getName() + "  /tp  " + p.pos.getX() + " " + p.pos.getY() + " " + p.pos.getZ());
@@ -398,11 +402,6 @@ public class TrialChambersGenerator {
 
     public static int getDecorationSalt() {
         return 30004;
-    }
-
-
-    public List<Piece> getPieces() {
-        return this.pieces;
     }
 
 
