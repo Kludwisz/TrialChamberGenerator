@@ -8,6 +8,9 @@ import java.io.File;
 import java.util.Scanner;
 
 public class Main {
+	public static int A = 0, B = 0, C = 0;
+
+
 	public static void main(String[] args) throws Exception {
 		// PanoramaCracker.runAutomatedTests(1000); // no errors w/ strict matching
 		// PanoramaCracker.runAutomatedTests(3000); // no errors w/ non-strict matching

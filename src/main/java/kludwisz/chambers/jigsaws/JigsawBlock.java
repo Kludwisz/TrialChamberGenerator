@@ -13,8 +13,8 @@ public class JigsawBlock {
     public BlockDirection direction2;
     public BPos relativePos;
     
-    private final int selectionPriority;
-    private final int placementPriority;
+    public final int selectionPriority;
+    public final int placementPriority;
 
     public JigsawBlock(int poolType, JointType jointType, String name, String targetName,
                        BlockDirection direction1, BlockDirection direction2, BPos relativePos,
