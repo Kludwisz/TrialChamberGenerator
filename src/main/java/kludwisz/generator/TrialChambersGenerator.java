@@ -233,8 +233,14 @@ public class TrialChambersGenerator {
             int minY = box.minY;
 
             // System.out.println("Shuffle for piece " + piece.getName());
+            System.out.println(" ==== JIGSAWS");
+            List<BlockJigsawInfo> jigsaws = piece.getShuffledJigsawBlocks(pos, rand);
+            for (BlockJigsawInfo bji : jigsaws) {
+                System.out.print(bji.nbt.targetName + ",  ");
+            }
+            System.out.println();
             label139:
-            for (BlockJigsawInfo blockJigsawInfo : piece.getShuffledJigsawBlocks(pos, rand)) {
+            for (BlockJigsawInfo blockJigsawInfo : jigsaws) { // TODO rollback
                 BlockDirection blockDirection = blockJigsawInfo.getFront();
                 BPos blockPos = blockJigsawInfo.pos;
                 BPos relativeBlockPos = new BPos(blockPos.getX() + blockDirection.getVector().getX(),
