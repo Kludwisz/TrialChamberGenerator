@@ -61,6 +61,7 @@ public class TrialChambersGenerator {
         }
     }
 
+    public int i = 0;
     public boolean generate(long worldseed, int chunkX, int chunkZ, ChunkRand rand) {
         this.piecesLen = 0;
 
@@ -110,6 +111,7 @@ public class TrialChambersGenerator {
     }
 
     public void tryPlacing(TrialChambersGenerator.Piece parentPiece, ChunkRand rand) {
+        //System.out.println("Parent piece: " + parentPiece.getName() + " rotation " + parentPiece.rotation.name() + "  RAND: " + rand.getSeed());
         int parentPieceId = parentPiece.id;
         int parentPieceDepth = parentPiece.depth;
         MutableBlockPos parentPiecePos = parentPiece.pos;
@@ -122,11 +124,11 @@ public class TrialChambersGenerator {
         }
 
         TrialChambersGenerator.BlockJigsawInfo[] parentJigsaws = this.parentJigsawsArr;
-        //System.out.println("RAND: before shuffled jigsaws: " + rand.getSeed());
+        System.out.println("RAND: before shuffled jigsaws: " + rand.getSeed());
         int parentJigsawsLen = getShuffledJigsawBlocks(rand, parentJigsaws, parentPieceId, parentPiece.rotation, parentPiecePos);
         nextParentJigsaw:
         for (int parentJigsawIndex = 0; parentJigsawIndex < parentJigsawsLen; parentJigsawIndex++) {
-            //System.out.println("RAND: inside shuffled jigsaws: " + rand.getSeed());
+            System.out.println("RAND: inside shuffled jigsaws: " + rand.getSeed());
             TrialChambersGenerator.BlockJigsawInfo parentJigsaw = parentJigsaws[parentJigsawIndex];
 
             TrialChambersGenerator.Piece childPiece = this.pieces[this.piecesLen];
@@ -179,10 +181,13 @@ public class TrialChambersGenerator {
                 }
 
                 BlockRotation[] childRotations = this.childRotationsArr;
-                //System.out.println("RAND: before shuffled rotations: " + rand.getSeed());
+                System.out.println("RAND: before shuffled rotations: " + rand.getSeed());
                 getShuffledBlockRotations(rand, childRotations);
                 for (BlockRotation childPieceRotation : childRotations) {
-                    //System.out.println("RAND: inside shuffled rotations: " + childPieceRotation.name() + " " + rand.getSeed());
+                    System.out.println("RAND: inside shuffled rotations: " + childPieceRotation.name() + " " + rand.getSeed());
+                    i++;
+                    if (i > 1000) return;
+
                     BlockRotation childRotationInverse;
                     switch (childPieceRotation) {
                         case CLOCKWISE_90:
