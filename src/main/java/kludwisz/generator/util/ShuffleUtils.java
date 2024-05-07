@@ -6,7 +6,7 @@ import com.seedfinding.mcseed.rand.JRand;
 public class ShuffleUtils {
     public static void skipShuffle(JRand rand, int size) {
         for (int i = size; i > 1; i--)
-            rand.nextInt(size);
+            rand.nextInt(i);
     }
 
     public static void shuffle(JRand rand, BlockRotation[] arr) {
@@ -42,5 +42,22 @@ public class ShuffleUtils {
             arr[i - 1] = arr[j];
             arr[j] = tmp;
         }
+    }
+
+    public static void shuffleFallbackPool21(JRand rand, int[] arr, final int len) {
+        int j = len + rand.nextInt(4);
+        int tmp = arr[len + 3];
+        arr[len + 3] = arr[j];
+        arr[j] = tmp;
+
+        j = len + rand.nextInt(3);
+        tmp = arr[len + 2];
+        arr[len + 2] = arr[j];
+        arr[j] = tmp;
+
+        j = len + rand.nextInt(2);
+        tmp = arr[len + 1];
+        arr[len + 1] = arr[j];
+        arr[j] = tmp;
     }
 }

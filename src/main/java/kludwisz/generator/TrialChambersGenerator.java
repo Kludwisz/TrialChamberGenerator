@@ -26,21 +26,22 @@ import kludwisz.util.VoxelShape;
 
 public class TrialChambersGenerator {
     public static final int EMPTY_PIECE_ID = 170;
+    public static final int EMPTY_POOL_ID = 45;
 
     private static final int MAX_DIST = 116; // max distance from start piece
     private static final int MAX_DEPTH = 20; // defined as "size" in the client jar
     private static final int[] START_TEMPLATES = {78, 79}; /* chamber/end id = 7 */
     public static final BlockRotation[] BLOCK_ROTATIONS = BlockRotation.values();
 
-    public final TrialChambersGenerator.Piece[] pieces = new TrialChambersGenerator.Piece[256];
-    public final VoxelShape[] voxelShapes = new VoxelShape[256];
+    public final TrialChambersGenerator.Piece[] pieces = new TrialChambersGenerator.Piece[512];
+    public final VoxelShape[] voxelShapes = new VoxelShape[512];
     public int piecesLen;
     public final SequencedPriorityIterator<TrialChambersGenerator.Piece> placing = new SequencedPriorityIterator<>();
 
     private final BlockBox rootBox = BlockBox.empty();
     private final TrialChambersGenerator.BlockJigsawInfo[] parentJigsawsArr = new TrialChambersGenerator.BlockJigsawInfo[60];
     private final TrialChambersGenerator.BlockJigsawInfo[] childPieceJigsawBlocksArr = new TrialChambersGenerator.BlockJigsawInfo[60];
-    private final int[] childTemplatesArr = new int[1225]; // don't even ask...
+    private final int[] childTemplatesArr = new int[1229]; // don't even ask...
     private final BlockRotation[] childRotationsArr = new BlockRotation[4];
     private final MutableBlockPos childJigsawPos = new MutableBlockPos();
     private final BlockBox childPieceMinBox = BlockBox.empty();
@@ -91,7 +92,6 @@ public class TrialChambersGenerator {
         startPiece.depth = 0;
 
         // create structure max bounding box
-        // this.placing.clear(); TODO why was this here
         this.piecesLen++;
         VoxelShape rootFreeSpace = this.voxelShapes[255].init(BlockBoxUtil.set(this.rootBox, centerX - MAX_DIST, y - MAX_DIST, centerZ - MAX_DIST, centerX + MAX_DIST, y + MAX_DIST, centerZ + MAX_DIST));
         rootFreeSpace.cutout.add(startPieceBox);
@@ -122,9 +122,11 @@ public class TrialChambersGenerator {
         }
 
         TrialChambersGenerator.BlockJigsawInfo[] parentJigsaws = this.parentJigsawsArr;
+        //System.out.println("RAND: before shuffled jigsaws: " + rand.getSeed());
         int parentJigsawsLen = getShuffledJigsawBlocks(rand, parentJigsaws, parentPieceId, parentPiece.rotation, parentPiecePos);
         nextParentJigsaw:
         for (int parentJigsawIndex = 0; parentJigsawIndex < parentJigsawsLen; parentJigsawIndex++) {
+            //System.out.println("RAND: inside shuffled jigsaws: " + rand.getSeed());
             TrialChambersGenerator.BlockJigsawInfo parentJigsaw = parentJigsaws[parentJigsawIndex];
 
             TrialChambersGenerator.Piece childPiece = this.pieces[this.piecesLen];
@@ -177,9 +179,10 @@ public class TrialChambersGenerator {
                 }
 
                 BlockRotation[] childRotations = this.childRotationsArr;
+                //System.out.println("RAND: before shuffled rotations: " + rand.getSeed());
                 getShuffledBlockRotations(rand, childRotations);
                 for (BlockRotation childPieceRotation : childRotations) {
-
+                    //System.out.println("RAND: inside shuffled rotations: " + childPieceRotation.name() + " " + rand.getSeed());
                     BlockRotation childRotationInverse;
                     switch (childPieceRotation) {
                         case CLOCKWISE_90:
@@ -293,7 +296,19 @@ public class TrialChambersGenerator {
         int len = pool.length;
         System.arraycopy(pool, 0, arr, 0, len);
         ShuffleUtils.shuffle(rand, arr, len);
-        return len;
+
+        // add the fallback templates (if there are any)
+        if (TrialChambersPools.getFallbackID(poolId) == EMPTY_POOL_ID) return len;
+
+        int[] fallbackPool = TrialChambersPools.CHAMBER_POOLS[TrialChambersPools.getFallbackID(poolId)];
+        int fallbackLen = fallbackPool.length;
+        System.arraycopy(fallbackPool, 0, arr, len, fallbackLen);
+
+        if (TrialChambersPools.getFallbackID(poolId) != 21) return len + fallbackLen;
+
+        // the extra shuffling only occurs when pool 21 is the fallback pool
+        ShuffleUtils.shuffleFallbackPool21(rand, arr, len);
+        return len + fallbackLen;
     }
 
     public static void getShuffledBlockRotations(JRand rand, BlockRotation[] arr) {
