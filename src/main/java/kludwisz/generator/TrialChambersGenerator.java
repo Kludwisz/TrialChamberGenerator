@@ -126,6 +126,10 @@ public class TrialChambersGenerator {
         TrialChambersGenerator.BlockJigsawInfo[] parentJigsaws = this.parentJigsawsArr;
         //System.out.println("RAND: before shuffled jigsaws: " + rand.getSeed());
         int parentJigsawsLen = getShuffledJigsawBlocks(rand, parentJigsaws, parentPieceId, parentPiece.rotation, parentPiecePos);
+        System.out.println(" ==== SHUFFLED JIGSAWS");
+        for (int i = 0; i < parentJigsawsLen; i++) {
+            System.out.print(parentJigsaws[i].nbt.targetName + ",  ");
+        }
         nextParentJigsaw:
         for (int parentJigsawIndex = 0; parentJigsawIndex < parentJigsawsLen; parentJigsawIndex++) {
             //System.out.println("RAND: inside shuffled jigsaws: " + rand.getSeed());
