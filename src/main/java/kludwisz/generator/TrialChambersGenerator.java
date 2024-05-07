@@ -268,9 +268,9 @@ public class TrialChambersGenerator {
                         // create a list of shuffled templates
                         ArrayList<Integer> list = new ArrayList<>();
 
-                        System.out.println("RAND: before shuffled templates, parent " + piece.id + ":  " + rand.getSeed());
+                        System.out.println("RAND: before shuffled templates: " + rand.getSeed());
                         if (depth != this.maxDepth) {
-                            System.out.println("pool size " + pool.size());
+                            System.out.println("parent " + piece.id + " jigsaw " + blockJigsawInfo.nbt.targetName + " pool size " + pool.size());
                             list = getShuffledTemplatesFromPool(pool, rand);
                             //if(list.size() != 0) {
                             //    rand.shuffle(list);
