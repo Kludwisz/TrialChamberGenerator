@@ -1,5 +1,6 @@
 package kludwisz.chambers.jigsaws;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -9,9 +10,9 @@ import com.seedfinding.mccore.util.data.Pair;
 public class TrialChambersPools {
 	
 	public static List<Pair<Integer, Integer>> get(int poolID) {
-		if (poolID < 0 || poolID > CHAMBER_POOLS.size())
+		if (poolID < 0 || poolID > CHAMBER_POOLS_V2.size())
 			return null;
-		return CHAMBER_POOLS.get(poolID);
+		return CHAMBER_POOLS_V2.get(poolID);
 	}
 	
 	public static int getFallbackID(int poolID) {
@@ -67,7 +68,7 @@ public class TrialChambersPools {
 			45   /* empty id = 45 */
 	);
 	
-    private static final List< List<Pair<Integer, Integer>> > CHAMBER_POOLS = Arrays.asList(
+    private static final List< List<Pair<Integer, Integer>> > CHAMBER_POOLS_V2 = Arrays.asList(
 			/* atrium id = 0 */Arrays.asList(
 					new Pair<>(108, 1),
 					new Pair<>(109, 1),
@@ -116,14 +117,14 @@ public class TrialChambersPools {
 					new Pair<>(145, 1),
 					new Pair<>(136, 1),
 					new Pair<>(138, 1),
-					new Pair<>(1, 150),
-					new Pair<>(2, 150),
-					new Pair<>(3, 150),
-					new Pair<>(4, 150),
-					new Pair<>(0, 150),
-					new Pair<>(6, 150),
-					new Pair<>(8, 150),
-					new Pair<>(7, 150),
+					new Pair<>(1, 150),	// !!!
+					new Pair<>(2, 150),	// !!!
+					new Pair<>(3, 150),	// !!!
+					new Pair<>(4, 150),	// !!!
+					new Pair<>(0, 150),	// !!!
+					new Pair<>(6, 150),	// !!!
+					new Pair<>(8, 150),	// !!!
+					new Pair<>(7, 150),	// !!!
 					new Pair<>(139, 10),
 					new Pair<>(140, 1),
 					new Pair<>(129, 1),
@@ -399,4 +400,20 @@ public class TrialChambersPools {
     				new Pair<>(170, 0)
     		)
     );
+
+	public static int[][] CHAMBER_POOLS;
+	static {
+		CHAMBER_POOLS = new int[CHAMBER_POOLS_V2.size()][];
+		ArrayList<Integer> list = new ArrayList<>();
+		for (int i = 0; i < CHAMBER_POOLS_V2.size(); i++) {
+			List<Pair<Integer, Integer>> pool = CHAMBER_POOLS_V2.get(i);
+			for (Pair<Integer, Integer> entry : pool) {
+				for (int k = 0; k < entry.getSecond(); k++) {
+					list.add(entry.getFirst());
+				}
+			}
+			CHAMBER_POOLS[i] = list.stream().mapToInt(e -> e).toArray();
+			list.clear();
+		}
+	}
 }

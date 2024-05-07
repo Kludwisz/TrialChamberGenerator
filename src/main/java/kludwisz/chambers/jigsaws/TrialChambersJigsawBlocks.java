@@ -1,18 +1,23 @@
 package kludwisz.chambers.jigsaws;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
+import com.seedfinding.mccore.util.block.BlockBox;
 import com.seedfinding.mccore.util.block.BlockDirection;
+import com.seedfinding.mccore.util.block.BlockRotation;
+import com.seedfinding.mccore.util.data.Pair;
 import com.seedfinding.mccore.util.pos.BPos;
+import kludwisz.chambers.pieces.TrialChambersStructureSize;
+import kludwisz.generator.TrialChambersGenerator;
+import kludwisz.generator.util.BlockBoxUtil;
+import kludwisz.generator.util.MutableBlockPos;
 
 public class TrialChambersJigsawBlocks {
 	public static List<JigsawBlock> get(int pieceID) {
-		return JIGSAW_BLOCKS.get(pieceID);
+		return JIGSAW_BLOCKS_V2.get(pieceID);
 	}
 	
-    private static final List<List<JigsawBlock>> JIGSAW_BLOCKS = Arrays.<List<JigsawBlock>>asList(
+    private static final List<List<JigsawBlock>> JIGSAW_BLOCKS_V2 = Arrays.<List<JigsawBlock>>asList(
 			// chamber/assembly id = 0
 			Arrays.asList(
 					new JigsawBlock(22, JointType.ALIGNED, "minecraft:empty", "minecraft:reward_connector", BlockDirection.NORTH, BlockDirection.UP, new BPos(29,3,12), 0, 0),
@@ -1315,4 +1320,68 @@ public class TrialChambersJigsawBlocks {
 			// empty
             Collections.emptyList()
     );
+
+
+	public static JigsawBlock[][] JIGSAW_BLOCKS;
+	static {
+		JIGSAW_BLOCKS = new JigsawBlock[JIGSAW_BLOCKS_V2.size()][];
+		for (int i = 0; i < JIGSAW_BLOCKS.length; i++) {
+			JIGSAW_BLOCKS[i] = JIGSAW_BLOCKS_V2.get(i).toArray(new JigsawBlock[0]);
+		}
+	}
+
+	public static HashMap<String, Set<BlockDirection>>[] PIECE_CONNECTION_DIRECTIONS = new HashMap[JIGSAW_BLOCKS_V2.size()];
+	static {
+		for (int i = 0; i < JIGSAW_BLOCKS_V2.size(); i++) {
+			PIECE_CONNECTION_DIRECTIONS[i] = new HashMap<>();
+			for (JigsawBlock block : JIGSAW_BLOCKS_V2.get(i)) {
+				PIECE_CONNECTION_DIRECTIONS[i].computeIfAbsent(block.name, (p) -> new HashSet<>()).add(TrialChambersGenerator.BlockJigsawInfo.getOpposite(block.direction1));
+			}
+			for (Map.Entry<String, Set<BlockDirection>> entry : PIECE_CONNECTION_DIRECTIONS[i].entrySet()) {
+				entry.setValue(EnumSet.copyOf(entry.getValue()));
+			}
+		}
+	}
+
+	public static HashMap<String, BlockBox>[] PIECE_TARGET_MIN_BOXES = new HashMap[JIGSAW_BLOCKS_V2.size()];
+	static {
+		for (int i = 0; i < JIGSAW_BLOCKS_V2.size(); i++) {
+			HashMap<String, BlockBox> targetMinBoxes = new HashMap<>();
+
+			for (JigsawBlock parentJigsaw : JIGSAW_BLOCKS_V2.get(i)) {
+				BlockBox minBox = targetMinBoxes.get(parentJigsaw.targetName);
+
+				for (Pair<Integer, Integer> pair : TrialChambersPools.get(parentJigsaw.poolType)) {
+					int childPieceId = pair.getFirst();
+					if (childPieceId == TrialChambersGenerator.EMPTY_PIECE_ID) continue;
+
+					BPos childPieceSize = TrialChambersStructureSize.get(childPieceId);
+					if (childPieceSize.getX() < 1 || childPieceSize.getY() < 1 || childPieceSize.getZ() < 1) continue;
+
+					for (BlockRotation childPieceRotation : BlockRotation.values()) {
+						for (JigsawBlock childJigsaw : JIGSAW_BLOCKS_V2.get(childPieceId)) {
+							if (!childJigsaw.name.equals(parentJigsaw.targetName)) continue;
+							if (childJigsaw.direction1.getAxis() == BlockDirection.Axis.Y) continue;
+							if (childPieceRotation.rotate(childJigsaw.direction1) != parentJigsaw.direction1.getOpposite()) continue;
+
+							BlockBox childPieceBox = new BlockBox(0, 0, 0, 0, 0, 0);
+							BlockBoxUtil.setSizeRotatePos(childPieceBox, childPieceSize, childPieceRotation, new MutableBlockPos().set(BPos.ORIGIN.subtract(childPieceRotation.rotate(childJigsaw.relativePos, BPos.ORIGIN))));
+
+							if (minBox == null) {
+								minBox = childPieceBox;
+							} else {
+								BlockBoxUtil.intersect(minBox, childPieceBox);
+							}
+						}
+					}
+				}
+
+				if (minBox != null && !BlockBoxUtil.isEmpty(minBox)) {
+					targetMinBoxes.put(parentJigsaw.targetName, minBox);
+				}
+			}
+
+			PIECE_TARGET_MIN_BOXES[i] = targetMinBoxes;
+		}
+	}
 }
