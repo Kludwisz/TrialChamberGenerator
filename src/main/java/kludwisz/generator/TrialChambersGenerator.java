@@ -223,7 +223,9 @@ public class TrialChambersGenerator {
             this.pieces = pieces;
         }
 
+        public int i = 0;
         public void tryPlacing(Piece piece, ChunkRand rand) {
+            if (i > 100) return;
             int depth = piece.depth;
             BPos pos = piece.pos;
             VoxelShape mutableobject = new VoxelShape();
@@ -266,13 +268,18 @@ public class TrialChambersGenerator {
                         // create a list of shuffled templates
                         ArrayList<Integer> list = new ArrayList<>();
 
+                        System.out.println("RAND: before shuffled templates, parent " + piece.id + ":  " + rand.getSeed());
                         if (depth != this.maxDepth) {
+                            System.out.println("pool size " + pool.size());
                             list = getShuffledTemplatesFromPool(pool, rand);
                             //if(list.size() != 0) {
                             //    rand.shuffle(list);
                             //}
                         }
+                        System.out.println("fallback id = " + fallbackPoolID + ", size: " + fallbackPool.size());
                         list.addAll(getShuffledTemplatesFromPool(fallbackPool, rand));
+                        System.out.println("RAND: after shuffled templates, parent " + piece.id + ":  " + rand.getSeed());
+                        if (i++ > 100) return;
 
                         // ArrayList<Integer> listtmp = getShuffledTemplatesFromPool(fallbackPool, rand);
                         // if(listtmp.size() != 0) {
