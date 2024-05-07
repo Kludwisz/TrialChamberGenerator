@@ -271,6 +271,7 @@ public class TrialChambersGenerator {
             blockJigsawInfo.pos.setRotateOffset(jigsawBlock.relativePos, rotation, offset);
 //            blockJigsawInfo.front = rotation.rotate(jigsawBlock.direction1);
             blockJigsawInfo.front = RotationUtil.rotate(rotation, jigsawBlock.direction1);
+            blockJigsawInfo.top = RotationUtil.rotate(rotation, jigsawBlock.direction2);
         }
 
         // TODO optimize this
@@ -335,6 +336,7 @@ public class TrialChambersGenerator {
         public MutableBlockPos pos = new MutableBlockPos();
         //        public BPos pos;
         public BlockDirection front;
+        public BlockDirection top;
 
         public BlockJigsawInfo() {
 
