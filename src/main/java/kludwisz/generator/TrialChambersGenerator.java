@@ -363,7 +363,7 @@ public class TrialChambersGenerator {
 
         public boolean canAttach(TrialChambersGenerator.BlockJigsawInfo blockJigsawInfo2, BlockDirection direction) {
             return (direction.ordinal() ^ 1) == blockJigsawInfo2.front.ordinal()
-                    && (this.nbt.jointType.equals(JointType.ROLLABLE) || this.nbt.direction2.equals(blockJigsawInfo2.nbt.direction2))
+                    && (this.nbt.jointType.equals(JointType.ROLLABLE) || this.top.equals(blockJigsawInfo2.top))
                     && this.nbt.targetName.equals(blockJigsawInfo2.nbt.name);
         }
     }
