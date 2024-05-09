@@ -233,7 +233,7 @@ public class TrialChambersGenerator {
             int minY = box.minY;
 
             // System.out.println("Shuffle for piece " + piece.getName());
-            System.out.println(" ==== JIGSAWS");
+            System.out.println(" ==== SHUFFLED JIGSAWS with start seed " + rand.getSeed());
             List<BlockJigsawInfo> jigsaws = piece.getShuffledJigsawBlocks(pos, rand);
             for (BlockJigsawInfo bji : jigsaws) {
                 System.out.print(bji.nbt.targetName + ",  ");
