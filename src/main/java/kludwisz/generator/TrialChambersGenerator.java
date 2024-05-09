@@ -124,9 +124,9 @@ public class TrialChambersGenerator {
         }
 
         TrialChambersGenerator.BlockJigsawInfo[] parentJigsaws = this.parentJigsawsArr;
-        //System.out.println("RAND: before shuffled jigsaws: " + rand.getSeed());
-        int parentJigsawsLen = getShuffledJigsawBlocks(rand, parentJigsaws, parentPieceId, parentPiece.rotation, parentPiecePos);
         System.out.println(" ==== SHUFFLED JIGSAWS with start seed " + rand.getSeed());
+        int parentJigsawsLen = getShuffledJigsawBlocks(rand, parentJigsaws, parentPieceId, parentPiece.rotation, parentPiecePos);
+
         for (int i = 0; i < parentJigsawsLen; i++) {
             System.out.print(parentJigsaws[i].nbt.targetName + ",  ");
         }
@@ -293,10 +293,11 @@ public class TrialChambersGenerator {
         // TODO optimize this
         ShuffleUtils.shuffle(rand, arr, len);
         Arrays.sort(
-                blocks,
+                arr,
+                0, len,
                 Comparator.comparingInt(
                         (var0x) -> {
-                            return -var0x.selectionPriority; // FIXME HACK
+                            return -var0x.nbt.selectionPriority; // FIXME HACK
                         }
                 )
         );
