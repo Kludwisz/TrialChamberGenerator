@@ -61,7 +61,6 @@ public class TrialChambersGenerator {
         }
     }
 
-    public int i = 0;
     public boolean generate(long worldseed, int chunkX, int chunkZ, ChunkRand rand) {
         this.piecesLen = 0;
 
@@ -124,12 +123,8 @@ public class TrialChambersGenerator {
         }
 
         TrialChambersGenerator.BlockJigsawInfo[] parentJigsaws = this.parentJigsawsArr;
-        System.out.println(" ==== SHUFFLED JIGSAWS with start seed " + rand.getSeed());
         int parentJigsawsLen = getShuffledJigsawBlocks(rand, parentJigsaws, parentPieceId, parentPiece.rotation, parentPiecePos);
 
-        for (int i = 0; i < parentJigsawsLen; i++) {
-            System.out.print(parentJigsaws[i].nbt.targetName + ",  ");
-        }
         nextParentJigsaw:
         for (int parentJigsawIndex = 0; parentJigsawIndex < parentJigsawsLen; parentJigsawIndex++) {
             //System.out.println("RAND: inside shuffled jigsaws: " + rand.getSeed());
@@ -169,11 +164,8 @@ public class TrialChambersGenerator {
 
             int parentJigsawPlacementPriority = parentJigsaw.nbt.placementPriority;
             int[] childTemplates = this.childTemplatesArr;
-            System.out.println("RAND: before shuffled templates: " + rand.getSeed());
             int childTemplatesLen = getShuffledTemplatesFromPool(rand, parentJigsaw.nbt.poolType, childTemplates);
-            System.out.println("parent " + parentPieceId +  " jigsaw " + parentJigsaw.nbt.targetName + " total pool size: " + childTemplatesLen);
-            System.out.println("RAND: after shuffled templates: " + rand.getSeed());
-            if (i++>100) return;
+
             for (int childTemplateIndex = 0; childTemplateIndex < childTemplatesLen; childTemplateIndex++) {
                 int childPieceId = childTemplates[childTemplateIndex];
                 if (childPieceId == EMPTY_PIECE_ID) // empty piece
@@ -192,10 +184,6 @@ public class TrialChambersGenerator {
                 //System.out.println("RAND: before shuffled rotations: " + rand.getSeed());
                 getShuffledBlockRotations(rand, childRotations);
                 for (BlockRotation childPieceRotation : childRotations) {
-                    //System.out.println("RAND: inside shuffled rotations: " + childPieceRotation.name() + " " + rand.getSeed());
-                    //i++;
-                    //if (i > 1000) return;
-
                     BlockRotation childRotationInverse;
                     switch (childPieceRotation) {
                         case CLOCKWISE_90:
