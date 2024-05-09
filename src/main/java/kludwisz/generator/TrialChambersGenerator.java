@@ -223,24 +223,15 @@ public class TrialChambersGenerator {
             this.pieces = pieces;
         }
 
-        public int i = 0;
         public void tryPlacing(Piece piece, ChunkRand rand) {
-            if (i > 100) return;
             int depth = piece.depth;
             BPos pos = piece.pos;
             VoxelShape mutableobject = new VoxelShape();
             BlockBox box = piece.box;
             int minY = box.minY;
 
-            // System.out.println("Shuffle for piece " + piece.getName());
-            System.out.println(" ==== SHUFFLED JIGSAWS with start seed " + rand.getSeed());
-            List<BlockJigsawInfo> jigsaws = piece.getShuffledJigsawBlocks(pos, rand);
-            for (BlockJigsawInfo bji : jigsaws) {
-                System.out.print(bji.nbt.targetName + ",  ");
-            }
-            System.out.println();
             label139:
-            for (BlockJigsawInfo blockJigsawInfo : jigsaws) { // TODO rollback
+            for (BlockJigsawInfo blockJigsawInfo : piece.getShuffledJigsawBlocks(pos, rand)) {
                 BlockDirection blockDirection = blockJigsawInfo.getFront();
                 BPos blockPos = blockJigsawInfo.pos;
                 BPos relativeBlockPos = new BPos(blockPos.getX() + blockDirection.getVector().getX(),
@@ -274,18 +265,14 @@ public class TrialChambersGenerator {
                         // create a list of shuffled templates
                         ArrayList<Integer> list = new ArrayList<>();
 
-                        System.out.println("RAND: before shuffled templates: " + rand.getSeed());
                         if (depth != this.maxDepth) {
-                            System.out.println("parent " + piece.id + " jigsaw " + blockJigsawInfo.nbt.targetName + " pool size " + pool.size());
+                            // System.out.println("parent " + piece.id + " jigsaw " + blockJigsawInfo.nbt.targetName + " pool size " + pool.size());
                             list = getShuffledTemplatesFromPool(pool, rand);
                             //if(list.size() != 0) {
                             //    rand.shuffle(list);
                             //}
                         }
-                        System.out.println("fallback id = " + fallbackPoolID + ", size: " + fallbackPool.size());
                         list.addAll(getShuffledTemplatesFromPool(fallbackPool, rand));
-                        System.out.println("RAND: after shuffled templates, parent " + piece.id + ":  " + rand.getSeed());
-                        if (i++ > 100) return;
 
                         // ArrayList<Integer> listtmp = getShuffledTemplatesFromPool(fallbackPool, rand);
                         // if(listtmp.size() != 0) {

@@ -12,8 +12,9 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		// PanoramaCracker.runAutomatedTests(1000); // no errors w/ strict matching
 		// PanoramaCracker.runAutomatedTests(3000); // no errors w/ non-strict matching
-		testGenerator(123L, 0, 0); // 7 / 7 perfectly matched trial chambers in-game, 24w18a
+		// testGenerator(123L, 0, 0); // 7 / 7 perfectly matched trial chambers in-game, 24w18a
 		// runMicroboincApp(args);
+		testSpeed();
 	}
 
 	public static void runMicroboincApp(String[] args) throws Exception {
@@ -35,5 +36,18 @@ public class Main {
 		CPos pos = new TrialChambers(MCVersion.v1_20).getInRegion(seed, rx, rz, new ChunkRand());
 		gen.generate(seed, pos.getX(), pos.getZ(), new ChunkRand());
 		gen.printPieces();
+	}
+
+	public static void testSpeed() {
+		long start = System.currentTimeMillis();
+
+		for (long seed = 1L; seed <= 5000L; seed++) {
+			TrialChambersGenerator gen = new TrialChambersGenerator();
+			CPos pos = new TrialChambers(MCVersion.v1_20).getInRegion(seed, 0, 0, new ChunkRand());
+			gen.generate(seed, pos.getX(), pos.getZ(), new ChunkRand());
+		}
+
+		long end = System.currentTimeMillis();
+		System.out.println("Time: " + (end - start) + "ms");
 	}
 }
