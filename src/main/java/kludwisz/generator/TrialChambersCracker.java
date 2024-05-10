@@ -1,15 +1,13 @@
 package kludwisz.generator;
 
-import java.util.*;
-
 import com.seedfinding.mccore.rand.ChunkRand;
 import com.seedfinding.mccore.util.block.BlockBox;
 import com.seedfinding.mccore.util.block.BlockDirection;
 import com.seedfinding.mccore.util.block.BlockRotation;
+import com.seedfinding.mccore.util.math.DistanceMetric;
 import com.seedfinding.mccore.util.pos.BPos;
 import com.seedfinding.mccore.version.MCVersion;
 import com.seedfinding.mcseed.rand.JRand;
-
 import kludwisz.chambers.jigsaws.JigsawBlock;
 import kludwisz.chambers.jigsaws.JointType;
 import kludwisz.chambers.jigsaws.TrialChambersJigsawBlocks;
@@ -23,8 +21,12 @@ import kludwisz.generator.util.ShuffleUtils;
 import kludwisz.util.SequencedPriorityIterator;
 import kludwisz.util.VoxelShape;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
-public class TrialChambersGenerator {
+
+public class TrialChambersCracker {
     public static final int EMPTY_PIECE_ID = 170;
     public static final int EMPTY_POOL_ID = 45;
 
@@ -36,41 +38,53 @@ public class TrialChambersGenerator {
     // storing a reference to the jigsaw blocks array to avoid using reflection
     private static final JigsawBlock[][] JIGSAW_BLOCKS = TrialChambersJigsawBlocks.JIGSAW_BLOCKS;
 
-    public final TrialChambersGenerator.Piece[] pieces = new TrialChambersGenerator.Piece[512];
+    public final TrialChambersCracker.Piece[] pieces = new TrialChambersCracker.Piece[512];
     public final VoxelShape[] voxelShapes = new VoxelShape[512];
     public int piecesLen;
-    public final SequencedPriorityIterator<TrialChambersGenerator.Piece> placing = new SequencedPriorityIterator<>();
+    public final SequencedPriorityIterator<TrialChambersCracker.Piece> placing = new SequencedPriorityIterator<>();
 
     private final BlockBox rootBox = BlockBox.empty();
-    private final TrialChambersGenerator.BlockJigsawInfo[] parentJigsawsArr = new TrialChambersGenerator.BlockJigsawInfo[50];
-    private final TrialChambersGenerator.BlockJigsawInfo[] childPieceJigsawBlocksArr = new TrialChambersGenerator.BlockJigsawInfo[50];
+    private final TrialChambersCracker.BlockJigsawInfo[] parentJigsawsArr = new TrialChambersCracker.BlockJigsawInfo[50];
+    private final TrialChambersCracker.BlockJigsawInfo[] childPieceJigsawBlocksArr = new TrialChambersCracker.BlockJigsawInfo[50];
     private final int[] childTemplatesArr = new int[1229]; // don't even ask...
     private final BlockRotation[] childRotationsArr = new BlockRotation[4];
     private final MutableBlockPos childJigsawPos = new MutableBlockPos();
     private final BlockBox childPieceMinBox = BlockBox.empty();
 
-    public TrialChambersGenerator() {
+    private final Requirements requirements;
+    private int missedPieces = 0;
+    private int matchedPieces = 0;
+    private boolean halted = false;
+    private boolean success = false;
+
+    public TrialChambersCracker(Requirements requirements) {
+        this.requirements = requirements;
+
         for (int i = 0; i < this.pieces.length; i++) {
-            this.pieces[i] = new TrialChambersGenerator.Piece(i);
+            this.pieces[i] = new TrialChambersCracker.Piece(i);
         }
         for (int i = 0; i < this.voxelShapes.length; i++) {
             this.voxelShapes[i] = new VoxelShape();
         }
         for (int i = 0; i < this.parentJigsawsArr.length; i++) {
-            this.parentJigsawsArr[i] = new TrialChambersGenerator.BlockJigsawInfo();
+            this.parentJigsawsArr[i] = new TrialChambersCracker.BlockJigsawInfo();
         }
         for (int i = 0; i < this.childPieceJigsawBlocksArr.length; i++) {
-            this.childPieceJigsawBlocksArr[i] = new TrialChambersGenerator.BlockJigsawInfo();
+            this.childPieceJigsawBlocksArr[i] = new TrialChambersCracker.BlockJigsawInfo();
         }
     }
 
-    public void generate(long worldseed, int chunkX, int chunkZ, ChunkRand rand) {
+    public boolean generate(long worldseed, int chunkX, int chunkZ, ChunkRand rand) {
         this.piecesLen = 0;
 
         // choose random y position and rotation
         rand.setCarverSeed(worldseed, chunkX, chunkZ, MCVersion.v1_20);
         int pickedY = rand.nextInt(21) - 41;
+        if (pickedY != this.requirements.startPieceY)
+            return false;
         BlockRotation startPieceRotation = rand.getRandom(BLOCK_ROTATIONS);
+        if (startPieceRotation.ordinal() != this.requirements.startPieceRotationOrdinal)
+            return false;
 
         // choose random starting template
         int startPieceId = START_TEMPLATES[rand.nextInt(START_TEMPLATES.length)];
@@ -103,14 +117,19 @@ public class TrialChambersGenerator {
         // place pieces
         this.tryPlacing(startPiece, rand);
         while (this.placing.hasNext()) {
+            if (this.halted)
+                break;
+
             Piece nextPiece = this.placing.next();
             if (nextPiece == null)
                 break; // end of input
             this.tryPlacing(nextPiece, rand);
         }
+
+        return this.success;
     }
 
-    public void tryPlacing(TrialChambersGenerator.Piece parentPiece, ChunkRand rand) {
+    public void tryPlacing(TrialChambersCracker.Piece parentPiece, ChunkRand rand) {
         //System.out.println("Parent piece: " + parentPiece.getName() + " rotation " + parentPiece.rotation.name() + "  RAND: " + rand.getSeed());
         int parentPieceId = parentPiece.id;
         int parentPieceDepth = parentPiece.depth;
@@ -123,15 +142,15 @@ public class TrialChambersGenerator {
             return;
         }
 
-        TrialChambersGenerator.BlockJigsawInfo[] parentJigsaws = this.parentJigsawsArr;
+        TrialChambersCracker.BlockJigsawInfo[] parentJigsaws = this.parentJigsawsArr;
         int parentJigsawsLen = getShuffledJigsawBlocks(rand, parentJigsaws, parentPieceId, parentPiece.rotation, parentPiecePos);
 
         nextParentJigsaw:
         for (int parentJigsawIndex = 0; parentJigsawIndex < parentJigsawsLen; parentJigsawIndex++) {
             //System.out.println("RAND: inside shuffled jigsaws: " + rand.getSeed());
-            TrialChambersGenerator.BlockJigsawInfo parentJigsaw = parentJigsaws[parentJigsawIndex];
+            TrialChambersCracker.BlockJigsawInfo parentJigsaw = parentJigsaws[parentJigsawIndex];
 
-            TrialChambersGenerator.Piece childPiece = this.pieces[this.piecesLen];
+            TrialChambersCracker.Piece childPiece = this.pieces[this.piecesLen];
             MutableBlockPos childPiecePos = childPiece.pos;
             BlockBox childPieceBox = childPiece.box;
 
@@ -206,10 +225,10 @@ public class TrialChambersGenerator {
 
                     BPos childPieceSize = TrialChambersStructureSize.get(childPieceId);
 
-                    TrialChambersGenerator.BlockJigsawInfo[] arr2 = this.childPieceJigsawBlocksArr;
+                    TrialChambersCracker.BlockJigsawInfo[] arr2 = this.childPieceJigsawBlocksArr;
                     int len2 = getShuffledJigsawBlocks(rand, arr2, childPieceId, childPieceRotation, MutableBlockPos.ORIGIN);
                     for (int ji2 = 0; ji2 < len2; ji2++) {
-                        TrialChambersGenerator.BlockJigsawInfo childJigsaw = arr2[ji2];
+                        TrialChambersCracker.BlockJigsawInfo childJigsaw = arr2[ji2];
 
                         if (!parentJigsaw.canAttach(childJigsaw, parentJigsawFront)) continue;
 
@@ -228,6 +247,29 @@ public class TrialChambersGenerator {
 
                         if (!isInsideFreeSpace(freeSpace, childPieceBox)) continue;
 
+                        Requirements.TestResult result = this.requirements.test(TrialChambersPieceNames.get(childPieceId), childPiecePos.toImmutable());
+                        switch (result) {
+                            case GOOD_CERTAIN_PIECE:
+                            case GOOD_UNCERTAIN_PIECE:
+                                this.matchedPieces++;
+                                if (this.requirements.isEnoughMatches(this.matchedPieces)) {
+                                    this.success = true;
+                                    this.halted = true;
+                                    return;
+                                }
+                                break;
+                            case BAD_CERTAIN_PIECE:
+                                this.halted = true;
+                                break;
+                            case BAD_UNCERTAIN_PIECE:
+                                if (this.requirements.tooManyMisses(++this.missedPieces)) {
+                                    this.halted = true;
+                                    return;
+                                }
+                                break;
+                        }
+
+                        this.piecesLen += 1;
                         freeSpace.cutout.add(childPieceBox);
 
                         int childPieceDepth = parentPieceDepth + 1;
@@ -235,8 +277,6 @@ public class TrialChambersGenerator {
                         childPiece.rotation = childPieceRotation;
                         childPiece.depth = childPieceDepth;
                         childPiece.freeSpace = freeSpace;
-
-                        this.piecesLen += 1;
 
                         if (childPieceDepth <= MAX_DEPTH) {
                             this.placing.add(childPiece, parentJigsawPlacementPriority);
@@ -270,7 +310,7 @@ public class TrialChambersGenerator {
 
     private static final int[] indexArray = new int[50];
     private static final int[] sortingCurrentIDs = new int[3];
-    public static int getShuffledJigsawBlocks(JRand rand, TrialChambersGenerator.BlockJigsawInfo[] arr, int id, BlockRotation rotation, MutableBlockPos offset) {//taking 20% need to opti
+    public static int getShuffledJigsawBlocks(JRand rand, TrialChambersCracker.BlockJigsawInfo[] arr, int id, BlockRotation rotation, MutableBlockPos offset) {//taking 20% need to opti
         JigsawBlock[] blocks = JIGSAW_BLOCKS[id];
         int len = blocks.length;
         for (int i = 0; i < len; i++)
@@ -285,7 +325,7 @@ public class TrialChambersGenerator {
             int selectionPrio = jigsawBlock.selectionPriority;
             int currentID = sortingCurrentIDs[selectionPrio]++;
 
-            TrialChambersGenerator.BlockJigsawInfo blockJigsawInfo = arr[currentID];
+            TrialChambersCracker.BlockJigsawInfo blockJigsawInfo = arr[currentID];
             blockJigsawInfo.nbt = jigsawBlock;
             blockJigsawInfo.pos.setRotateOffset(jigsawBlock.relativePos, rotation, offset);
             blockJigsawInfo.front = RotationUtil.rotate(rotation, jigsawBlock.direction1);
@@ -321,10 +361,6 @@ public class TrialChambersGenerator {
         arr[2] = BlockRotation.CLOCKWISE_180;
         arr[3] = BlockRotation.COUNTERCLOCKWISE_90;
         ShuffleUtils.shuffleRotations(rand, arr);
-    }
-
-    public List<Piece> getPieces() {
-        return Arrays.asList(this.pieces).subList(0, this.piecesLen);
     }
 
     // -------------------------------------------------------------------------
@@ -384,19 +420,98 @@ public class TrialChambersGenerator {
             }
         }
 
-        public boolean canAttach(TrialChambersGenerator.BlockJigsawInfo blockJigsawInfo2, BlockDirection direction) {
+        public boolean canAttach(TrialChambersCracker.BlockJigsawInfo blockJigsawInfo2, BlockDirection direction) {
             return (direction.ordinal() ^ 1) == blockJigsawInfo2.front.ordinal()
                     && (this.nbt.jointType.equals(JointType.ROLLABLE) || this.top.equals(blockJigsawInfo2.top))
                     && this.nbt.targetName.equals(blockJigsawInfo2.nbt.name);
         }
     }
 
-    // -------------------------------------------------------------------------
+    public static class Requirements {
+        public static final int MAX_UNIQUE_OFFSET_TOLERANCE = 4;
+        public static final int MAX_UNCERTAIN_TOLERANCE = 2;
 
-    public void printPieces() {
-        for (int i = 0; i < this.piecesLen; i++) {
-            Piece piece = this.pieces[i];
-            System.out.println("Piece " + i + ": " + piece.getName() + "  /tp " + piece.pos.x + " " + piece.pos.y + " " + piece.pos.z + " rotation " + piece.rotation.name() + " and depth " + piece.depth);
+        private final HashSet<String> bannedPieces = new HashSet<>();
+        private final HashMap<String, BPos> uniquePieces = new HashMap<>();
+        private final HashMap<BPos, String> certainPieces = new HashMap<>();
+        private final HashMap<BPos, String> uncertainPieces = new HashMap<>();
+
+        public final int chunkX;
+        public final int chunkZ;
+        public final int startPieceY;
+        public final int startPieceRotationOrdinal;
+        public int targetMatches;
+        public Requirements(int chunkX, int chunkZ, int startPieceY, int startPieceRotationOrdinal) {
+            this.chunkX = chunkX;
+            this.chunkZ = chunkZ;
+            this.startPieceY = startPieceY;
+            this.startPieceRotationOrdinal = startPieceRotationOrdinal;
+        }
+
+        // --------------------------------------------------------------
+
+        public void addBannedPiece(String piece) {
+            bannedPieces.add(piece);
+        }
+
+        public void addUniquePiece(String piece, BPos pos) {
+            uniquePieces.put(piece, pos);
+            targetMatches++;
+        }
+
+        public void addCertainPiece(String piece, BPos pos) {
+            certainPieces.put(pos, piece);
+            targetMatches++;
+        }
+
+        public void addUncertainPiece(String piece, BPos pos) {
+            uncertainPieces.put(pos, piece);
+            targetMatches++;
+        }
+
+        public boolean isEnoughMatches(int matchedPieces) {
+            return matchedPieces >= targetMatches - MAX_UNCERTAIN_TOLERANCE;
+        }
+
+        public boolean tooManyMisses(int missedPieces) {
+            return missedPieces > MAX_UNCERTAIN_TOLERANCE;
+        }
+
+        // --------------------------------------------------------------
+
+        public final TestResult test(String piecename, BPos pos) {
+            if (bannedPieces.contains(piecename))
+                return TestResult.BAD_CERTAIN_PIECE;
+
+            if (uniquePieces.containsKey(piecename)) {
+                BPos uniquePos = uniquePieces.get(piecename);
+                if (pos.distanceTo(uniquePos, DistanceMetric.CHEBYSHEV) <= MAX_UNIQUE_OFFSET_TOLERANCE)
+                    return TestResult.GOOD_CERTAIN_PIECE;
+                return TestResult.BAD_CERTAIN_PIECE;
+            }
+
+            if (certainPieces.containsKey(pos)) {
+                if (certainPieces.get(pos).contains(piecename))
+                    return TestResult.GOOD_CERTAIN_PIECE;
+                return TestResult.BAD_CERTAIN_PIECE;
+            }
+
+            if (uncertainPieces.containsKey(pos)) {
+                String uncertainPiece = uncertainPieces.get(pos);
+                if (piecename.contains(uncertainPiece))
+                    return TestResult.GOOD_UNCERTAIN_PIECE;
+                return TestResult.BAD_UNCERTAIN_PIECE;
+            }
+
+            return TestResult.NEUTRAL;
+        }
+
+        public enum TestResult {
+            GOOD_CERTAIN_PIECE,
+            GOOD_UNCERTAIN_PIECE,
+            BAD_CERTAIN_PIECE,
+            BAD_UNCERTAIN_PIECE,
+            NEUTRAL
         }
     }
 }
