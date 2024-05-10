@@ -277,6 +277,7 @@ public class TrialChambersGenerator {
         int len = blocks.length;
         for (int i = 0; i < len; i++)
             indexArray[i] = i;
+        System.arraycopy(TrialChambersJigsawBlocks.PIECE_JIGSAW_SORT_OFFSETS[id], 0, sortingCurrentIDs, 0, 3);
 
         ShuffleUtils.shuffle(rand, indexArray, len);
 

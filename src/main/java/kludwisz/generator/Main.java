@@ -16,8 +16,8 @@ public class Main {
 		// PanoramaCracker.runAutomatedTests(3000); // no errors w/ non-strict matching
 		// testGenerator(123L, 0, 3); // 7 / 7 perfectly matched trial chambers in-game, 24w18a
 		// runMicroboincApp(args);
-		// testGenerator(123L, 0, 0);
-		testSpeed();
+		testGenerator(123L, 0, 0);
+		//testSpeed();
 	}
 
 	public static void testGenerator(long seed, int rx, int rz) {
@@ -30,7 +30,7 @@ public class Main {
 	public static void testSpeed() {
 		long start = System.currentTimeMillis();
 
-		for (long seed = 1L; seed <= 50000L; seed++) {
+		for (long seed = 1L; seed <= 10000L; seed++) {
 			TrialChambersGenerator gen = new TrialChambersGenerator();
 			CPos pos = new TrialChambers(MCVersion.v1_20).getInRegion(seed, 0, 0, new ChunkRand());
 			gen.generate(seed, pos.getX(), pos.getZ(), new ChunkRand());
