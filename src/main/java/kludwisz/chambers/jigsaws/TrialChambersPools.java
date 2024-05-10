@@ -16,10 +16,10 @@ public class TrialChambersPools {
 	}
 	
 	public static int getFallbackID(int poolID) {
-		return FALLBACK_POOLS.get(poolID);
+		return FALLBACK_POOLS[poolID];
 	}
 	
-	private static final List<Integer> FALLBACK_POOLS = Arrays.asList(
+	private static final int[] FALLBACK_POOLS = new int[]{
 			45,  /* atrium id = 0 */
 			45,  /* corridor id = 1 */
 			45,  /* decor id = 2 */
@@ -66,7 +66,7 @@ public class TrialChambersPools {
 			45,  /* spawner/small_melee/silverfish id = 43 */
 			45,  /* spawner/small_melee/slime id = 44 */
 			45   /* empty id = 45 */
-	);
+	};
 	
     private static final List< List<Pair<Integer, Integer>> > CHAMBER_POOLS_V2 = Arrays.asList(
 			/* atrium id = 0 */Arrays.asList(

@@ -1384,4 +1384,23 @@ public class TrialChambersJigsawBlocks {
 			PIECE_TARGET_MIN_BOXES[i] = targetMinBoxes;
 		}
 	}
+
+	public static final int[][] PIECE_JIGSAW_SORT_OFFSETS = new int[JIGSAW_BLOCKS_V2.size()][3];
+	static {
+		for (int pieceID = 0; pieceID < 170; pieceID++) {
+			List<JigsawBlock> pieceJigsaws = JIGSAW_BLOCKS_V2.get(pieceID);
+			pieceJigsaws.sort(
+					Comparator.comparingInt(
+						(var0x) -> -var0x.selectionPriority
+					)
+			);
+
+			for (JigsawBlock jigsaw : pieceJigsaws) {
+				if (jigsaw.selectionPriority == 2)
+					PIECE_JIGSAW_SORT_OFFSETS[pieceID][1]++;
+				if (jigsaw.selectionPriority >= 1)
+					PIECE_JIGSAW_SORT_OFFSETS[pieceID][0]++;
+			}
+		}
+	}
 }

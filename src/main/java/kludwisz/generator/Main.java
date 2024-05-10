@@ -30,7 +30,7 @@ public class Main {
 	public static void testSpeed() {
 		long start = System.currentTimeMillis();
 
-		for (long seed = 1L; seed <= 10000L; seed++) {
+		for (long seed = 1L; seed <= 50000L; seed++) {
 			TrialChambersGenerator gen = new TrialChambersGenerator();
 			CPos pos = new TrialChambers(MCVersion.v1_20).getInRegion(seed, 0, 0, new ChunkRand());
 			gen.generate(seed, pos.getX(), pos.getZ(), new ChunkRand());

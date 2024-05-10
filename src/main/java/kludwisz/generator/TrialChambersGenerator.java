@@ -42,10 +42,8 @@ public class TrialChambersGenerator {
     public final SequencedPriorityIterator<TrialChambersGenerator.Piece> placing = new SequencedPriorityIterator<>();
 
     private final BlockBox rootBox = BlockBox.empty();
-    private final TrialChambersGenerator.BlockJigsawInfo[] parentJigsawsArr = new TrialChambersGenerator.BlockJigsawInfo[60];
-    private final TrialChambersGenerator.BlockJigsawInfo[] childPieceJigsawBlocksArr = new TrialChambersGenerator.BlockJigsawInfo[60];
-    private final Integer[] parentJigsawsIndexArr = new Integer[60];
-    private final Integer[] childJigsawsIndexArr = new Integer[60];
+    private final TrialChambersGenerator.BlockJigsawInfo[] parentJigsawsArr = new TrialChambersGenerator.BlockJigsawInfo[50];
+    private final TrialChambersGenerator.BlockJigsawInfo[] childPieceJigsawBlocksArr = new TrialChambersGenerator.BlockJigsawInfo[50];
     private final int[] childTemplatesArr = new int[1229]; // don't even ask...
     private final BlockRotation[] childRotationsArr = new BlockRotation[4];
     private final MutableBlockPos childJigsawPos = new MutableBlockPos();
@@ -272,30 +270,28 @@ public class TrialChambersGenerator {
 
     // Jigsaws & templates
 
+    private static final int[] indexArray = new int[50];
+    private static final int[] sortingCurrentIDs = new int[3];
     public static int getShuffledJigsawBlocks(JRand rand, TrialChambersGenerator.BlockJigsawInfo[] arr, int id, BlockRotation rotation, MutableBlockPos offset) {//taking 20% need to opti
         JigsawBlock[] blocks = JIGSAW_BLOCKS[id];
         int len = blocks.length;
+        for (int i = 0; i < len; i++)
+            indexArray[i] = i;
+
+        ShuffleUtils.shuffle(rand, indexArray, len);
+
+        // place the jigsaws directly at the target positions, no sorting needed
         for (int i = 0; i < len; i++) {
-            JigsawBlock jigsawBlock = blocks[i];
-            TrialChambersGenerator.BlockJigsawInfo blockJigsawInfo = arr[i];
+            JigsawBlock jigsawBlock = blocks[indexArray[i]];
+            int selectionPrio = jigsawBlock.selectionPriority;
+            int currentID = sortingCurrentIDs[selectionPrio]++;
+
+            TrialChambersGenerator.BlockJigsawInfo blockJigsawInfo = arr[currentID];
             blockJigsawInfo.nbt = jigsawBlock;
             blockJigsawInfo.pos.setRotateOffset(jigsawBlock.relativePos, rotation, offset);
-//            blockJigsawInfo.front = rotation.rotate(jigsawBlock.direction1);
             blockJigsawInfo.front = RotationUtil.rotate(rotation, jigsawBlock.direction1);
             blockJigsawInfo.top = RotationUtil.rotate(rotation, jigsawBlock.direction2);
         }
-
-        // TODO optimize this
-        ShuffleUtils.shuffle(rand, arr, len);
-        Arrays.sort(
-                arr,
-                0, len,
-                Comparator.comparingInt(
-                        (var0x) -> {
-                            return -var0x.nbt.selectionPriority; // FIXME HACK
-                        }
-                )
-        );
 
         return len;
     }
