@@ -4,8 +4,10 @@ import com.seedfinding.mccore.rand.ChunkRand;
 import com.seedfinding.mccore.util.pos.CPos;
 import com.seedfinding.mccore.version.MCVersion;
 import com.seedfinding.mcseed.lcg.LCG;
+import kludwisz.chambers.jigsaws.TrialChambersJigsawBlocks;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.Scanner;
 
 public class Main {
