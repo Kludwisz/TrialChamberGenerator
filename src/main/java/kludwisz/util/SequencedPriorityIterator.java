@@ -75,4 +75,11 @@ public final class SequencedPriorityIterator<T> extends AbstractIterator<T> {
       this.highestPrio = var1;
       this.highestPrioQueue = var2;
    }
+
+   public void clear() {
+      while (this.hasNext()) {
+         if (this.next() == null)
+            return;
+      }
+   }
 }

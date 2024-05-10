@@ -35,9 +35,6 @@ public class TrialChambersCracker {
     private static final int[] START_TEMPLATES = {78, 79}; /* chamber/end id = 7 */
     public static final BlockRotation[] BLOCK_ROTATIONS = BlockRotation.values();
 
-    // storing a reference to the jigsaw blocks array to avoid using reflection
-    private static final JigsawBlock[][] JIGSAW_BLOCKS = TrialChambersJigsawBlocks.JIGSAW_BLOCKS;
-
     public final TrialChambersCracker.Piece[] pieces = new TrialChambersCracker.Piece[512];
     public final VoxelShape[] voxelShapes = new VoxelShape[512];
     public int piecesLen;
@@ -52,10 +49,10 @@ public class TrialChambersCracker {
     private final BlockBox childPieceMinBox = BlockBox.empty();
 
     private final Requirements requirements;
-    private int missedPieces = 0;
-    private int matchedPieces = 0;
-    private boolean halted = false;
-    private boolean success = false;
+    private int missedPieces;
+    private int matchedPieces;
+    private boolean halted;
+    private boolean success;
 
     public TrialChambersCracker(Requirements requirements) {
         this.requirements = requirements;
@@ -76,6 +73,11 @@ public class TrialChambersCracker {
 
     public boolean generate(long worldseed, int chunkX, int chunkZ, ChunkRand rand) {
         this.piecesLen = 0;
+        this.placing.clear();
+        this.halted = false;
+        this.success = false;
+        this.matchedPieces = 0;
+        this.missedPieces = 0;
 
         // choose random y position and rotation
         rand.setCarverSeed(worldseed, chunkX, chunkZ, MCVersion.v1_20);
@@ -311,7 +313,7 @@ public class TrialChambersCracker {
     private static final int[] indexArray = new int[50];
     private static final int[] sortingCurrentIDs = new int[3];
     public static int getShuffledJigsawBlocks(JRand rand, TrialChambersCracker.BlockJigsawInfo[] arr, int id, BlockRotation rotation, MutableBlockPos offset) {//taking 20% need to opti
-        JigsawBlock[] blocks = JIGSAW_BLOCKS[id];
+        JigsawBlock[] blocks = TrialChambersJigsawBlocks.JIGSAW_BLOCKS[id];
         int len = blocks.length;
         for (int i = 0; i < len; i++)
             indexArray[i] = i;

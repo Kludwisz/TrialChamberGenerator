@@ -13,6 +13,7 @@ public class Panorama {
     public static void crack(long rangeStart, long rangeEnd, TrialChambersCracker.Requirements reqs) {
         final TrialChambers TC = new TrialChambers(MCVersion.v1_20);
         final ChunkRand rand = new ChunkRand();
+        final TrialChambersCracker cracker = new TrialChambersCracker(reqs);
 
         for (long n = rangeStart; n <= rangeEnd; n++) {
             long upper31 = (n * 22L + reqs.chunkX) << 17;
@@ -29,7 +30,6 @@ public class Panorama {
                 long structureSeed = (rand.getSeed() ^ LCG.JAVA.multiplier) - TC.getSalt();
 
                 // bruteforce structure seed - generate trial chambers
-                TrialChambersCracker cracker = new TrialChambersCracker(reqs);
                 if (cracker.generate(structureSeed, reqs.chunkX, reqs.chunkZ, rand)) {
                     System.out.println(structureSeed);
                 }
