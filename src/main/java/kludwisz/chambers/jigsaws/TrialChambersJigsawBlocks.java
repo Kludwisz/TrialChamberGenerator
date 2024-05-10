@@ -1322,7 +1322,7 @@ public class TrialChambersJigsawBlocks {
     );
 
 
-	public static JigsawBlock[][] JIGSAW_BLOCKS;
+	public static final JigsawBlock[][] JIGSAW_BLOCKS;
 	static {
 		JIGSAW_BLOCKS = new JigsawBlock[JIGSAW_BLOCKS_V2.size()][];
 		for (int i = 0; i < JIGSAW_BLOCKS.length; i++) {

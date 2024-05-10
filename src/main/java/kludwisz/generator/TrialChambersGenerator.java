@@ -33,6 +33,9 @@ public class TrialChambersGenerator {
     private static final int[] START_TEMPLATES = {78, 79}; /* chamber/end id = 7 */
     public static final BlockRotation[] BLOCK_ROTATIONS = BlockRotation.values();
 
+    // storing a reference to the jigsaw blocks array to avoid using reflection
+    private static JigsawBlock[][] JIGSAW_BLOCKS = TrialChambersJigsawBlocks.JIGSAW_BLOCKS;
+
     public final TrialChambersGenerator.Piece[] pieces = new TrialChambersGenerator.Piece[512];
     public final VoxelShape[] voxelShapes = new VoxelShape[512];
     public int piecesLen;
@@ -41,6 +44,8 @@ public class TrialChambersGenerator {
     private final BlockBox rootBox = BlockBox.empty();
     private final TrialChambersGenerator.BlockJigsawInfo[] parentJigsawsArr = new TrialChambersGenerator.BlockJigsawInfo[60];
     private final TrialChambersGenerator.BlockJigsawInfo[] childPieceJigsawBlocksArr = new TrialChambersGenerator.BlockJigsawInfo[60];
+    private final Integer[] parentJigsawsIndexArr = new Integer[60];
+    private final Integer[] childJigsawsIndexArr = new Integer[60];
     private final int[] childTemplatesArr = new int[1229]; // don't even ask...
     private final BlockRotation[] childRotationsArr = new BlockRotation[4];
     private final MutableBlockPos childJigsawPos = new MutableBlockPos();
@@ -187,11 +192,11 @@ public class TrialChambersGenerator {
                 getShuffledBlockRotations(rand, childRotations);
                 for (BlockRotation childPieceRotation : childRotations) {
                     BlockRotation childRotationInverse;
-                    switch (childPieceRotation) {
-                        case CLOCKWISE_90:
+                    switch (childPieceRotation.ordinal()) {
+                        case /*CLOCKWISE_90*/1:
                             childRotationInverse = BlockRotation.COUNTERCLOCKWISE_90;
                             break;
-                        case COUNTERCLOCKWISE_90:
+                        case /*COUNTERCLOCKWISE_90*/3:
                             childRotationInverse = BlockRotation.CLOCKWISE_90;
                             break;
                         default:
@@ -268,7 +273,7 @@ public class TrialChambersGenerator {
     // Jigsaws & templates
 
     public static int getShuffledJigsawBlocks(JRand rand, TrialChambersGenerator.BlockJigsawInfo[] arr, int id, BlockRotation rotation, MutableBlockPos offset) {//taking 20% need to opti
-        JigsawBlock[] blocks = TrialChambersJigsawBlocks.JIGSAW_BLOCKS[id];
+        JigsawBlock[] blocks = JIGSAW_BLOCKS[id];
         int len = blocks.length;
         for (int i = 0; i < len; i++) {
             JigsawBlock jigsawBlock = blocks[i];
