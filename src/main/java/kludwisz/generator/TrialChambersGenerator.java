@@ -164,6 +164,8 @@ public class TrialChambersGenerator {
 
             int parentJigsawPlacementPriority = parentJigsaw.nbt.placementPriority;
             int[] childTemplates = this.childTemplatesArr;
+
+            // getShuffledTemplatesFromPool 36%
             int childTemplatesLen = getShuffledTemplatesFromPool(rand, parentJigsaw.nbt.poolType, childTemplates);
 
             for (int childTemplateIndex = 0; childTemplateIndex < childTemplatesLen; childTemplateIndex++) {
@@ -173,7 +175,7 @@ public class TrialChambersGenerator {
 
                 Set<BlockDirection> directions = TrialChambersJigsawBlocks.PIECE_CONNECTION_DIRECTIONS[childPieceId].get(parentJigsaw.nbt.targetName);
                 if (directions == null || skip) {
-                    ShuffleUtils.skipShuffle(rand, 4);
+                    ShuffleUtils.skipRotationShuffle(rand);
                     for (int i = 0; i < 4; i++) {
                         ShuffleUtils.skipShuffle(rand, TrialChambersJigsawBlocks.get(childPieceId).size());
                     }
@@ -318,7 +320,7 @@ public class TrialChambersGenerator {
         arr[1] = BlockRotation.CLOCKWISE_90;
         arr[2] = BlockRotation.CLOCKWISE_180;
         arr[3] = BlockRotation.COUNTERCLOCKWISE_90;
-        ShuffleUtils.shuffle(rand, arr);
+        ShuffleUtils.shuffleRotations(rand, arr);
     }
 
     // -------------------------------------------------------------------------

@@ -9,7 +9,13 @@ public class ShuffleUtils {
             rand.nextInt(i);
     }
 
-    public static void shuffle(JRand rand, BlockRotation[] arr) {
+    public static void skipRotationShuffle(JRand rand) {
+        rand.nextSeed();
+        rand.nextInt(3);
+        rand.nextSeed();
+    }
+
+    public static void shuffleRotations(JRand rand, BlockRotation[] arr) {
         int j = rand.nextInt(4);
         BlockRotation tmp = arr[3];
         arr[3] = arr[j];

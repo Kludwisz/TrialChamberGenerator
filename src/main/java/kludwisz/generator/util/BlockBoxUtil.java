@@ -43,26 +43,26 @@ public class BlockBoxUtil {
         }
         box.minY = pos.y;
         box.maxY = pos.y + sy;
-        switch (rotation) {
-            case NONE:
+        switch (rotation.ordinal()) {
+            case /*NONE*/0:
                 box.minX = pos.x;
                 box.minZ = pos.z;
                 box.maxX = pos.x + sx;
                 box.maxZ = pos.z + sz;
                 break;
-            case CLOCKWISE_90:
+            case /*CLOCKWISE_90*/1:
                 box.minX = pos.x - sx;
                 box.minZ = pos.z;
                 box.maxX = pos.x;
                 box.maxZ = pos.z + sz;
                 break;
-            case CLOCKWISE_180:
+            case /*CLOCKWISE_180*/2:
                 box.minX = pos.x - sx;
                 box.minZ = pos.z - sz;
                 box.maxX = pos.x;
                 box.maxZ = pos.z;
                 break;
-            case COUNTERCLOCKWISE_90:
+            case /*COUNTERCLOCKWISE_90*/3:
                 box.minX = pos.x;
                 box.minZ = pos.z - sz;
                 box.maxX = pos.x + sx;
@@ -74,26 +74,26 @@ public class BlockBoxUtil {
     public static void setRotateMove(BlockBox box, BlockBox other, BlockRotation rotation, MutableBlockPos offset) {
         box.minY = offset.y + other.minY;
         box.maxY = offset.y + other.maxY;
-        switch (rotation) {
-            case NONE:
+        switch (rotation.ordinal()) {
+            case /*NONE*/0:
                 box.minX = offset.x + other.minX;
                 box.minZ = offset.z + other.minZ;
                 box.maxX = offset.x + other.maxX;
                 box.maxZ = offset.z + other.maxZ;
                 break;
-            case CLOCKWISE_90:
+            case /*CLOCKWISE_90*/1:
                 box.minX = offset.x - other.maxZ;
                 box.minZ = offset.z + other.minX;
                 box.maxX = offset.x - other.minZ;
                 box.maxZ = offset.z + other.maxX;
                 break;
-            case CLOCKWISE_180:
+            case /*CLOCKWISE_180*/2:
                 box.minX = offset.x - other.maxX;
                 box.minZ = offset.z - other.maxZ;
                 box.maxX = offset.x - other.minX;
                 box.maxZ = offset.z - other.minZ;
                 break;
-            case COUNTERCLOCKWISE_90:
+            case /*COUNTERCLOCKWISE_90*/3:
                 box.minX = offset.x + other.minZ;
                 box.minZ = offset.z - other.maxX;
                 box.maxX = offset.x + other.maxZ;
