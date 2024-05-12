@@ -399,4 +399,8 @@ public class TrialChambersGenerator {
             System.out.println("Piece " + i + ": " + piece.getName() + "  /tp " + piece.pos.x + " " + piece.pos.y + " " + piece.pos.z + " rotation " + piece.rotation.name() + " and depth " + piece.depth);
         }
     }
+
+    public static int getDecorationSalt() {
+        return 30004;
+    }
 }
