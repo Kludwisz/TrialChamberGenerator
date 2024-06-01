@@ -19,7 +19,7 @@ public class Panorama {
             long upper31 = (n * 22L + reqs.chunkX) << 17;
 
             //iterate over lower 17 bits
-            for (long lower17 = 0; lower17 < (1L<<17); lower17++) {
+            for (int lower17 = 0; lower17 < (1<<17); lower17++) {
                 long internalSeed = upper31 | lower17;
 
                 // nextInt(22)
@@ -127,8 +127,8 @@ public class Panorama {
                     continue;
 
                 //iterate over lower 17 bits
-                for (long lower17 = 0; lower17 < (1L<<17); lower17++) {
-                    if (lower17 != randLow17)
+                for (int lower17 = 0; lower17 < (1<<17); lower17++) {
+                    if (lower17 != (int)randLow17)
                         continue;
                     long internalSeed = upper31 | lower17;
 

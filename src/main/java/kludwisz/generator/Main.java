@@ -16,9 +16,9 @@ public class Main {
 		// testGenerator(262871859801710L, 0, 0);
 		// testSpeed();
 		// Panorama.mainTask(0, 1000);
-		Panorama.runAutomatedTests(100); // cleared
+		// Panorama.runAutomatedTests(1000); // cleared
 
-		// runMicroboincApp(args);
+		runMicroboincApp(args);
 	}
 
 	public static void runMicroboincApp(String[] args) throws Exception {
