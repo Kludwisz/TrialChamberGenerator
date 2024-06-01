@@ -21,13 +21,25 @@ public class Panorama {
             //iterate over lower 17 bits
             for (long lower17 = 0; lower17 < (1L<<17); lower17++) {
                 long internalSeed = upper31 | lower17;
-                rand.setSeed(internalSeed, false);
-                if (rand.nextInt(22) != reqs.chunkZ)
+
+                // nextInt(22)
+                internalSeed = (internalSeed * LCG.JAVA.multiplier + LCG.JAVA.addend) & Mth.MASK_48;
+                int value = (int)(internalSeed >>> 17) % 22;
+
+                if (value != reqs.chunkZ)
                     continue;
 
                 // reverse region seed into structure seed
-                rand.advance(-2);
-                long structureSeed = (rand.getSeed() ^ LCG.JAVA.multiplier) - TC.getSalt();
+                internalSeed = (internalSeed * 254681119335897L + 120305458776662L) & Mth.MASK_48; // advance(-2)
+                long structureSeed = (internalSeed ^ LCG.JAVA.multiplier) - TC.getSalt();
+
+//                rand.setSeed(internalSeed, false);
+//                if (rand.nextInt(22) != reqs.chunkZ)
+//                    continue;
+//
+//                // reverse region seed into structure seed
+//                rand.advance(-2);
+//                long structureSeed = (rand.getSeed() ^ LCG.JAVA.multiplier) - TC.getSalt();
 
                 // bruteforce structure seed - generate trial chambers
                 if (cracker.generate(structureSeed, reqs.chunkX, reqs.chunkZ, rand)) {
@@ -120,13 +132,25 @@ public class Panorama {
                         continue;
                     long internalSeed = upper31 | lower17;
 
-                    rand.setSeed(internalSeed, false);
-                    if (rand.nextInt(22) != chunkZTest)
+//                    rand.setSeed(internalSeed, false);
+//                    if (rand.nextInt(22) != chunkZTest)
+//                        continue;
+//
+//                    // reverse region seed into structure seed
+//                    rand.advance(-2);
+//                    long structureSeed = (rand.getSeed() ^ LCG.JAVA.multiplier) - TC.getSalt();
+
+                    // nextInt(22)
+                    internalSeed = (internalSeed * LCG.JAVA.multiplier + LCG.JAVA.addend) & Mth.MASK_48;
+                    int value = (int)(internalSeed >>> 17) % 22;
+
+                    if (value != chunkZTest)
                         continue;
 
                     // reverse region seed into structure seed
-                    rand.advance(-2);
-                    long structureSeed = (rand.getSeed() ^ LCG.JAVA.multiplier) - TC.getSalt();
+                    internalSeed = (internalSeed * 254681119335897L + 120305458776662L) & Mth.MASK_48; // advance(-2)
+                    long structureSeed = (internalSeed ^ LCG.JAVA.multiplier) - TC.getSalt();
+
                     if (structureSeed != structseed) {
                         System.out.println("Failed test case: " + structureSeed);
                         return;
