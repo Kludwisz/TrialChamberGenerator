@@ -12,12 +12,13 @@ import java.util.Scanner;
 
 public class Main {
 	public static void main(String[] args) throws Exception {
-		// testGenerator(123L, 0, 4); // 7 / 7 perfectly matched trial chambers in-game, 24w18a
+		// testGenerator(15732852718635233L, 0, 0); // 7 / 7 perfectly matched trial chambers in-game, 24w18a
 		// testGenerator(262871859801710L, 0, 0);
 		// testSpeed();
 		// Panorama.mainTask(0, 1000);
 		// Panorama.runAutomatedTests(1000); // cleared
 
+		// CURRENT VERSION: 1.20.6
 		runMicroboincApp(args);
 	}
 
