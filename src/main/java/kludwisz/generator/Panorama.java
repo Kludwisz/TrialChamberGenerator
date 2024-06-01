@@ -69,18 +69,18 @@ public class Panorama {
         reqs.addCertainPiece("corridor/atrium/bogged_relief", new BPos(-12, -21, 7));       // OK!
         reqs.addCertainPiece("decor/candle_3", new BPos(-5, -19, 6));                       // OK!
 
-        reqs.addCertainPiece("corridor/straight_3", new BPos(-7, -22, 8));                  // OK!
-        reqs.addCertainPiece("corridor/straight_4", new BPos(-2, -22, 8));                  // OK!
+        reqs.addUncertainPiece("corridor/straight_3", new BPos(-7, -22, 8));                  // OK!
+        reqs.addUncertainPiece("corridor/straight_4", new BPos(-2, -22, 8));                  // OK!
         reqs.addCertainPiece("decor/dead_bush_pot", new BPos(-6, -19, 6));                  // OK!
         reqs.addCertainPiece("decor/barrel", new BPos(-1, -19, 6));                         // OK!
         reqs.addCertainPiece("decor/undecorated_pot", new BPos(-6, -21, -3));               // OK!
-        reqs.addCertainPiece("_pot", new BPos(-4, -19, 6));                                 // OK!
-        reqs.addCertainPiece("_pot", new BPos(-5, -21, 1));                                 // OK!
+        // reqs.addCertainPiece("_pot", new BPos(-4, -19, 6));                                 // OK!
+        // reqs.addCertainPiece("_pot", new BPos(-5, -21, 1));                                 // OK!
 
         reqs.addUncertainPiece("decor/barrel", new BPos(-1, -21, 1)); // certain, but not found
         reqs.addUncertainPiece("decor/undecorated_pot", new BPos(-4, -19, -8)); // certain, but not found
-        reqs.addUncertainPiece("_pot", new BPos(5, -21, 1)); // far
-        reqs.addUncertainPiece("_pot", new BPos(11, -21, 1)); // far
+        // reqs.addUncertainPiece("_pot", new BPos(5, -21, 1)); // far
+        // reqs.addUncertainPiece("_pot", new BPos(11, -21, 1)); // far
 
         crack(rangeStart, rangeEnd, reqs);
     }
@@ -232,7 +232,7 @@ public class Panorama {
             )
                 continue;
 
-            dataSet.addUncertainPiece(piece.getName(), piece.pos.toImmutable());
+            dataSet.addCertainPiece(piece.getName(), piece.pos.toImmutable());
             threshold--;
             if (threshold <= 0)
                 break;

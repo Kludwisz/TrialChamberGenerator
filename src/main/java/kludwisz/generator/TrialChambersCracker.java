@@ -439,7 +439,7 @@ public class TrialChambersCracker {
 
     public static class Requirements {
         public static final int MAX_UNIQUE_OFFSET_TOLERANCE = 4;
-        public static final int MAX_UNCERTAIN_TOLERANCE = 2;
+        public static final int MAX_UNCERTAIN_TOLERANCE = 3;
 
         private final HashSet<String> bannedPieces = new HashSet<>();
         private final HashMap<String, BPos> uniquePieces = new HashMap<>();
