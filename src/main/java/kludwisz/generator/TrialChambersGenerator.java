@@ -25,12 +25,20 @@ import kludwisz.util.VoxelShape;
 
 
 public class TrialChambersGenerator {
-    public static final int EMPTY_PIECE_ID = 170;
-    public static final int EMPTY_POOL_ID = 45;
+    // snapshot
+//    public static final int EMPTY_PIECE_ID = 170;
+//    public static final int EMPTY_POOL_ID = 45;
+//    private static final int[] START_TEMPLATES = {78, 79}; /* chamber/end id = 7 */
+//    private static final int SHUFFLED_FALLBACK_ID = 21;
+
+    // 1.20.6
+    public static final int EMPTY_PIECE_ID = 180;
+    public static final int EMPTY_POOL_ID = 44;
+    private static final int[] START_TEMPLATES = {93, 94}; /* chamber/end id = 7 */
+    private static final int SHUFFLED_FALLBACK_ID = 20;
 
     private static final int MAX_DIST = 116; // max distance from start piece
     private static final int MAX_DEPTH = 20; // defined as "size" in the client jar
-    private static final int[] START_TEMPLATES = {78, 79}; /* chamber/end id = 7 */
     public static final BlockRotation[] BLOCK_ROTATIONS = BlockRotation.values();
 
     // storing a reference to the jigsaw blocks array to avoid using reflection
@@ -239,6 +247,7 @@ public class TrialChambersGenerator {
                         this.piecesLen += 1;
 
                         if (childPieceDepth <= MAX_DEPTH) {
+                            // System.out.println("child piece: " + childPiece.getName() + "  /tp " + childPiece.pos.x + " " + childPiece.pos.y + " " + childPiece.pos.z);
                             this.placing.add(childPiece, parentJigsawPlacementPriority);
                         }
 
@@ -308,9 +317,9 @@ public class TrialChambersGenerator {
         int fallbackLen = fallbackPool.length;
         System.arraycopy(fallbackPool, 0, arr, len, fallbackLen);
 
-        if (TrialChambersPools.getFallbackID(poolId) != 21) return len + fallbackLen;
+        if (TrialChambersPools.getFallbackID(poolId) != SHUFFLED_FALLBACK_ID) return len + fallbackLen;
 
-        // the extra shuffling only occurs when pool 21 is the fallback pool
+        // the extra shuffling only occurs when pool SHUFFLED_FALLBACK_ID is the fallback pool
         ShuffleUtils.shuffleFallbackPool21(rand, arr, len);
         return len + fallbackLen;
     }
