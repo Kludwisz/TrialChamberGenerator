@@ -60,7 +60,7 @@ public class TrialChambersCarverCracker {
         }
     }
 
-    public boolean generate(long worldseed, int chunkX, int chunkZ, ChunkRand rand) {
+    public boolean generateForCarver(long carverSeedAfterY, ChunkRand rand) {
         this.piecesLen = 0;
         this.placing.clear();
         this.halted = false;
@@ -69,10 +69,12 @@ public class TrialChambersCarverCracker {
         this.missedPieces = 0;
 
         // choose random y position and rotation
-        rand.setCarverSeed(worldseed, chunkX, chunkZ, MCVersion.v1_20);
-        int pickedY = rand.nextInt(21) - 41;
-        if (pickedY != this.requirements.startPieceY)
-            return false;
+        // rand.setCarverSeed(worldseed, chunkX, chunkZ, MCVersion.v1_20);
+        // int pickedY = rand.nextInt(21) - 41;
+        // if (pickedY != this.requirements.startPieceY)
+        //     return false;
+
+        rand.setSeed(carverSeedAfterY, false);
         BlockRotation startPieceRotation = rand.getRandom(BLOCK_ROTATIONS);
         if (startPieceRotation.ordinal() != this.requirements.startPieceRotationOrdinal)
             return false;
@@ -84,7 +86,7 @@ public class TrialChambersCarverCracker {
         // set starting position
         TrialChambersPieces.Piece startPiece = this.pieces[this.piecesLen];
         MutableBlockPos startPiecePos = startPiece.pos;
-        startPiecePos.set(chunkX << 4, pickedY, chunkZ << 4);
+        startPiecePos.set(this.requirements.chunkX << 4, this.requirements.startPieceY, this.requirements.chunkZ << 4);
 
         BlockBox startPieceBox = startPiece.box;
         BlockBoxUtil.setSizeRotatePos(startPieceBox, startPieceSize, startPieceRotation, startPiecePos);

@@ -48,7 +48,43 @@ public class Panorama {
         }
     }
 
+    public static void crackCarver(long rangeStart, long rangeEnd, Requirements reqs) {
+        final TrialChambers TC = new TrialChambers(MCVersion.v1_20);
+        final ChunkRand rand = new ChunkRand();
+        final TrialChambersCarverCracker cracker = new TrialChambersCarverCracker(reqs);
+
+        for (long n = rangeStart; n <= rangeEnd; n++) {
+            long upper31 = (n * 21L + reqs.startPieceY + 41) << 17;
+
+            //iterate over lower 17 bits
+            for (int lower17 = 0; lower17 < (1<<17); lower17++) {
+                long carverSeedAfterY = upper31 | lower17;
+
+                // bruteforce structure seed - generate trial chambers
+                if (cracker.generateForCarver(carverSeedAfterY, rand)) {
+                    // go back to the carver seed
+                    rand.setSeed(carverSeedAfterY, false);
+                    rand.advance(-1);
+                    long carverSeed = rand.getSeed() ^ LCG.JAVA.multiplier;
+                    System.out.println(carverSeed);
+                }
+            }
+        }
+    }
+
+    // --------------------------------------------------------------
+
     public static void mainTask(long rangeStart, long rangeEnd) {
+        Requirements reqs = getPanoRequirements();
+        crack(rangeStart, rangeEnd, reqs);
+    }
+
+    public static void carverBruteforce(long rangeStart, long rangeEnd) {
+        Requirements reqs = getPanoRequirements();
+        crackCarver(rangeStart, rangeEnd, reqs);
+    }
+
+    private static Requirements getPanoRequirements() {
         Requirements reqs = new Requirements(1, 2, -23, BlockRotation.NONE.ordinal());
         reqs.setMaxOffsetTolerance(4);
         reqs.setMaxMissTolerance(1);
@@ -83,8 +119,10 @@ public class Panorama {
         // reqs.addUncertainPiece("_pot", new BPos(5, -21, 1)); // far
         // reqs.addUncertainPiece("_pot", new BPos(11, -21, 1)); // far
 
-        crack(rangeStart, rangeEnd, reqs);
+        return reqs;
     }
+
+    // --------------------------------------------------------------
 
     @SuppressWarnings("unused")
     public static void runAutomatedTests(int scale) {
