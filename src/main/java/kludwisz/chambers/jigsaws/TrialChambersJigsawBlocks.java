@@ -9,6 +9,7 @@ import com.seedfinding.mccore.util.data.Pair;
 import com.seedfinding.mccore.util.pos.BPos;
 import kludwisz.chambers.pieces.TrialChambersStructureSize;
 import kludwisz.generator.TrialChambersGenerator;
+import kludwisz.generator.TrialChambersPieces;
 import kludwisz.generator.util.BlockBoxUtil;
 import kludwisz.generator.util.MutableBlockPos;
 
@@ -2693,7 +2694,7 @@ public class TrialChambersJigsawBlocks {
 		for (int i = 0; i < JIGSAW_BLOCKS_V2.size(); i++) {
 			PIECE_CONNECTION_DIRECTIONS[i] = new HashMap<>();
 			for (JigsawBlock block : JIGSAW_BLOCKS_V2.get(i)) {
-				PIECE_CONNECTION_DIRECTIONS[i].computeIfAbsent(block.name, (p) -> new HashSet<>()).add(TrialChambersGenerator.BlockJigsawInfo.getOpposite(block.direction1));
+				PIECE_CONNECTION_DIRECTIONS[i].computeIfAbsent(block.name, (p) -> new HashSet<>()).add(TrialChambersPieces.BlockJigsawInfo.getOpposite(block.direction1));
 			}
 			for (Map.Entry<String, Set<BlockDirection>> entry : PIECE_CONNECTION_DIRECTIONS[i].entrySet()) {
 				entry.setValue(EnumSet.copyOf(entry.getValue()));
@@ -2712,7 +2713,7 @@ public class TrialChambersJigsawBlocks {
 				if (TrialChambersPools.get(parentJigsaw.poolType) == null) continue;
 				for (Pair<Integer, Integer> pair : TrialChambersPools.get(parentJigsaw.poolType)) {
 					int childPieceId = pair.getFirst();
-					if (childPieceId == TrialChambersGenerator.EMPTY_PIECE_ID) continue;
+					if (childPieceId == TrialChambersPieces.EMPTY_PIECE_ID) continue;
 
 					BPos childPieceSize = TrialChambersStructureSize.get(childPieceId);
 					if (childPieceSize.getX() < 1 || childPieceSize.getY() < 1 || childPieceSize.getZ() < 1) continue;

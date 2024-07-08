@@ -1,6 +1,4 @@
-package kludwisz.generator;
-
-import java.util.*;
+package kludwisz.generator.seedcracking;
 
 import com.seedfinding.mccore.rand.ChunkRand;
 import com.seedfinding.mccore.util.block.BlockBox;
@@ -8,18 +6,20 @@ import com.seedfinding.mccore.util.block.BlockDirection;
 import com.seedfinding.mccore.util.block.BlockRotation;
 import com.seedfinding.mccore.util.pos.BPos;
 import com.seedfinding.mccore.version.MCVersion;
-
-import kludwisz.chambers.jigsaws.JigsawBlock;
 import kludwisz.chambers.jigsaws.TrialChambersJigsawBlocks;
+import kludwisz.chambers.pieces.TrialChambersPieceNames;
 import kludwisz.chambers.pieces.TrialChambersStructureSize;
+import kludwisz.generator.TrialChambersPieces;
 import kludwisz.generator.util.BlockBoxUtil;
 import kludwisz.generator.util.MutableBlockPos;
 import kludwisz.generator.util.ShuffleUtils;
 import kludwisz.util.SequencedPriorityIterator;
 import kludwisz.util.VoxelShape;
 
+import java.util.Set;
 
-public class TrialChambersGenerator {
+
+public class TrialChambersCracker {
     private static final int MAX_DIST = 116; // max distance from start piece
     private static final int MAX_DEPTH = 20; // defined as "size" in the client jar
     public static final BlockRotation[] BLOCK_ROTATIONS = BlockRotation.values();
@@ -37,7 +37,15 @@ public class TrialChambersGenerator {
     private final MutableBlockPos childJigsawPos = new MutableBlockPos();
     private final BlockBox childPieceMinBox = BlockBox.empty();
 
-    public TrialChambersGenerator() {
+    private final Requirements requirements;
+    private int missedPieces;
+    private int matchedPieces;
+    private boolean halted;
+    private boolean success;
+
+    public TrialChambersCracker(Requirements requirements) {
+        this.requirements = requirements;
+
         for (int i = 0; i < this.pieces.length; i++) {
             this.pieces[i] = new TrialChambersPieces.Piece(i);
         }
@@ -52,13 +60,22 @@ public class TrialChambersGenerator {
         }
     }
 
-    public void generate(long worldseed, int chunkX, int chunkZ, ChunkRand rand) {
+    public boolean generate(long worldseed, int chunkX, int chunkZ, ChunkRand rand) {
         this.piecesLen = 0;
+        this.placing.clear();
+        this.halted = false;
+        this.success = false;
+        this.matchedPieces = 0;
+        this.missedPieces = 0;
 
         // choose random y position and rotation
         rand.setCarverSeed(worldseed, chunkX, chunkZ, MCVersion.v1_20);
         int pickedY = rand.nextInt(21) - 41;
+        if (pickedY != this.requirements.startPieceY)
+            return false;
         BlockRotation startPieceRotation = rand.getRandom(BLOCK_ROTATIONS);
+        if (startPieceRotation.ordinal() != this.requirements.startPieceRotationOrdinal)
+            return false;
 
         // choose random starting template
         int startPieceId = TrialChambersPieces.START_TEMPLATES[rand.nextInt(TrialChambersPieces.START_TEMPLATES.length)];
@@ -91,11 +108,16 @@ public class TrialChambersGenerator {
         // place pieces
         this.tryPlacing(startPiece, rand);
         while (this.placing.hasNext()) {
+            if (this.halted)
+                break;
+
             TrialChambersPieces.Piece nextPiece = this.placing.next();
             if (nextPiece == null)
                 break; // end of input
             this.tryPlacing(nextPiece, rand);
         }
+
+        return this.success;
     }
 
     public void tryPlacing(TrialChambersPieces.Piece parentPiece, ChunkRand rand) {
@@ -216,6 +238,29 @@ public class TrialChambersGenerator {
 
                         if (!TrialChambersPieces.isInsideFreeSpace(freeSpace, childPieceBox)) continue;
 
+                        Requirements.TestResult result = this.requirements.test(TrialChambersPieceNames.get(childPieceId), childPiecePos.toImmutable());
+                        switch (result) {
+                            case GOOD_CERTAIN_PIECE:
+                            case GOOD_UNCERTAIN_PIECE:
+                                this.matchedPieces++;
+                                if (this.requirements.isEnoughMatches(this.matchedPieces)) {
+                                    this.success = true;
+                                    this.halted = true;
+                                    return;
+                                }
+                                break;
+                            case BAD_CERTAIN_PIECE:
+                                this.halted = true;
+                                break;
+                            case BAD_UNCERTAIN_PIECE:
+                                if (this.requirements.tooManyMisses(++this.missedPieces)) {
+                                    this.halted = true;
+                                    return;
+                                }
+                                break;
+                        }
+
+                        this.piecesLen += 1;
                         freeSpace.cutout.add(childPieceBox);
 
                         int childPieceDepth = parentPieceDepth + 1;
@@ -224,10 +269,7 @@ public class TrialChambersGenerator {
                         childPiece.depth = childPieceDepth;
                         childPiece.freeSpace = freeSpace;
 
-                        this.piecesLen += 1;
-
                         if (childPieceDepth <= MAX_DEPTH) {
-                            // System.out.println("child piece: " + childPiece.getName() + "  /tp " + childPiece.pos.x + " " + childPiece.pos.y + " " + childPiece.pos.z);
                             this.placing.add(childPiece, parentJigsawPlacementPriority);
                         }
 
@@ -236,22 +278,5 @@ public class TrialChambersGenerator {
                 }
             }
         }
-    }
-
-    public List<TrialChambersPieces.Piece> getPieces() {
-        return Arrays.asList(this.pieces).subList(0, this.piecesLen);
-    }
-
-    // -------------------------------------------------------------------------
-
-    public void printPieces() {
-        for (int i = 0; i < this.piecesLen; i++) {
-            TrialChambersPieces.Piece piece = this.pieces[i];
-            System.out.println("Piece " + i + ": " + piece.getName() + "  /tp " + piece.pos.x + " " + piece.pos.y + " " + piece.pos.z + " rotation " + piece.rotation.name() + " and depth " + piece.depth);
-        }
-    }
-
-    public static int getDecorationSalt() {
-        return 30004;
     }
 }

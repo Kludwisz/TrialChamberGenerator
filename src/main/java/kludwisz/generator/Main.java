@@ -4,10 +4,9 @@ import com.seedfinding.mccore.rand.ChunkRand;
 import com.seedfinding.mccore.util.pos.CPos;
 import com.seedfinding.mccore.version.MCVersion;
 import com.seedfinding.mcseed.lcg.LCG;
-import kludwisz.chambers.jigsaws.TrialChambersJigsawBlocks;
+import kludwisz.generator.seedcracking.Panorama;
 
 import java.io.File;
-import java.util.HashSet;
 import java.util.Scanner;
 
 public class Main {
@@ -16,10 +15,10 @@ public class Main {
 		// testGenerator(262871859801710L, 0, 0);
 		// testSpeed();
 		// Panorama.mainTask(0, 1000);
-		// Panorama.runAutomatedTests(100); // cleared
+		Panorama.runAutomatedTests(100); // cleared
 
 		// CURRENT VERSION: 1.20.6
-		runMicroboincApp(args);
+		// runMicroboincApp(args);
 	}
 
 	public static void runMicroboincApp(String[] args) throws Exception {

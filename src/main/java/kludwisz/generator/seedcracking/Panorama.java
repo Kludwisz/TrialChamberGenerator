@@ -1,4 +1,4 @@
-package kludwisz.generator;
+package kludwisz.generator.seedcracking;
 
 import com.seedfinding.mccore.rand.ChunkRand;
 import com.seedfinding.mccore.util.block.BlockRotation;
@@ -6,11 +6,14 @@ import com.seedfinding.mccore.util.pos.BPos;
 import com.seedfinding.mccore.version.MCVersion;
 import com.seedfinding.mcmath.util.Mth;
 import com.seedfinding.mcseed.lcg.LCG;
+import kludwisz.generator.TrialChambers;
+import kludwisz.generator.TrialChambersGenerator;
+import kludwisz.generator.TrialChambersPieces;
 
 import java.util.List;
 
 public class Panorama {
-    public static void crack(long rangeStart, long rangeEnd, TrialChambersCracker.Requirements reqs) {
+    public static void crack(long rangeStart, long rangeEnd, Requirements reqs) {
         final TrialChambers TC = new TrialChambers(MCVersion.v1_20);
         final ChunkRand rand = new ChunkRand();
         final TrialChambersCracker cracker = new TrialChambersCracker(reqs);
@@ -36,10 +39,6 @@ public class Panorama {
 //                rand.setSeed(internalSeed, false);
 //                if (rand.nextInt(22) != reqs.chunkZ)
 //                    continue;
-//
-//                // reverse region seed into structure seed
-//                rand.advance(-2);
-//                long structureSeed = (rand.getSeed() ^ LCG.JAVA.multiplier) - TC.getSalt();
 
                 // bruteforce structure seed - generate trial chambers
                 if (cracker.generate(structureSeed, reqs.chunkX, reqs.chunkZ, rand)) {
@@ -50,7 +49,9 @@ public class Panorama {
     }
 
     public static void mainTask(long rangeStart, long rangeEnd) {
-        TrialChambersCracker.Requirements reqs = new TrialChambersCracker.Requirements(1, 2, -23, BlockRotation.NONE.ordinal());
+        Requirements reqs = new Requirements(1, 2, -23, BlockRotation.NONE.ordinal());
+        reqs.setMaxOffsetTolerance(4);
+        reqs.setMaxMissTolerance(1);
 
         // banned pieces
         reqs.addBannedPiece("corridor/atrium/grand_staircase_1");
@@ -118,7 +119,7 @@ public class Panorama {
             int startPieceYTest = rand.nextInt(21) - 41;
             int rotTest = rand.nextInt(4);
 
-            TrialChambersCracker.Requirements pieces = new TrialChambersCracker.Requirements(chunkXTest, chunkZTest, startPieceYTest, rotTest);
+            Requirements pieces = new Requirements(chunkXTest, chunkZTest, startPieceYTest, rotTest);
             createStructureData(structseed, chunkXTest, chunkZTest, pieces, rand);
 
             for (long n = 0; n <= (long)Math.ceil((1L<<31) / 22.0); n++) {
@@ -184,12 +185,12 @@ public class Panorama {
     }
 
     @SuppressWarnings("unused")
-    private static void createStructureData(long structseed, int cx, int cz, TrialChambersCracker.Requirements dataSet, ChunkRand rand) {
+    private static void createStructureData(long structseed, int cx, int cz, Requirements dataSet, ChunkRand rand) {
         TrialChambersGenerator tcg = new TrialChambersGenerator();
         tcg.generate(structseed, cx, cz, rand);
 
         // create unique piece data
-        for (TrialChambersGenerator.Piece piece : tcg.getPieces()) {
+        for (TrialChambersPieces.Piece piece : tcg.getPieces()) {
             if (piece.getName().contains("corridor/atrium/grand_staircase_")) {
                 dataSet.addUniquePiece(piece.getName(), piece.pos.toImmutable());
 
@@ -219,11 +220,11 @@ public class Panorama {
         }
 
         // select other, random pieces from the generator and add them to the list
-        List<TrialChambersGenerator.Piece> shuffledPieces = tcg.getPieces();
+        List<TrialChambersPieces.Piece> shuffledPieces = tcg.getPieces();
         rand.shuffle(shuffledPieces);
         int threshold = rand.nextInt(6) + 10;
 
-        for (TrialChambersGenerator.Piece piece : shuffledPieces) {
+        for (TrialChambersPieces.Piece piece : shuffledPieces) {
             if (    piece.getName().contains("corridor/atrium/grand_staircase_")
                     || piece.getName().contains("intersection/intersection_")
                     || piece.getName().equals("corridor/atrium_1")
