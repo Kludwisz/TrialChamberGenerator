@@ -5,7 +5,6 @@ import com.seedfinding.mccore.util.block.BlockBox;
 import com.seedfinding.mccore.util.block.BlockDirection;
 import com.seedfinding.mccore.util.block.BlockRotation;
 import com.seedfinding.mccore.util.pos.BPos;
-import com.seedfinding.mccore.version.MCVersion;
 import kludwisz.chambers.jigsaws.TrialChambersJigsawBlocks;
 import kludwisz.chambers.pieces.TrialChambersPieceNames;
 import kludwisz.chambers.pieces.TrialChambersStructureSize;
