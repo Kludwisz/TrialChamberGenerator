@@ -16,7 +16,7 @@ import kludwisz.util.VoxelShape;
 
 
 public class TrialChambersPieces {
-    private static final GenerationVersion VERSION = GenerationVersion.v1_20_6;
+    private static final GenerationVersion VERSION = GenerationVersion.SNAPSHOT;
 
     public static final int EMPTY_PIECE_ID;
     public static final int EMPTY_POOL_ID;

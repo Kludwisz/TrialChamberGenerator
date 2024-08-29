@@ -33,7 +33,7 @@ public class Main {
 		// Panorama.runAutomatedCarverTests(1000);
 		// Panorama.genManualCarverTestData(10);
 
-		// CURRENT VERSION: 1.20.6
+		// CURRENT VERSION: 24w18a
 		runMicroboincApp(args);
 	}
 
