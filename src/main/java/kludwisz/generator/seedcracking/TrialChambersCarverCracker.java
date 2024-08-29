@@ -78,6 +78,8 @@ public class TrialChambersCarverCracker {
         if (startPieceRotation.ordinal() != this.requirements.startPieceRotationOrdinal)
             return false;
 
+        // System.out.println("Passed rotation");
+
         // choose random starting template
         int startPieceId = TrialChambersPieces.START_TEMPLATES[rand.nextInt(TrialChambersPieces.START_TEMPLATES.length)];
         BPos startPieceSize = TrialChambersStructureSize.get(startPieceId);

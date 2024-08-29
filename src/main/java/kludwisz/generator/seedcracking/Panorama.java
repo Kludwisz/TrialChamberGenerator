@@ -3,6 +3,7 @@ package kludwisz.generator.seedcracking;
 import com.seedfinding.mccore.rand.ChunkRand;
 import com.seedfinding.mccore.util.block.BlockRotation;
 import com.seedfinding.mccore.util.pos.BPos;
+import com.seedfinding.mccore.util.pos.CPos;
 import com.seedfinding.mccore.version.MCVersion;
 import com.seedfinding.mcmath.util.Mth;
 import com.seedfinding.mcseed.lcg.LCG;
@@ -11,6 +12,7 @@ import kludwisz.generator.TrialChambersGenerator;
 import kludwisz.generator.TrialChambersPieces;
 
 import java.util.List;
+import java.util.Random;
 
 public class Panorama {
     public static void crack(long rangeStart, long rangeEnd, Requirements reqs) {
@@ -81,10 +83,12 @@ public class Panorama {
 
     public static void carverBruteforce(long rangeStart, long rangeEnd) {
         Requirements reqs = getPanoRequirements();
+        reqs.setMaxMissTolerance(0);
+        reqs.setMaxOffsetTolerance(0);
         crackCarver(rangeStart, rangeEnd, reqs);
     }
 
-    private static Requirements getPanoRequirements() {
+    public static Requirements getPanoRequirements() {
         Requirements reqs = new Requirements(1, 2, -23, BlockRotation.NONE.ordinal());
         reqs.setMaxOffsetTolerance(4);
         reqs.setMaxMissTolerance(1);
@@ -220,6 +224,96 @@ public class Panorama {
                 }
             }
         }
+    }
+
+    public static void runAutomatedCarverTests(int scale) {
+        TrialChambers TC = new TrialChambers(MCVersion.v1_20);
+        ChunkRand rand = new ChunkRand();
+        long initialSeed = new Random().nextLong();
+
+        for (int i = 0; i < scale; i++) {
+            long worldseed = i + initialSeed;
+            CPos pos = TC.getInRegion(worldseed, 0, 0, rand);
+
+            long carverSeed = rand.setCarverSeed(worldseed, pos.getX(), pos.getZ(), MCVersion.v1_20);
+            int startPieceY = rand.nextInt(21) - 41;
+            int rot = rand.nextInt(4);
+
+            Requirements testReqs = new Requirements(pos.getX(), pos.getZ(), startPieceY, rot);
+            createStructureData(worldseed, pos.getX(), pos.getZ(), testReqs, rand);
+            testReqs.setMaxOffsetTolerance(0);
+            testReqs.setMaxMissTolerance(0);
+
+            if (!crackCarverTest(carverSeed, 0, (1L<<31), testReqs)) {
+                System.out.println("Failed test case: " + carverSeed);
+                return;
+            }
+            else {
+                System.out.println("Passed " + (i+1));
+            }
+        }
+    }
+
+    public static void genManualCarverTestData(int scale) {
+        long worldseed = 123456789L;
+        TrialChambersGenerator tcg = new TrialChambersGenerator();
+
+        for (int i = 0; i < scale; i++) {
+            CPos pos = new TrialChambers(MCVersion.v1_20).getInRegion(worldseed, 0, i, new ChunkRand());
+            tcg.generate(worldseed, pos.getX(), pos.getZ(), new ChunkRand());
+            List<TrialChambersPieces.Piece> pieces = tcg.getPieces();
+
+            int totalCandles = pieces.stream().filter(p -> p.getName().contains("candle")).mapToInt(p -> 1).sum();
+            int minForTest = totalCandles - 2;
+            int cID = 0;
+
+            for (TrialChambersPieces.Piece piece : pieces) {
+                // easy to spot any misses using this, candles are rare and their count matters
+                if (piece.getName().contains("candle") && (cID++ >= minForTest)) {
+                    BPos piecepos = piece.pos.toImmutable();
+                    System.out.println(piece.getName() + " /tp " + piecepos.getX() + " " + piecepos.getY() + " " + piecepos.getZ());
+                }
+            }
+        }
+    }
+
+    public static boolean crackCarverTest(long targetCarverSeed, long rangeStart, long rangeEnd, Requirements reqs) {
+        final TrialChambers TC = new TrialChambers(MCVersion.v1_20);
+        final ChunkRand rand = new ChunkRand();
+        final TrialChambersCarverCracker cracker = new TrialChambersCarverCracker(reqs);
+
+        rand.setSeed(targetCarverSeed);
+        rand.nextInt(21);
+        final long targetCarverAfterY = rand.getSeed();
+
+        for (long n = rangeStart; n <= rangeEnd; n++) {
+            long upper31 = (n * 21L + reqs.startPieceY + 41) << 17;
+            if (upper31 != ((targetCarverAfterY >> 17) << 17))
+                continue;
+            System.out.println("Good upper 31");
+
+            //iterate over lower 17 bits
+            for (int lower17 = 0; lower17 < (1<<17); lower17++) {
+                long carverSeedAfterY = upper31 | lower17;
+                if (carverSeedAfterY != targetCarverAfterY && lower17 > 5)
+                    continue;
+                if (carverSeedAfterY == targetCarverAfterY)
+                    System.out.println("Good full seed");
+
+                // bruteforce structure seed - generate trial chambers
+                if (cracker.generateForCarver(carverSeedAfterY, rand)) {
+                    // go back to the carver seed
+                    rand.setSeed(carverSeedAfterY, false);
+                    rand.advance(-1);
+                    long carverSeed = rand.getSeed() ^ LCG.JAVA.multiplier;
+                    if (carverSeed == targetCarverSeed)
+                        return true;
+                    // System.out.println(carverSeed);
+                }
+            }
+        }
+
+        return false;
     }
 
     @SuppressWarnings("unused")

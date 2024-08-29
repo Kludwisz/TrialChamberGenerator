@@ -1323,7 +1323,7 @@ public class TrialChambersJigsawBlocks {
 //            Collections.emptyList()
 //    );
 
-// 1.20.6 pieces
+	// 1.20.6 pieces
 	private static final List<List<JigsawBlock>> JIGSAW_BLOCKS_V2 = Arrays.<List<JigsawBlock>>asList(
 	// chamber/assembly id = 0
 			Arrays.asList(

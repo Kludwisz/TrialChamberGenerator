@@ -95,6 +95,33 @@ public class Requirements {
         return Requirements.TestResult.NEUTRAL;
     }
 
+    public final double getPieceQuality(String piecename, BPos pos) {
+        if (bannedPieces.contains(piecename))
+            return -100000.0;
+
+        if (uniquePieces.containsKey(piecename)) {
+            BPos uniquePos = uniquePieces.get(piecename);
+            if (pos.distanceTo(uniquePos, DistanceMetric.CHEBYSHEV) <= this.MAX_UNIQUE_OFFSET_TOLERANCE)
+                return 10.0 - pos.distanceTo(uniquePos, DistanceMetric.CHEBYSHEV);
+            return -100000.0;
+        }
+
+        if (certainPieces.containsKey(pos)) {
+            if (certainPieces.get(pos).contains(piecename))
+                return 10.0;
+            return -100000.0;
+        }
+
+        if (uncertainPieces.containsKey(pos)) {
+            String uncertainPiece = uncertainPieces.get(pos);
+            if (piecename.contains(uncertainPiece))
+                return 2.0;
+            return -2.0;
+        }
+
+        return 0.0;
+    }
+
     public enum TestResult {
         GOOD_CERTAIN_PIECE,
         GOOD_UNCERTAIN_PIECE,

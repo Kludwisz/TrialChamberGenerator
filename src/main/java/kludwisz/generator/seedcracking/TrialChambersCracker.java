@@ -42,6 +42,7 @@ public class TrialChambersCracker {
     private int matchedPieces;
     private boolean halted;
     private boolean success;
+    public double quality;
 
     public TrialChambersCracker(Requirements requirements) {
         this.requirements = requirements;
@@ -67,6 +68,7 @@ public class TrialChambersCracker {
         this.success = false;
         this.matchedPieces = 0;
         this.missedPieces = 0;
+        this.quality = 0.0;
 
         // choose random y position and rotation
         rand.setCarverSeed(worldseed, chunkX, chunkZ, MCVersion.v1_20);
@@ -238,27 +240,31 @@ public class TrialChambersCracker {
 
                         if (!TrialChambersPieces.isInsideFreeSpace(freeSpace, childPieceBox)) continue;
 
-                        Requirements.TestResult result = this.requirements.test(TrialChambersPieceNames.get(childPieceId), childPiecePos.toImmutable());
-                        switch (result) {
-                            case GOOD_CERTAIN_PIECE:
-                            case GOOD_UNCERTAIN_PIECE:
-                                this.matchedPieces++;
-                                if (this.requirements.isEnoughMatches(this.matchedPieces)) {
-                                    this.success = true;
-                                    this.halted = true;
-                                    return;
-                                }
-                                break;
-                            case BAD_CERTAIN_PIECE:
-                                this.halted = true;
-                                break;
-                            case BAD_UNCERTAIN_PIECE:
-                                if (this.requirements.tooManyMisses(++this.missedPieces)) {
-                                    this.halted = true;
-                                    return;
-                                }
-                                break;
-                        }
+                        // TODO restore for future runs
+//                        Requirements.TestResult result = this.requirements.test(TrialChambersPieceNames.get(childPieceId), childPiecePos.toImmutable());
+//                        switch (result) {
+//                            case GOOD_CERTAIN_PIECE:
+//                            case GOOD_UNCERTAIN_PIECE:
+//                                this.matchedPieces++;
+//                                if (this.requirements.isEnoughMatches(this.matchedPieces)) {
+//                                    this.success = true;
+//                                    this.halted = true;
+//                                    return;
+//                                }
+//                                break;
+//                            case BAD_CERTAIN_PIECE:
+//                                this.halted = true;
+//                                break;
+//                            case BAD_UNCERTAIN_PIECE:
+//                                if (this.requirements.tooManyMisses(++this.missedPieces)) {
+//                                    this.halted = true;
+//                                    return;
+//                                }
+//                                break;
+//                        }
+
+                        double deltaQuality = this.requirements.getPieceQuality(TrialChambersPieceNames.get(childPieceId), childPiecePos.toImmutable());
+                        this.quality += deltaQuality;
 
                         this.piecesLen += 1;
                         freeSpace.cutout.add(childPieceBox);
