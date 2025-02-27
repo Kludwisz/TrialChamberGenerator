@@ -4,11 +4,11 @@ import com.seedfinding.mccore.util.block.BlockBox;
 import com.seedfinding.mccore.util.block.BlockDirection;
 import com.seedfinding.mccore.util.block.BlockRotation;
 import com.seedfinding.mcseed.rand.JRand;
-import kludwisz.chambers.jigsaws.JigsawBlock;
-import kludwisz.chambers.jigsaws.JointType;
-import kludwisz.chambers.jigsaws.TrialChambersJigsawBlocks;
-import kludwisz.chambers.jigsaws.TrialChambersPools;
-import kludwisz.chambers.pieces.TrialChambersPieceNames;
+import kludwisz.structure.jigsaws.JigsawBlock;
+import kludwisz.structure.jigsaws.JointType;
+import kludwisz.structure.jigsaws.TrialChambersJigsawBlocks;
+import kludwisz.structure.jigsaws.TrialChambersPools;
+import kludwisz.structure.pieces.TrialChambersPieceNames;
 import kludwisz.generator.util.MutableBlockPos;
 import kludwisz.generator.util.RotationUtil;
 import kludwisz.generator.util.ShuffleUtils;
@@ -16,31 +16,10 @@ import kludwisz.util.VoxelShape;
 
 
 public class TrialChambersPieces {
-    private static final GenerationVersion VERSION = GenerationVersion.v1_20_6;
-
     public static final int EMPTY_PIECE_ID;
     public static final int EMPTY_POOL_ID;
     public static final int[] START_TEMPLATES; /* chamber/end id = 7 */
     public static final int SHUFFLED_FALLBACK_ID;
-
-    static {
-        switch (VERSION) {
-            case SNAPSHOT:
-                EMPTY_PIECE_ID = 170;
-                EMPTY_POOL_ID = 45;
-                START_TEMPLATES = new int[]{78, 79}; /* chamber/end id = 7 */
-                SHUFFLED_FALLBACK_ID = 21;
-                break;
-            case v1_20_6:
-                EMPTY_PIECE_ID = 180;
-                EMPTY_POOL_ID = 44;
-                START_TEMPLATES = new int[]{93, 94}; /* chamber/end id = 7 */
-                SHUFFLED_FALLBACK_ID = 20;
-                break;
-            default:
-                throw new IllegalStateException("Unexpected generation version: " + VERSION);
-        }
-    }
 
     // -------------------------------------------------------------------------
     // Jigsaws & templates
@@ -178,11 +157,5 @@ public class TrialChambersPieces {
                     && (this.nbt.jointType.equals(JointType.ROLLABLE) || this.top.equals(blockJigsawInfo2.top))
                     && this.nbt.targetName.equals(blockJigsawInfo2.nbt.name);
         }
-    }
-
-    // -------------------------------------------------------------------------
-
-    private enum GenerationVersion {
-        SNAPSHOT, v1_20_6
     }
 }

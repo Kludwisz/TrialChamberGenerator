@@ -1,4 +1,4 @@
-package kludwisz.chambers.jigsaws;
+package kludwisz.structure.jigsaws;
 
 import com.seedfinding.mccore.util.block.BlockDirection;
 import com.seedfinding.mccore.util.pos.BPos;

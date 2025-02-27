@@ -1,4 +1,4 @@
-package kludwisz.chambers.jigsaws;
+package kludwisz.structure.jigsaws;
 
 public enum JointType {
 	ALIGNED,

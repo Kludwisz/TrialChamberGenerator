@@ -1,4 +1,4 @@
-package kludwisz.chambers.jigsaws;
+package kludwisz.structure.jigsaws;
 
 import java.util.*;
 
@@ -7,8 +7,7 @@ import com.seedfinding.mccore.util.block.BlockDirection;
 import com.seedfinding.mccore.util.block.BlockRotation;
 import com.seedfinding.mccore.util.data.Pair;
 import com.seedfinding.mccore.util.pos.BPos;
-import kludwisz.chambers.pieces.TrialChambersStructureSize;
-import kludwisz.generator.TrialChambersGenerator;
+import kludwisz.structure.pieces.TrialChambersPieceSize;
 import kludwisz.generator.TrialChambersPieces;
 import kludwisz.generator.util.BlockBoxUtil;
 import kludwisz.generator.util.MutableBlockPos;
@@ -2715,7 +2714,7 @@ public class TrialChambersJigsawBlocks {
 					int childPieceId = pair.getFirst();
 					if (childPieceId == TrialChambersPieces.EMPTY_PIECE_ID) continue;
 
-					BPos childPieceSize = TrialChambersStructureSize.get(childPieceId);
+					BPos childPieceSize = TrialChambersPieceSize.get(childPieceId);
 					if (childPieceSize.getX() < 1 || childPieceSize.getY() < 1 || childPieceSize.getZ() < 1) continue;
 
 					for (BlockRotation childPieceRotation : BlockRotation.values()) {

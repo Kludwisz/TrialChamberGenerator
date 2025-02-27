@@ -1,11 +1,10 @@
-package kludwisz.generator;
+package kludwisz.structure;
 
 import com.seedfinding.mcbiome.biome.Biome;
 import com.seedfinding.mccore.rand.ChunkRand;
 import com.seedfinding.mccore.state.Dimension;
 import com.seedfinding.mccore.version.MCVersion;
 import com.seedfinding.mccore.version.VersionMap;
-import com.seedfinding.mcfeature.structure.RegionStructure;
 import com.seedfinding.mcfeature.structure.UniformStructure;
 
 public class TrialChambers extends UniformStructure<TrialChambers> {

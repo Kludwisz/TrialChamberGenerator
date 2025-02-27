@@ -9,9 +9,8 @@ import com.seedfinding.mccore.util.block.BlockRotation;
 import com.seedfinding.mccore.util.pos.BPos;
 import com.seedfinding.mccore.version.MCVersion;
 
-import kludwisz.chambers.jigsaws.JigsawBlock;
-import kludwisz.chambers.jigsaws.TrialChambersJigsawBlocks;
-import kludwisz.chambers.pieces.TrialChambersStructureSize;
+import kludwisz.structure.jigsaws.TrialChambersJigsawBlocks;
+import kludwisz.structure.pieces.TrialChambersPieceSize;
 import kludwisz.generator.util.BlockBoxUtil;
 import kludwisz.generator.util.MutableBlockPos;
 import kludwisz.generator.util.ShuffleUtils;
@@ -62,7 +61,7 @@ public class TrialChambersGenerator {
 
         // choose random starting template
         int startPieceId = TrialChambersPieces.START_TEMPLATES[rand.nextInt(TrialChambersPieces.START_TEMPLATES.length)];
-        BPos startPieceSize = TrialChambersStructureSize.get(startPieceId);
+        BPos startPieceSize = TrialChambersPieceSize.get(startPieceId);
 
         // set starting position
         TrialChambersPieces.Piece startPiece = this.pieces[this.piecesLen];
@@ -192,7 +191,7 @@ public class TrialChambersGenerator {
                         continue;
                     }
 
-                    BPos childPieceSize = TrialChambersStructureSize.get(childPieceId);
+                    BPos childPieceSize = TrialChambersPieceSize.get(childPieceId);
 
                     TrialChambersPieces.BlockJigsawInfo[] arr2 = this.childPieceJigsawBlocksArr;
                     int len2 = TrialChambersPieces.getShuffledJigsawBlocks(rand, arr2, childPieceId, childPieceRotation, MutableBlockPos.ORIGIN);

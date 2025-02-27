@@ -1,4 +1,4 @@
-package kludwisz.chambers.jigsaws;
+package kludwisz.structure.jigsaws;
 
 import java.util.ArrayList;
 import java.util.Arrays;
