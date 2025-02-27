@@ -1423,7 +1423,7 @@ public class TrialChambersJigsawBlocks {
             Collections.singletonList(
                     new JigsawBlock(47, JointType.ALIGNED, "minecraft:spawner", "minecraft:empty", BlockDirection.UP, BlockDirection.NORTH, new BPos(1, 1, 0), 0, 0)
             ),
-			// empty
+// empty id = 191
 			Collections.emptyList()
 	);
 

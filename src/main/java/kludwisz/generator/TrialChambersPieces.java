@@ -16,10 +16,10 @@ import kludwisz.util.VoxelShape;
 
 
 public class TrialChambersPieces {
-    public static final int EMPTY_PIECE_ID;
-    public static final int EMPTY_POOL_ID;
-    public static final int[] START_TEMPLATES; /* chamber/end id = 7 */
-    public static final int SHUFFLED_FALLBACK_ID;
+    public static final int EMPTY_PIECE_ID = 191;
+    public static final int EMPTY_POOL_ID = 47;
+    public static final int[] START_TEMPLATES = {76, 77}; /* chamber/end id = 7 */
+    public static final int SHUFFLED_FALLBACK_ID = 23;
 
     // -------------------------------------------------------------------------
     // Jigsaws & templates
