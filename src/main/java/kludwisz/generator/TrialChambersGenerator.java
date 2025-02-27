@@ -31,7 +31,7 @@ public class TrialChambersGenerator {
     private final BlockBox rootBox = BlockBox.empty();
     private final TrialChambersPieces.BlockJigsawInfo[] parentJigsawsArr = new TrialChambersPieces.BlockJigsawInfo[50];
     private final TrialChambersPieces.BlockJigsawInfo[] childPieceJigsawBlocksArr = new TrialChambersPieces.BlockJigsawInfo[50];
-    private final int[] childTemplatesArr = new int[1229]; // don't even ask...
+    private final int[] childTemplatesArr = new int[1235]; // don't even ask...
     private final BlockRotation[] childRotationsArr = new BlockRotation[4];
     private final MutableBlockPos childJigsawPos = new MutableBlockPos();
     private final BlockBox childPieceMinBox = BlockBox.empty();

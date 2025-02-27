@@ -4,8 +4,8 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.1'
 }
 
-group = 'Kludwisz'
-version '1.0-SNAPSHOT'
+group = 'kludwisz'
+version '1.1'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -21,14 +21,17 @@ repositories {
 dependencies {
     implementation('com.seedfinding:mc_math:1.171.0') 		{ transitive = false }
     implementation('com.seedfinding:mc_seed:1.171.1') 		{ transitive = false }
-    implementation('com.seedfinding:mc_core:1.200.0') 		{ transitive = false }
+    implementation('com.seedfinding:mc_core:1.210.0') 		{ transitive = false }
     implementation('com.seedfinding:mc_noise:1.171.1') 		{ transitive = false }
     implementation('com.seedfinding:mc_reversal:1.171.1') 	{ transitive = false }
     implementation('com.seedfinding:mc_biome:1.171.1') 		{ transitive = false }
     implementation('com.seedfinding:mc_terrain:1.171.1') 	{ transitive = false }
-    implementation('com.seedfinding:mc_feature:1.171.7') 	{ transitive = false }
+    implementation('com.seedfinding:mc_feature:1.171.9') 	{ transitive = false }
 
     implementation group: 'it.unimi.dsi', name: 'fastutil-core', version: '8.5.13'
+
+    testImplementation('org.junit.jupiter:junit-jupiter-api:5.7.0')
+    testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.7.0')
 }
 
 jar {
@@ -45,4 +48,8 @@ publishing {
             from components.java
         }
     }
+}
+
+test {
+    useJUnitPlatform()
 }
