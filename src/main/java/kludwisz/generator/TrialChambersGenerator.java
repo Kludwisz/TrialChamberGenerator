@@ -28,6 +28,9 @@ public class TrialChambersGenerator {
     public static final int EMPTY_PIECE_ID = 170;
     public static final int EMPTY_POOL_ID = 45;
 
+    private static final int OVERWORLD_MIN_Y = -64;
+    private static final int OVERWORLD_MAX_Y = -64 + 384;
+    private static final int DIMENSION_PADDING = 10;
     private static final int MAX_DIST = 116; // max distance from start piece
     private static final int MAX_DEPTH = 20; // defined as "size" in the client jar
     private static final int[] START_TEMPLATES = {78, 79}; /* chamber/end id = 7 */
@@ -96,7 +99,14 @@ public class TrialChambersGenerator {
 
         // create structure max bounding box
         this.piecesLen++;
-        VoxelShape rootFreeSpace = this.voxelShapes[255].init(BlockBoxUtil.set(this.rootBox, centerX - MAX_DIST, y - MAX_DIST, centerZ - MAX_DIST, centerX + MAX_DIST, y + MAX_DIST, centerZ + MAX_DIST));
+        VoxelShape rootFreeSpace = this.voxelShapes[255].init(BlockBoxUtil.set(this.rootBox,
+                centerX - MAX_DIST,
+                Math.max(OVERWORLD_MIN_Y + DIMENSION_PADDING, y - MAX_DIST),
+                centerZ - MAX_DIST,
+                centerX + MAX_DIST + 1,
+                Math.min(OVERWORLD_MAX_Y - DIMENSION_PADDING, y + MAX_DIST) + 1,
+                centerZ + MAX_DIST + 1
+        ));
         rootFreeSpace.cutout.add(startPieceBox);
         startPiece.freeSpace = rootFreeSpace;
 
